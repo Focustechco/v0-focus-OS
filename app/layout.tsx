@@ -24,7 +24,13 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "FOCUS PROJECT OS | Sistema de Gestao de Projetos",
   description: "Sistema operacional interno de gestao de projetos da Focus - Desenvolvimento de Software, Apps e Automacoes",
-  generator: 'v0.app'
+  generator: 'v0.app',
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
+  manifest: "/manifest.json",
 }
 
 export const viewport: Viewport = {

@@ -71,15 +71,21 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
       {/* Header */}
       <div className="p-4 border-b border-[#2A2A2A]">
         <div className="flex items-center justify-between">
-          <div className={`${collapsed ? "hidden" : "block"}`}>
-            <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider">FOCUS OS</h1>
-            <p className="text-neutral-600 text-xs font-mono">v3.0 CLASSIFIED</p>
+          <div className={`${collapsed ? "hidden" : "flex items-center gap-3"}`}>
+            <img src="/logo.svg" alt="Focus OS" className="w-10 h-10" />
+            <div>
+              <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider">FOCUS OS</h1>
+              <p className="text-neutral-600 text-xs font-mono">v3.0 CLASSIFIED</p>
+            </div>
           </div>
+          {collapsed && (
+            <img src="/logo.svg" alt="Focus OS" className="w-8 h-8 mx-auto" />
+          )}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onCollapse(!collapsed)}
-            className="text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
+            className={`text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A] ${collapsed ? "absolute right-2 top-4" : ""}`}
           >
             <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? "rotate-180" : ""}`} />
           </Button>
