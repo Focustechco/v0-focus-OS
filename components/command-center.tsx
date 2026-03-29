@@ -14,7 +14,10 @@ import {
   CheckCircle2,
   ArrowRight,
   MessageSquare,
+  Briefcase,
+  TrendingUp,
 } from "lucide-react"
+import Link from "next/link"
 
 const teamMembers = [
   { id: 1, name: "Gabriel", role: "CTO / Dev Full-stack", status: "ativo", color: "bg-orange-500" },
@@ -105,6 +108,44 @@ export function CommandCenter() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Pipeline Comercial Card */}
+      <Card className="bg-gradient-to-r from-[#141414] to-[#1A1A1A] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                <Briefcase className="w-6 h-6 text-orange-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-1">PIPELINE COMERCIAL</h3>
+                <div className="flex items-center gap-4 text-xs">
+                  <span className="text-white font-mono">23 deals ativos</span>
+                  <span className="text-orange-500 font-mono">R$ 47.800 pipeline</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="flex items-center gap-1 text-yellow-500 text-[10px]">
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>3 deals parados</span>
+                </div>
+                <div className="flex items-center gap-1 text-green-500 text-[10px] mt-1">
+                  <TrendingUp className="w-3 h-3" />
+                  <span>5 prioritarios</span>
+                </div>
+              </div>
+              <Link href="/comercial">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                  VER PIPELINE
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

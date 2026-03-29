@@ -17,12 +17,14 @@ import {
   BarChart3,
   Settings,
   Bell,
+  Briefcase,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 const navigation = [
   { id: "command-center", href: "/", icon: LayoutDashboard, label: "COMMAND CENTER" },
+  { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
   { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23 },
   { id: "fluxo", href: "/fluxo", icon: GitBranch, label: "FLUXO DE ETAPAS" },
   { id: "sprints", href: "/sprints", icon: Zap, label: "SPRINTS", badge: 7 },
