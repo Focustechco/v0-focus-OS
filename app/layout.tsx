@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
+import { ModulesProvider } from "@/contexts/modules-context"
 
 const syne = Syne({ 
   subsets: ["latin"],
@@ -116,7 +117,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png" />
       </head>
       <body className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans bg-[#0A0A0A] text-white antialiased overscroll-none`}>
-        {children}
+        <ModulesProvider>
+          {children}
+        </ModulesProvider>
       </body>
     </html>
   )

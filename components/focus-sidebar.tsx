@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useModules } from "@/contexts/modules-context"
 
 const navigation = [
   { id: "command-center", href: "/", icon: LayoutDashboard, label: "COMMAND CENTER" },
@@ -51,6 +52,10 @@ interface FocusSidebarProps {
 export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   const pathname = usePathname()
   const [uptime, setUptime] = useState("00:00:00")
+  const { isSidebarItemVisible } = useModules()
+
+  // Filtrar navegacao baseado nos modulos ativos
+  const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
 
   useEffect(() => {
     const startTime = Date.now()
@@ -102,7 +107,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-        {navigation.map((item) => (
+        {visibleNavigation.map((item) => (
           <Link
             key={item.id}
             href={item.href}
