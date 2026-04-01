@@ -19,6 +19,8 @@ import {
   Bell,
   Briefcase,
   FileText,
+  Layers,
+  Cog,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -33,10 +35,12 @@ const navigation = [
   { id: "checklists", href: "/checklists", icon: CheckSquare, label: "CHECKLISTS" },
   { id: "aprovacoes", href: "/aprovacoes", icon: Clock, label: "APROVACOES", badge: 5 },
   { id: "prazos", href: "/prazos", icon: CalendarClock, label: "PRAZOS & ENTREGAS" },
+  { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
   { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
   { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE" },
   { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
   { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
+  { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
 ]
 
 interface FocusSidebarProps {
