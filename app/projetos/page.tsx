@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageWrapper } from "@/components/page-wrapper"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -132,21 +131,21 @@ function ProjectCard({ project }: { project: typeof projects[0] }) {
 
   return (
     <Card className={`bg-[#141414] border-[#2A2A2A] border-l-4 ${status.border} hover:border-orange-500/30 transition-colors cursor-pointer group`}>
-      <CardContent className="p-4">
+      <CardContent className="p-3 sm:p-4">
         <div className="flex items-start justify-between mb-3">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-xs text-orange-500 font-mono">{project.id}</span>
               <Badge className={`text-[9px] ${stageConfig?.color} text-white`}>
                 {stageConfig?.label}
               </Badge>
             </div>
-            <h3 className="text-sm font-medium text-white group-hover:text-orange-500 transition-colors">
+            <h3 className="text-sm font-medium text-white group-hover:text-orange-500 transition-colors truncate">
               {project.name}
             </h3>
-            <p className="text-[10px] text-neutral-500">Cliente: {project.client}</p>
+            <p className="text-[10px] text-neutral-500 truncate">Cliente: {project.client}</p>
           </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white">
+          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white flex-shrink-0">
             <MoreVertical className="w-4 h-4" />
           </Button>
         </div>
@@ -160,7 +159,7 @@ function ProjectCard({ project }: { project: typeof projects[0] }) {
             <Progress value={project.progress} className="h-1.5 bg-[#2A2A2A]" />
           </div>
 
-          <div className="flex items-center justify-between text-[10px]">
+          <div className="flex items-center justify-between text-[10px] flex-wrap gap-2">
             <div className="flex items-center gap-1 text-neutral-400">
               <User className="w-3 h-3" />
               <span>{project.techLead}</span>
@@ -174,12 +173,12 @@ function ProjectCard({ project }: { project: typeof projects[0] }) {
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-[#2A2A2A]">
+          <div className="flex items-center justify-between pt-2 border-t border-[#2A2A2A] flex-wrap gap-2">
             <Badge variant="outline" className={`text-[9px] ${status.badge}`}>
               {status.label}
             </Badge>
             <div className="flex gap-1">
-              <Button size="sm" variant="ghost" className="h-6 text-[10px] text-neutral-400 hover:text-white">
+              <Button size="sm" variant="ghost" className="h-6 text-[10px] text-neutral-400 hover:text-white hidden sm:flex">
                 Ver Tasks
               </Button>
               <Button size="sm" className="h-6 text-[10px] bg-orange-500 hover:bg-orange-600">
@@ -195,160 +194,153 @@ function ProjectCard({ project }: { project: typeof projects[0] }) {
 }
 
 export default function ProjetosPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [viewMode, setViewMode] = useState("kanban")
 
   const getProjectsByStage = (stageId: string) => projects.filter((p) => p.stage === stageId)
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="PROJETOS" />
-        
-        <main className="flex-1 overflow-auto p-6">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-xl font-display font-bold text-white">Projetos</h1>
-              <p className="text-sm text-neutral-500">Gerencie todos os projetos da Focus</p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg">
-                <Search className="w-4 h-4 text-neutral-500" />
-                <input
-                  type="text"
-                  placeholder="Buscar projetos..."
-                  className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-40"
-                />
-              </div>
-
-              {/* Filter */}
-              <Button variant="outline" className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white hover:border-orange-500/50">
-                <Filter className="w-4 h-4 mr-2" />
-                Filtros
-              </Button>
-
-              {/* View Toggle */}
-              <Tabs value={viewMode} onValueChange={setViewMode}>
-                <TabsList className="bg-[#141414] border border-[#2A2A2A]">
-                  <TabsTrigger value="kanban" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                    <LayoutGrid className="w-4 h-4" />
-                  </TabsTrigger>
-                  <TabsTrigger value="list" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                    <List className="w-4 h-4" />
-                  </TabsTrigger>
-                  <TabsTrigger value="timeline" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                    <Calendar className="w-4 h-4" />
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-
-              {/* New Project */}
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Projeto
-              </Button>
-            </div>
+    <PageWrapper title="PROJETOS">
+      {/* Header */}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg sm:text-xl font-display font-bold text-white">Projetos</h1>
+            <p className="text-xs sm:text-sm text-neutral-500">Gerencie todos os projetos da Focus</p>
           </div>
 
-          {/* Kanban View */}
-          {viewMode === "kanban" && (
-            <div className="flex gap-4 overflow-x-auto pb-4">
-              {stages.map((stage) => (
-                <div key={stage.id} className="flex-shrink-0 w-80">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${stage.color}`} />
-                      <span className="text-xs font-medium text-neutral-400 tracking-wider">
-                        {stage.label.toUpperCase()}
-                      </span>
-                    </div>
-                    <Badge variant="outline" className="text-[10px] border-[#2A2A2A] text-neutral-500">
-                      {getProjectsByStage(stage.id).length}
-                    </Badge>
-                  </div>
-                  <div className="space-y-3">
-                    {getProjectsByStage(stage.id).map((project) => (
-                      <ProjectCard key={project.id} project={project} />
-                    ))}
-                    {getProjectsByStage(stage.id).length === 0 && (
-                      <div className="p-8 border border-dashed border-[#2A2A2A] rounded-lg text-center">
-                        <p className="text-xs text-neutral-600">Nenhum projeto</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {/* Search */}
+            <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg flex-1 sm:flex-none">
+              <Search className="w-4 h-4 text-neutral-500" />
+              <input
+                type="text"
+                placeholder="Buscar projetos..."
+                className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-full sm:w-32 lg:w-40"
+              />
             </div>
-          )}
 
-          {/* List View */}
-          {viewMode === "list" && (
-            <Card className="bg-[#141414] border-[#2A2A2A]">
-              <CardContent className="p-0">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-[#2A2A2A]">
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">ID</th>
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PROJETO</th>
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">CLIENTE</th>
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">ETAPA</th>
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PROGRESSO</th>
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PRAZO</th>
-                      <th className="text-left p-4 text-[10px] text-neutral-500 font-medium tracking-wider">ACOES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projects.map((project) => {
-                      const stageConfig = stages.find((s) => s.id === project.stage)
-                      return (
-                        <tr key={project.id} className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors">
-                          <td className="p-4 text-xs text-orange-500 font-mono">{project.id}</td>
-                          <td className="p-4">
-                            <div className="text-sm text-white">{project.name}</div>
-                          </td>
-                          <td className="p-4 text-xs text-neutral-400">{project.client}</td>
-                          <td className="p-4">
-                            <Badge className={`text-[9px] ${stageConfig?.color} text-white`}>
-                              {stageConfig?.label}
-                            </Badge>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <Progress value={project.progress} className="w-20 h-1.5 bg-[#2A2A2A]" />
-                              <span className="text-xs text-neutral-400 font-mono">{project.progress}%</span>
-                            </div>
-                          </td>
-                          <td className="p-4 text-xs text-neutral-400 font-mono">{project.deadline}</td>
-                          <td className="p-4">
-                            <Button size="sm" className="h-6 text-[10px] bg-orange-500 hover:bg-orange-600">
-                              Abrir
-                            </Button>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </CardContent>
-            </Card>
-          )}
+            {/* Filter */}
+            <Button variant="outline" size="sm" className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white hover:border-orange-500/50">
+              <Filter className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Filtros</span>
+            </Button>
 
-          {/* Timeline View */}
-          {viewMode === "timeline" && (
-            <Card className="bg-[#141414] border-[#2A2A2A] p-6">
-              <div className="text-center text-neutral-500">
-                <Calendar className="w-12 h-12 mx-auto mb-3 text-neutral-600" />
-                <p className="text-sm">Visualizacao de Timeline em desenvolvimento</p>
-              </div>
-            </Card>
-          )}
-        </main>
+            {/* View Toggle */}
+            <Tabs value={viewMode} onValueChange={setViewMode}>
+              <TabsList className="bg-[#141414] border border-[#2A2A2A] h-9">
+                <TabsTrigger value="kanban" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-2 sm:px-3">
+                  <LayoutGrid className="w-4 h-4" />
+                </TabsTrigger>
+                <TabsTrigger value="list" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-2 sm:px-3 hidden sm:flex">
+                  <List className="w-4 h-4" />
+                </TabsTrigger>
+                <TabsTrigger value="timeline" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-2 sm:px-3 hidden md:flex">
+                  <Calendar className="w-4 h-4" />
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {/* New Project */}
+            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
+              <Plus className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Novo Projeto</span>
+            </Button>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Kanban View */}
+      {viewMode === "kanban" && (
+        <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 -mx-3 px-3 sm:-mx-4 sm:px-4 lg:-mx-6 lg:px-6 snap-x snap-mandatory">
+          {stages.map((stage) => (
+            <div key={stage.id} className="flex-shrink-0 w-72 sm:w-80 snap-start">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${stage.color}`} />
+                  <span className="text-xs font-medium text-neutral-400 tracking-wider">
+                    {stage.label.toUpperCase()}
+                  </span>
+                </div>
+                <Badge variant="outline" className="text-[10px] border-[#2A2A2A] text-neutral-500">
+                  {getProjectsByStage(stage.id).length}
+                </Badge>
+              </div>
+              <div className="space-y-3">
+                {getProjectsByStage(stage.id).map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+                {getProjectsByStage(stage.id).length === 0 && (
+                  <div className="p-8 border border-dashed border-[#2A2A2A] rounded-lg text-center">
+                    <p className="text-xs text-neutral-600">Nenhum projeto</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* List View */}
+      {viewMode === "list" && (
+        <Card className="bg-[#141414] border-[#2A2A2A] overflow-hidden">
+          <CardContent className="p-0 overflow-x-auto">
+            <table className="w-full min-w-[700px]">
+              <thead>
+                <tr className="border-b border-[#2A2A2A]">
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">ID</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PROJETO</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">CLIENTE</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">ETAPA</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PROGRESSO</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PRAZO</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">ACOES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.map((project) => {
+                  const stageConfig = stages.find((s) => s.id === project.stage)
+                  return (
+                    <tr key={project.id} className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors">
+                      <td className="p-3 sm:p-4 text-xs text-orange-500 font-mono">{project.id}</td>
+                      <td className="p-3 sm:p-4">
+                        <div className="text-sm text-white">{project.name}</div>
+                      </td>
+                      <td className="p-3 sm:p-4 text-xs text-neutral-400">{project.client}</td>
+                      <td className="p-3 sm:p-4">
+                        <Badge className={`text-[9px] ${stageConfig?.color} text-white`}>
+                          {stageConfig?.label}
+                        </Badge>
+                      </td>
+                      <td className="p-3 sm:p-4">
+                        <div className="flex items-center gap-2">
+                          <Progress value={project.progress} className="w-16 sm:w-20 h-1.5 bg-[#2A2A2A]" />
+                          <span className="text-xs text-neutral-400 font-mono">{project.progress}%</span>
+                        </div>
+                      </td>
+                      <td className="p-3 sm:p-4 text-xs text-neutral-400 font-mono">{project.deadline}</td>
+                      <td className="p-3 sm:p-4">
+                        <Button size="sm" className="h-6 text-[10px] bg-orange-500 hover:bg-orange-600">
+                          Abrir
+                        </Button>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Timeline View */}
+      {viewMode === "timeline" && (
+        <Card className="bg-[#141414] border-[#2A2A2A] p-6">
+          <div className="text-center text-neutral-500">
+            <Calendar className="w-12 h-12 mx-auto mb-3 text-neutral-600" />
+            <p className="text-sm">Visualizacao de Timeline em desenvolvimento</p>
+          </div>
+        </Card>
+      )}
+    </PageWrapper>
   )
 }

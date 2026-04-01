@@ -1,20 +1,14 @@
 "use client"
 
-import { FocusSidebar } from "@/components/focus-sidebar"
+import { PageWrapper } from "@/components/page-wrapper"
 import { ConfiguracoesModule } from "@/components/configuracoes/configuracoes-module"
-import { useState } from "react"
 
 export default function ConfiguracoesPage() {
-  const [collapsed, setCollapsed] = useState(false)
-
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={collapsed} onCollapse={setCollapsed} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-hidden">
-          <ConfiguracoesModule />
-        </main>
+    <PageWrapper title="CONFIGURACOES" breadcrumb="CONFIGURACOES">
+      <div className="-m-3 sm:-m-4 lg:-m-6">
+        <ConfiguracoesModule />
       </div>
-    </div>
+    </PageWrapper>
   )
 }

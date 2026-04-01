@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
+import { PageWrapper } from "@/components/page-wrapper"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -10,7 +8,6 @@ import { Progress } from "@/components/ui/progress"
 import {
   Zap,
   Calendar,
-  Clock,
   Users,
   ListTodo,
   ArrowRight,
@@ -85,25 +82,23 @@ const sprintTasks = [
 ]
 
 function SprintCard({ sprint }: { sprint: typeof sprints[0] }) {
-  const totalTasks = sprint.tasks.todo + sprint.tasks.inProgress + sprint.tasks.review + sprint.tasks.done
-  
   return (
     <Card className={`bg-[#141414] border-[#2A2A2A] ${sprint.status === "active" ? "border-l-4 border-l-orange-500" : ""} hover:border-orange-500/30 transition-colors`}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg font-bold text-white font-mono">SPRINT #{sprint.id}</span>
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start justify-between mb-4 gap-2">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-base sm:text-lg font-bold text-white font-mono">SPRINT #{sprint.id}</span>
               <Badge className={sprint.status === "active" ? "bg-orange-500" : "bg-green-500"}>
                 {sprint.status === "active" ? "ATIVA" : "CONCLUIDA"}
               </Badge>
             </div>
-            <p className="text-sm text-neutral-400">{sprint.project}</p>
+            <p className="text-sm text-neutral-400 truncate">{sprint.project}</p>
             <p className="text-[10px] text-orange-500 font-mono">{sprint.projectId}</p>
           </div>
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <div className="text-xs text-neutral-500">Periodo</div>
-            <div className="text-xs text-neutral-300 font-mono">{sprint.startDate} - {sprint.endDate}</div>
+            <div className="text-[10px] sm:text-xs text-neutral-300 font-mono">{sprint.startDate} - {sprint.endDate}</div>
             {sprint.daysLeft > 0 && (
               <div className={`text-xs font-mono mt-1 ${sprint.daysLeft <= 2 ? "text-red-500" : "text-orange-500"}`}>
                 {sprint.daysLeft} dias restantes
@@ -121,29 +116,29 @@ function SprintCard({ sprint }: { sprint: typeof sprints[0] }) {
             <Progress value={sprint.progress} className="h-2 bg-[#2A2A2A]" />
           </div>
 
-          <div className="grid grid-cols-4 gap-2">
-            <div className="p-2 bg-[#0A0A0A] rounded text-center">
-              <div className="text-lg font-bold text-neutral-400 font-mono">{sprint.tasks.todo}</div>
-              <div className="text-[9px] text-neutral-600">TO DO</div>
+          <div className="grid grid-cols-4 gap-1 sm:gap-2">
+            <div className="p-1.5 sm:p-2 bg-[#0A0A0A] rounded text-center">
+              <div className="text-sm sm:text-lg font-bold text-neutral-400 font-mono">{sprint.tasks.todo}</div>
+              <div className="text-[8px] sm:text-[9px] text-neutral-600">TO DO</div>
             </div>
-            <div className="p-2 bg-[#0A0A0A] rounded text-center">
-              <div className="text-lg font-bold text-blue-500 font-mono">{sprint.tasks.inProgress}</div>
-              <div className="text-[9px] text-neutral-600">IN PROGRESS</div>
+            <div className="p-1.5 sm:p-2 bg-[#0A0A0A] rounded text-center">
+              <div className="text-sm sm:text-lg font-bold text-blue-500 font-mono">{sprint.tasks.inProgress}</div>
+              <div className="text-[8px] sm:text-[9px] text-neutral-600">PROGRESS</div>
             </div>
-            <div className="p-2 bg-[#0A0A0A] rounded text-center">
-              <div className="text-lg font-bold text-yellow-500 font-mono">{sprint.tasks.review}</div>
-              <div className="text-[9px] text-neutral-600">REVIEW</div>
+            <div className="p-1.5 sm:p-2 bg-[#0A0A0A] rounded text-center">
+              <div className="text-sm sm:text-lg font-bold text-yellow-500 font-mono">{sprint.tasks.review}</div>
+              <div className="text-[8px] sm:text-[9px] text-neutral-600">REVIEW</div>
             </div>
-            <div className="p-2 bg-[#0A0A0A] rounded text-center">
-              <div className="text-lg font-bold text-green-500 font-mono">{sprint.tasks.done}</div>
-              <div className="text-[9px] text-neutral-600">DONE</div>
+            <div className="p-1.5 sm:p-2 bg-[#0A0A0A] rounded text-center">
+              <div className="text-sm sm:text-lg font-bold text-green-500 font-mono">{sprint.tasks.done}</div>
+              <div className="text-[8px] sm:text-[9px] text-neutral-600">DONE</div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-[#2A2A2A]">
+          <div className="flex items-center justify-between pt-2 border-t border-[#2A2A2A] flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-neutral-500" />
-              <span className="text-[10px] text-neutral-400">{sprint.team.join(", ")}</span>
+              <span className="text-[10px] text-neutral-400 truncate max-w-[100px] sm:max-w-none">{sprint.team.join(", ")}</span>
             </div>
             <Button size="sm" className="h-7 text-xs bg-orange-500 hover:bg-orange-600">
               Ver Sprint
@@ -157,194 +152,184 @@ function SprintCard({ sprint }: { sprint: typeof sprints[0] }) {
 }
 
 export default function SprintsPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="SPRINTS" />
-        
-        <main className="flex-1 overflow-auto p-6">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-xl font-display font-bold text-white">Sprints</h1>
-              <p className="text-sm text-neutral-500">Gerenciamento de sprints ativas</p>
-            </div>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Nova Sprint
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Active Sprint Detail */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Sprint Header */}
-              <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-orange-500">
-                <CardHeader className="border-b border-[#2A2A2A]">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-orange-500" />
-                      SPRINT #{activeSprint.id} — {activeSprint.project.toUpperCase()}
-                    </CardTitle>
-                    <Badge className="bg-orange-500 text-white">{activeSprint.daysLeft} dias restantes</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 text-xs text-neutral-400">
-                        <Calendar className="w-4 h-4" />
-                        {activeSprint.startDate} - {activeSprint.endDate}
-                      </div>
-                    </div>
-                    <Progress value={activeSprint.progress} className="w-48 h-2 bg-[#2A2A2A]" />
-                    <span className="text-sm font-mono text-white">{activeSprint.progress}%</span>
-                  </div>
-
-                  {/* Burndown Chart */}
-                  <div className="h-48 bg-[#0A0A0A] rounded-lg p-4 relative">
-                    <div className="absolute top-2 left-2 text-[10px] text-neutral-500 flex items-center gap-2">
-                      <TrendingDown className="w-3 h-3" />
-                      BURNDOWN CHART
-                    </div>
-                    <svg className="w-full h-full" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
-                      {/* Grid */}
-                      {[0, 1, 2, 3, 4].map((i) => (
-                        <line key={i} x1="40" y1={30 + i * 30} x2="380" y2={30 + i * 30} stroke="#2A2A2A" strokeWidth="1" />
-                      ))}
-                      {/* Ideal line */}
-                      <polyline
-                        points={burndownData.map((d, i) => `${40 + i * 34},${30 + (1 - d.ideal / 20) * 120}`).join(" ")}
-                        fill="none"
-                        stroke="#525252"
-                        strokeWidth="2"
-                        strokeDasharray="5,5"
-                      />
-                      {/* Actual line */}
-                      <polyline
-                        points={burndownData
-                          .filter((d) => d.actual !== null)
-                          .map((d, i) => `${40 + i * 34},${30 + (1 - (d.actual || 0) / 20) * 120}`)
-                          .join(" ")}
-                        fill="none"
-                        stroke="#F97316"
-                        strokeWidth="2"
-                      />
-                      {/* Y axis labels */}
-                      <text x="10" y="35" className="fill-neutral-500 text-[8px]">20</text>
-                      <text x="10" y="95" className="fill-neutral-500 text-[8px]">10</text>
-                      <text x="10" y="155" className="fill-neutral-500 text-[8px]">0</text>
-                    </svg>
-                    <div className="absolute bottom-2 right-4 flex items-center gap-4 text-[9px]">
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-0.5 bg-neutral-500" />
-                        <span className="text-neutral-500">Ideal</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-0.5 bg-orange-500" />
-                        <span className="text-neutral-500">Atual</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Sprint Tasks */}
-              <Card className="bg-[#141414] border-[#2A2A2A]">
-                <CardHeader className="border-b border-[#2A2A2A]">
-                  <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
-                    <ListTodo className="w-4 h-4 text-orange-500" />
-                    TASKS DA SPRINT
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-[#2A2A2A]">
-                    {sprintTasks.map((task) => (
-                      <div key={task.id} className="flex items-center justify-between p-4 hover:bg-[#1A1A1A] transition-colors">
-                        <div className="flex items-center gap-3">
-                          {task.status === "done" ? (
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          ) : task.status === "inProgress" ? (
-                            <Circle className="w-4 h-4 text-blue-500" />
-                          ) : task.status === "review" ? (
-                            <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                          ) : (
-                            <Circle className="w-4 h-4 text-neutral-600" />
-                          )}
-                          <div>
-                            <div className="text-xs text-orange-500 font-mono">{task.id}</div>
-                            <div className={`text-sm ${task.status === "done" ? "text-neutral-500 line-through" : "text-white"}`}>
-                              {task.title}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Badge variant="outline" className={`text-[9px] ${
-                            task.priority === "alta" ? "border-red-500 text-red-500" :
-                            task.priority === "media" ? "border-yellow-500 text-yellow-500" :
-                            "border-neutral-500 text-neutral-500"
-                          }`}>
-                            {task.priority.toUpperCase()}
-                          </Badge>
-                          <span className="text-xs text-neutral-400">{task.assignee}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Meetings */}
-              <Card className="bg-[#141414] border-[#2A2A2A]">
-                <CardHeader className="border-b border-[#2A2A2A]">
-                  <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-orange-500" />
-                    CADENCIA DE REUNIOES
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4 space-y-4">
-                  <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 rounded-full bg-orange-500" />
-                      <span className="text-sm text-white font-medium">Reuniao Interna Semanal</span>
-                    </div>
-                    <p className="text-xs text-neutral-400 ml-4">
-                      Acompanhamento de todos os projetos em curso, status de sprints, bloqueios e realocacao de recursos.
-                    </p>
-                    <p className="text-[10px] text-neutral-500 ml-4 mt-1">
-                      Participantes: Gabriel + devs ativos + DevSecOps quando relevante
-                    </p>
-                  </div>
-                  <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-500" />
-                      <span className="text-sm text-white font-medium">Reuniao com Cliente Quinzenal</span>
-                    </div>
-                    <p className="text-xs text-neutral-400 ml-4">
-                      Apresentacao de entregas, validacao/aprovacao do cliente, coleta de ajustes para proxima sprint.
-                    </p>
-                    <p className="text-[10px] text-neutral-500 ml-4 mt-1">
-                      Participantes: Gabriel + Dev do projeto + cliente
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Sidebar - All Sprints */}
-            <div className="space-y-4">
-              <h2 className="text-sm font-medium text-neutral-400 tracking-wider">TODAS AS SPRINTS</h2>
-              {sprints.map((sprint) => (
-                <SprintCard key={sprint.id} sprint={sprint} />
-              ))}
-            </div>
-          </div>
-        </main>
+    <PageWrapper title="SPRINTS">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-lg sm:text-xl font-display font-bold text-white">Sprints</h1>
+          <p className="text-xs sm:text-sm text-neutral-500">Gerenciamento de sprints ativas</p>
+        </div>
+        <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto">
+          <Plus className="w-4 h-4 mr-2" />
+          Nova Sprint
+        </Button>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Active Sprint Detail */}
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          {/* Sprint Header */}
+          <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-orange-500">
+            <CardHeader className="border-b border-[#2A2A2A] p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <CardTitle className="text-xs sm:text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-orange-500" />
+                  SPRINT #{activeSprint.id} — {activeSprint.project.toUpperCase()}
+                </CardTitle>
+                <Badge className="bg-orange-500 text-white w-fit">{activeSprint.daysLeft} dias restantes</Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4 p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+                <div className="flex items-center gap-2 text-xs text-neutral-400">
+                  <Calendar className="w-4 h-4" />
+                  {activeSprint.startDate} - {activeSprint.endDate}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Progress value={activeSprint.progress} className="w-32 sm:w-48 h-2 bg-[#2A2A2A]" />
+                  <span className="text-sm font-mono text-white">{activeSprint.progress}%</span>
+                </div>
+              </div>
+
+              {/* Burndown Chart */}
+              <div className="h-40 sm:h-48 bg-[#0A0A0A] rounded-lg p-3 sm:p-4 relative">
+                <div className="absolute top-2 left-2 text-[10px] text-neutral-500 flex items-center gap-2">
+                  <TrendingDown className="w-3 h-3" />
+                  BURNDOWN CHART
+                </div>
+                <svg className="w-full h-full" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
+                  {/* Grid */}
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <line key={i} x1="40" y1={30 + i * 30} x2="380" y2={30 + i * 30} stroke="#2A2A2A" strokeWidth="1" />
+                  ))}
+                  {/* Ideal line */}
+                  <polyline
+                    points={burndownData.map((d, i) => `${40 + i * 34},${30 + (1 - d.ideal / 20) * 120}`).join(" ")}
+                    fill="none"
+                    stroke="#525252"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                  />
+                  {/* Actual line */}
+                  <polyline
+                    points={burndownData
+                      .filter((d) => d.actual !== null)
+                      .map((d, i) => `${40 + i * 34},${30 + (1 - (d.actual || 0) / 20) * 120}`)
+                      .join(" ")}
+                    fill="none"
+                    stroke="#F97316"
+                    strokeWidth="2"
+                  />
+                  {/* Y axis labels */}
+                  <text x="10" y="35" className="fill-neutral-500 text-[8px]">20</text>
+                  <text x="10" y="95" className="fill-neutral-500 text-[8px]">10</text>
+                  <text x="10" y="155" className="fill-neutral-500 text-[8px]">0</text>
+                </svg>
+                <div className="absolute bottom-2 right-4 flex items-center gap-4 text-[9px]">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-0.5 bg-neutral-500" />
+                    <span className="text-neutral-500">Ideal</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-0.5 bg-orange-500" />
+                    <span className="text-neutral-500">Atual</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sprint Tasks */}
+          <Card className="bg-[#141414] border-[#2A2A2A]">
+            <CardHeader className="border-b border-[#2A2A2A] p-3 sm:p-6">
+              <CardTitle className="text-xs sm:text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+                <ListTodo className="w-4 h-4 text-orange-500" />
+                TASKS DA SPRINT
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-[#2A2A2A]">
+                {sprintTasks.map((task) => (
+                  <div key={task.id} className="flex items-center justify-between p-3 sm:p-4 hover:bg-[#1A1A1A] transition-colors">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      {task.status === "done" ? (
+                        <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                      ) : task.status === "inProgress" ? (
+                        <Circle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                      ) : task.status === "review" ? (
+                        <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                      ) : (
+                        <Circle className="w-4 h-4 text-neutral-600 flex-shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <div className="text-xs text-orange-500 font-mono">{task.id}</div>
+                        <div className={`text-xs sm:text-sm truncate ${task.status === "done" ? "text-neutral-500 line-through" : "text-white"}`}>
+                          {task.title}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                      <Badge variant="outline" className={`text-[9px] hidden sm:inline-flex ${
+                        task.priority === "alta" ? "border-red-500 text-red-500" :
+                        task.priority === "media" ? "border-yellow-500 text-yellow-500" :
+                        "border-neutral-500 text-neutral-500"
+                      }`}>
+                        {task.priority.toUpperCase()}
+                      </Badge>
+                      <span className="text-[10px] sm:text-xs text-neutral-400">{task.assignee}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Meetings - Hidden on mobile */}
+          <Card className="bg-[#141414] border-[#2A2A2A] hidden sm:block">
+            <CardHeader className="border-b border-[#2A2A2A]">
+              <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-orange-500" />
+                CADENCIA DE REUNIOES
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500" />
+                  <span className="text-sm text-white font-medium">Reuniao Interna Semanal</span>
+                </div>
+                <p className="text-xs text-neutral-400 ml-4">
+                  Acompanhamento de todos os projetos em curso, status de sprints, bloqueios e realocacao de recursos.
+                </p>
+                <p className="text-[10px] text-neutral-500 ml-4 mt-1">
+                  Participantes: Gabriel + devs ativos + DevSecOps quando relevante
+                </p>
+              </div>
+              <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="text-sm text-white font-medium">Reuniao com Cliente Quinzenal</span>
+                </div>
+                <p className="text-xs text-neutral-400 ml-4">
+                  Apresentacao de entregas, validacao/aprovacao do cliente, coleta de ajustes para proxima sprint.
+                </p>
+                <p className="text-[10px] text-neutral-500 ml-4 mt-1">
+                  Participantes: Gabriel + Dev do projeto + cliente
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar - All Sprints */}
+        <div className="space-y-4">
+          <h2 className="text-xs sm:text-sm font-medium text-neutral-400 tracking-wider">TODAS AS SPRINTS</h2>
+          {sprints.map((sprint) => (
+            <SprintCard key={sprint.id} sprint={sprint} />
+          ))}
+        </div>
+      </div>
+    </PageWrapper>
   )
 }

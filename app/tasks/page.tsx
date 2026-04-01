@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageWrapper } from "@/components/page-wrapper"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -162,24 +161,24 @@ function TaskCard({ task }: { task: typeof tasks[0] }) {
   
   return (
     <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
-      <CardContent className="p-4">
+      <CardContent className="p-3 sm:p-4">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <StatusIcon className={`w-4 h-4 ${task.status === "done" ? "text-green-500" : task.status === "review" ? "text-yellow-500" : task.status === "inProgress" ? "text-blue-500" : "text-neutral-500"}`} />
             <span className="text-xs text-orange-500 font-mono">{task.id}</span>
             <Badge variant="outline" className={`text-[9px] ${priority.color}`}>
               {priority.label}
             </Badge>
           </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white">
+          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white flex-shrink-0">
             <MoreVertical className="w-4 h-4" />
           </Button>
         </div>
 
-        <h3 className="text-sm font-medium text-white mb-1">{task.title}</h3>
-        <p className="text-[10px] text-neutral-500 mb-3">{task.description}</p>
+        <h3 className="text-sm font-medium text-white mb-1 line-clamp-2">{task.title}</h3>
+        <p className="text-[10px] text-neutral-500 mb-3 line-clamp-2">{task.description}</p>
 
-        <div className="flex items-center gap-4 text-[10px] text-neutral-400 mb-3">
+        <div className="flex items-center gap-2 sm:gap-4 text-[10px] text-neutral-400 mb-3 flex-wrap">
           <div className="flex items-center gap-1">
             <FolderKanban className="w-3 h-3" />
             {task.projectId}
@@ -199,11 +198,11 @@ function TaskCard({ task }: { task: typeof tasks[0] }) {
           {task.criteria.slice(0, 2).map((c, idx) => (
             <div key={idx} className="flex items-center gap-2 text-[10px]">
               {c.done ? (
-                <CheckCircle2 className="w-3 h-3 text-green-500" />
+                <CheckCircle2 className="w-3 h-3 text-green-500 flex-shrink-0" />
               ) : (
-                <Circle className="w-3 h-3 text-neutral-600" />
+                <Circle className="w-3 h-3 text-neutral-600 flex-shrink-0" />
               )}
-              <span className={c.done ? "text-neutral-500 line-through" : "text-neutral-400"}>
+              <span className={`${c.done ? "text-neutral-500 line-through" : "text-neutral-400"} truncate`}>
                 {c.text}
               </span>
             </div>
@@ -215,7 +214,7 @@ function TaskCard({ task }: { task: typeof tasks[0] }) {
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-[#2A2A2A]">
+        <div className="flex items-center justify-between pt-3 border-t border-[#2A2A2A] flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Badge className={`text-[9px] ${status.color} text-white`}>
               {status.label}
@@ -240,7 +239,6 @@ function TaskCard({ task }: { task: typeof tasks[0] }) {
 }
 
 export default function TasksPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [statusFilter, setStatusFilter] = useState("all")
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -249,186 +247,182 @@ export default function TasksPage() {
     : tasks.filter((t) => t.status === statusFilter)
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="TAREFAS" />
-        
-        <main className="flex-1 overflow-auto p-6">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-xl font-display font-bold text-white">Tarefas</h1>
-              <p className="text-sm text-neutral-500">Gerenciamento de tasks por estagiario / tech lead</p>
+    <PageWrapper title="TAREFAS">
+      {/* Header */}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg sm:text-xl font-display font-bold text-white">Tarefas</h1>
+            <p className="text-xs sm:text-sm text-neutral-500">Gerenciamento de tasks por estagiario / tech lead</p>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {/* Search */}
+            <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg flex-1 sm:flex-none">
+              <Search className="w-4 h-4 text-neutral-500" />
+              <input
+                type="text"
+                placeholder="Buscar tasks..."
+                className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-full sm:w-32"
+              />
             </div>
 
-            <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg">
-                <Search className="w-4 h-4 text-neutral-500" />
-                <input
-                  type="text"
-                  placeholder="Buscar tasks..."
-                  className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-40"
-                />
-              </div>
+            {/* Filter */}
+            <Button variant="outline" size="sm" className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white hover:border-orange-500/50">
+              <Filter className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Filtros</span>
+            </Button>
 
-              {/* Filter */}
-              <Button variant="outline" className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white hover:border-orange-500/50">
-                <Filter className="w-4 h-4 mr-2" />
-                Filtros
-              </Button>
-
-              {/* New Task Dialog */}
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                    <Plus className="w-4 h-4 mr-2" />
+            {/* New Task Dialog */}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
+                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Nova Task</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-lg max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-display text-white flex items-center gap-2">
+                    <ListTodo className="w-5 h-5 text-orange-500" />
                     Nova Task
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-lg">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg font-display text-white flex items-center gap-2">
-                      <ListTodo className="w-5 h-5 text-orange-500" />
-                      Nova Task
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 pt-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Projeto</Label>
-                        <Select>
-                          <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
-                            <SelectValue placeholder="Selecionar projeto" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
-                            <SelectItem value="prj-042">PRJ-042 - Projeto Alpha</SelectItem>
-                            <SelectItem value="prj-041">PRJ-041 - App Beta</SelectItem>
-                            <SelectItem value="prj-040">PRJ-040 - Automacao X</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Sprint</Label>
-                        <Select>
-                          <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
-                            <SelectValue placeholder="Selecionar sprint" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
-                            <SelectItem value="7">Sprint #7</SelectItem>
-                            <SelectItem value="6">Sprint #6</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Atribuida para</Label>
-                        <Select>
-                          <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
-                            <SelectValue placeholder="Selecionar" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
-                            <SelectItem value="joao">Joao (Estagiario)</SelectItem>
-                            <SelectItem value="maria">Maria (Estagiario)</SelectItem>
-                            <SelectItem value="pedro">Pedro (Estagiario)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Revisada por</Label>
-                        <Select>
-                          <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
-                            <SelectValue placeholder="Selecionar" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
-                            <SelectItem value="gabriel">Gabriel (Tech Lead)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-neutral-400 text-xs">Titulo</Label>
-                      <Input className="bg-[#0A0A0A] border-[#2A2A2A] text-white" placeholder="Titulo da task" />
+                      <Label className="text-neutral-400 text-xs">Projeto</Label>
+                      <Select>
+                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                          <SelectValue placeholder="Selecionar projeto" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectItem value="prj-042">PRJ-042 - Projeto Alpha</SelectItem>
+                          <SelectItem value="prj-041">PRJ-041 - App Beta</SelectItem>
+                          <SelectItem value="prj-040">PRJ-040 - Automacao X</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-
                     <div className="space-y-2">
-                      <Label className="text-neutral-400 text-xs">Descricao</Label>
-                      <Textarea className="bg-[#0A0A0A] border-[#2A2A2A] text-white resize-none" placeholder="Descreva a task..." rows={3} />
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Prioridade</Label>
-                        <Select>
-                          <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
-                            <SelectValue placeholder="Prioridade" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
-                            <SelectItem value="baixa">Baixa</SelectItem>
-                            <SelectItem value="media">Media</SelectItem>
-                            <SelectItem value="alta">Alta</SelectItem>
-                            <SelectItem value="critica">Critica</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Estimativa (horas)</Label>
-                        <Input type="number" className="bg-[#0A0A0A] border-[#2A2A2A] text-white" placeholder="8" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-neutral-400 text-xs">Deadline</Label>
-                        <Input type="date" className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-3 pt-4">
-                      <Button variant="outline" className="border-[#2A2A2A]" onClick={() => setDialogOpen(false)}>
-                        Cancelar
-                      </Button>
-                      <Button className="bg-orange-500 hover:bg-orange-600">
-                        Criar Task
-                      </Button>
+                      <Label className="text-neutral-400 text-xs">Sprint</Label>
+                      <Select>
+                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                          <SelectValue placeholder="Selecionar sprint" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectItem value="7">Sprint #7</SelectItem>
+                          <SelectItem value="6">Sprint #6</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
 
-          {/* Status Tabs */}
-          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mb-6">
-            <TabsList className="bg-[#141414] border border-[#2A2A2A]">
-              <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                Todas ({tasks.length})
-              </TabsTrigger>
-              <TabsTrigger value="todo" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                A Fazer ({tasks.filter(t => t.status === "todo").length})
-              </TabsTrigger>
-              <TabsTrigger value="inProgress" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                Em Progresso ({tasks.filter(t => t.status === "inProgress").length})
-              </TabsTrigger>
-              <TabsTrigger value="review" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                Em Revisao ({tasks.filter(t => t.status === "review").length})
-              </TabsTrigger>
-              <TabsTrigger value="done" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                Concluidas ({tasks.filter(t => t.status === "done").length})
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-neutral-400 text-xs">Atribuida para</Label>
+                      <Select>
+                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                          <SelectValue placeholder="Selecionar" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectItem value="joao">Joao (Estagiario)</SelectItem>
+                          <SelectItem value="maria">Maria (Estagiario)</SelectItem>
+                          <SelectItem value="pedro">Pedro (Estagiario)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-neutral-400 text-xs">Revisada por</Label>
+                      <Select>
+                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                          <SelectValue placeholder="Selecionar" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectItem value="gabriel">Gabriel (Tech Lead)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
 
-          {/* Tasks Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
+                  <div className="space-y-2">
+                    <Label className="text-neutral-400 text-xs">Titulo</Label>
+                    <Input className="bg-[#0A0A0A] border-[#2A2A2A] text-white" placeholder="Titulo da task" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-neutral-400 text-xs">Descricao</Label>
+                    <Textarea className="bg-[#0A0A0A] border-[#2A2A2A] text-white resize-none" placeholder="Descreva a task..." rows={3} />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-neutral-400 text-xs">Prioridade</Label>
+                      <Select>
+                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                          <SelectValue placeholder="Prioridade" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectItem value="baixa">Baixa</SelectItem>
+                          <SelectItem value="media">Media</SelectItem>
+                          <SelectItem value="alta">Alta</SelectItem>
+                          <SelectItem value="critica">Critica</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-neutral-400 text-xs">Estimativa</Label>
+                      <Input type="number" className="bg-[#0A0A0A] border-[#2A2A2A] text-white" placeholder="8" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-neutral-400 text-xs">Deadline</Label>
+                      <Input type="date" className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4">
+                    <Button variant="outline" className="border-[#2A2A2A]" onClick={() => setDialogOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button className="bg-orange-500 hover:bg-orange-600">
+                      Criar Task
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
-        </main>
+        </div>
       </div>
-    </div>
+
+      {/* Status Tabs */}
+      <div className="mb-6 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+        <Tabs value={statusFilter} onValueChange={setStatusFilter}>
+          <TabsList className="bg-[#141414] border border-[#2A2A2A] w-max sm:w-auto">
+            <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+              Todas ({tasks.length})
+            </TabsTrigger>
+            <TabsTrigger value="todo" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+              A Fazer ({tasks.filter(t => t.status === "todo").length})
+            </TabsTrigger>
+            <TabsTrigger value="inProgress" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+              Progresso ({tasks.filter(t => t.status === "inProgress").length})
+            </TabsTrigger>
+            <TabsTrigger value="review" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+              Revisao ({tasks.filter(t => t.status === "review").length})
+            </TabsTrigger>
+            <TabsTrigger value="done" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+              Feitas ({tasks.filter(t => t.status === "done").length})
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      {/* Tasks Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        {filteredTasks.map((task) => (
+          <TaskCard key={task.id} task={task} />
+        ))}
+      </div>
+    </PageWrapper>
   )
 }

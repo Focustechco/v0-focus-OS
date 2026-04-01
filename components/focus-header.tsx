@@ -1,16 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Bell, RefreshCw, Search } from "lucide-react"
+import { Bell, RefreshCw, Search, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 interface FocusHeaderProps {
   title: string
   breadcrumb?: string
+  onMenuClick?: () => void
 }
 
-export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
+export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps) {
   const [currentTime, setCurrentTime] = useState("")
 
   useEffect(() => {
@@ -36,29 +37,51 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
   }, [])
 
   return (
-    <header className="h-14 bg-[#111111] border-b border-[#2A2A2A] flex items-center justify-between px-6">
-      <div className="flex items-center gap-4">
-        <div className="text-sm text-neutral-400 font-mono tracking-wide">
-          FOCUS OS /{" "}
+    <header className="h-14 bg-[#111111] border-b border-[#2A2A2A] flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
+      <div className="flex items-center gap-2 sm:gap-4">
+        {/* Mobile Menu Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMenuClick}
+          className="lg:hidden text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
+
+        {/* Logo for mobile */}
+        <img src="/logo.svg" alt="Focus OS" className="w-7 h-7 lg:hidden" />
+
+        <div className="text-xs sm:text-sm text-neutral-400 font-mono tracking-wide truncate max-w-[140px] sm:max-w-none">
+          <span className="hidden sm:inline">FOCUS OS / </span>
           <span className="text-orange-500 font-medium">{breadcrumb || title}</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        {/* Search */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-md">
+      <div className="flex items-center gap-1 sm:gap-3">
+        {/* Search - Hidden on small mobile */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-md">
           <Search className="w-4 h-4 text-neutral-500" />
           <input
             type="text"
             placeholder="Buscar..."
-            className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-40"
+            className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-24 md:w-40"
           />
-          <kbd className="text-[10px] text-neutral-600 bg-[#1A1A1A] px-1.5 py-0.5 rounded font-mono">
+          <kbd className="hidden md:inline-block text-[10px] text-neutral-600 bg-[#1A1A1A] px-1.5 py-0.5 rounded font-mono">
             /
           </kbd>
         </div>
 
-        {/* Last Update */}
+        {/* Search icon for mobile */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="sm:hidden text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
+        >
+          <Search className="w-4 h-4" />
+        </Button>
+
+        {/* Last Update - Hidden on mobile */}
         <div className="hidden lg:block text-xs text-neutral-500 font-mono">
           LAST UPDATE: {currentTime}
         </div>
@@ -75,11 +98,11 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
           </Badge>
         </Button>
 
-        {/* Refresh */}
+        {/* Refresh - Hidden on mobile */}
         <Button
           variant="ghost"
           size="icon"
-          className="text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
+          className="hidden sm:flex text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>

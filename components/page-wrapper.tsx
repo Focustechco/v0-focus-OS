@@ -4,9 +4,14 @@ import { useState } from "react"
 import { FocusSidebar } from "@/components/focus-sidebar"
 import { FocusHeader } from "@/components/focus-header"
 import { MobileSidebar } from "@/components/mobile-sidebar"
-import { CommandCenter } from "@/components/command-center"
 
-export default function HomePage() {
+interface PageWrapperProps {
+  title: string
+  breadcrumb?: string
+  children: React.ReactNode
+}
+
+export function PageWrapper({ title, breadcrumb, children }: PageWrapperProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -22,12 +27,13 @@ export default function HomePage() {
       
       <div className="flex-1 flex flex-col min-w-0">
         <FocusHeader 
-          title="COMMAND CENTER" 
+          title={title}
+          breadcrumb={breadcrumb}
           onMenuClick={() => setMobileMenuOpen(true)} 
         />
         
         <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6 overscroll-contain">
-          <CommandCenter />
+          {children}
         </main>
       </div>
     </div>
