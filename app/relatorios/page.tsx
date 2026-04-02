@@ -5,6 +5,7 @@ import { FocusSidebar } from "@/components/focus-sidebar"
 import { FocusHeader } from "@/components/focus-header"
 import { ReportWizard } from "@/components/reports/report-wizard"
 import { ReportEditor } from "@/components/reports/report-editor"
+import { TranscriptModal } from "@/components/reports/transcript-modal"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +28,7 @@ import {
   Calendar,
   User,
   FolderOpen,
+  FileUp,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -101,6 +103,7 @@ interface EditorConfig {
 export default function RelatoriosPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [wizardOpen, setWizardOpen] = useState(false)
+  const [transcriptOpen, setTranscriptOpen] = useState(false)
   const [editorConfig, setEditorConfig] = useState<EditorConfig | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterProject, setFilterProject] = useState("all")
@@ -144,6 +147,14 @@ export default function RelatoriosPage() {
             </div>
 
             <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setTranscriptOpen(true)}
+                variant="outline"
+                className="bg-[#1e1e1e] border-[#ff6b00] text-[#ff6b00] hover:bg-[#ff6b00]/10"
+              >
+                <FileUp className="w-4 h-4 mr-2" />
+                Ler Transcricao
+              </Button>
               <Button
                 onClick={() => setWizardOpen(true)}
                 className="bg-orange-500 hover:bg-orange-600 text-white"
@@ -390,6 +401,12 @@ export default function RelatoriosPage() {
         open={wizardOpen}
         onOpenChange={setWizardOpen}
         onComplete={handleWizardComplete}
+      />
+
+      {/* Transcript Modal */}
+      <TranscriptModal
+        open={transcriptOpen}
+        onOpenChange={setTranscriptOpen}
       />
     </div>
   )
