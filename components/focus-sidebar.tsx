@@ -5,6 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   ChevronLeft,
+  ChevronDown,
+  ChevronRight,
   LayoutDashboard,
   FolderKanban,
   GitBranch,
@@ -26,16 +28,20 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useModules } from "@/contexts/modules-context"
 
-const navigation = [
-  { id: "command-center", href: "/", icon: LayoutDashboard, label: "COMMAND CENTER" },
-  { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
-  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23 },
+// Subitems do módulo Projetos
+const projetosSubItems = [
   { id: "fluxo", href: "/fluxo", icon: GitBranch, label: "FLUXO DE ETAPAS" },
   { id: "sprints", href: "/sprints", icon: Zap, label: "SPRINTS", badge: 7 },
   { id: "tasks", href: "/tasks", icon: ListTodo, label: "TAREFAS", badge: 89 },
   { id: "checklists", href: "/checklists", icon: CheckSquare, label: "CHECKLISTS" },
   { id: "aprovacoes", href: "/aprovacoes", icon: Clock, label: "APROVACOES", badge: 5 },
   { id: "prazos", href: "/prazos", icon: CalendarClock, label: "PRAZOS & ENTREGAS" },
+]
+
+const navigation = [
+  { id: "command-center", href: "/", icon: LayoutDashboard, label: "COMMAND CENTER" },
+  { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
+  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: true },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
   { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
   { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE" },
@@ -52,10 +58,20 @@ interface FocusSidebarProps {
 export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   const pathname = usePathname()
   const [uptime, setUptime] = useState("00:00:00")
+  const [projetosExpanded, setProjetosExpanded] = useState(false)
   const { isSidebarItemVisible } = useModules()
 
   // Filtrar navegacao baseado nos modulos ativos
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
+  const visibleProjetosSubItems = projetosSubItems.filter(item => isSidebarItemVisible(item.id))
+
+  // Auto-expand Projetos if a subitem is active
+  const isProjetosSubItemActive = projetosSubItems.some(item => pathname.startsWith(item.href))
+  useEffect(() => {
+    if (isProjetosSubItemActive) {
+      setProjetosExpanded(true)
+    }
+  }, [isProjetosSubItemActive])
 
   useEffect(() => {
     const startTime = Date.now()
@@ -108,39 +124,129 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
         {visibleNavigation.map((item) => (
-          <Link
-            key={item.id}
-            href={item.href}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative ${
-              isActive(item.href)
-                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
-            }`}
-          >
-            <item.icon className="w-5 h-5 flex-shrink-0" />
-            {!collapsed && (
+          <div key={item.id}>
+            {item.hasSubmenu ? (
               <>
-                <span className="text-xs font-medium tracking-wide flex-1">{item.label}</span>
-                {item.badge && (
-                  <Badge
-                    variant="secondary"
-                    className={`text-[10px] px-1.5 py-0 h-5 ${
-                      isActive(item.href)
-                        ? "bg-white/20 text-white"
-                        : "bg-orange-500/20 text-orange-500"
-                    }`}
-                  >
-                    {item.badge}
-                  </Badge>
-                )}
+                {/* Projetos com submenu */}
+                <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <Link
+                      href={item.href}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative flex-1 ${
+                        isActive(item.href) && !isProjetosSubItemActive
+                          ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                          : isProjetosSubItemActive || projetosExpanded
+                          ? "bg-orange-500/10 text-orange-500"
+                          : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      {!collapsed && (
+                        <>
+                          <span className="text-xs font-medium tracking-wide flex-1">{item.label}</span>
+                          {item.badge && (
+                            <Badge
+                              variant="secondary"
+                              className={`text-[10px] px-1.5 py-0 h-5 ${
+                                isActive(item.href) && !isProjetosSubItemActive
+                                  ? "bg-white/20 text-white"
+                                  : "bg-orange-500/20 text-orange-500"
+                              }`}
+                            >
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </>
+                      )}
+                      {collapsed && item.badge && (
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-white font-bold">
+                          {item.badge > 9 ? "9+" : item.badge}
+                        </span>
+                      )}
+                    </Link>
+                    {!collapsed && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setProjetosExpanded(!projetosExpanded)}
+                        className="h-8 w-8 text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
+                      >
+                        {projetosExpanded ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                  {/* Subitems */}
+                  {!collapsed && projetosExpanded && (
+                    <div className="ml-4 mt-1 space-y-1 border-l border-[#2A2A2A] pl-2">
+                      {visibleProjetosSubItems.map((subItem) => (
+                        <Link
+                          key={subItem.id}
+                          href={subItem.href}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group relative ${
+                            isActive(subItem.href)
+                              ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                              : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
+                          }`}
+                        >
+                          <subItem.icon className="w-4 h-4 flex-shrink-0" />
+                          <span className="text-xs font-medium tracking-wide flex-1">{subItem.label}</span>
+                          {subItem.badge && (
+                            <Badge
+                              variant="secondary"
+                              className={`text-[10px] px-1.5 py-0 h-5 ${
+                                isActive(subItem.href)
+                                  ? "bg-white/20 text-white"
+                                  : "bg-orange-500/20 text-orange-500"
+                              }`}
+                            >
+                              {subItem.badge}
+                            </Badge>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </>
+            ) : (
+              <Link
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative ${
+                  isActive(item.href)
+                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                    : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
+                }`}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {!collapsed && (
+                  <>
+                    <span className="text-xs font-medium tracking-wide flex-1">{item.label}</span>
+                    {item.badge && (
+                      <Badge
+                        variant="secondary"
+                        className={`text-[10px] px-1.5 py-0 h-5 ${
+                          isActive(item.href)
+                            ? "bg-white/20 text-white"
+                            : "bg-orange-500/20 text-orange-500"
+                        }`}
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </>
+                )}
+                {collapsed && item.badge && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-white font-bold">
+                    {item.badge > 9 ? "9+" : item.badge}
+                  </span>
+                )}
+              </Link>
             )}
-            {collapsed && item.badge && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-white font-bold">
-                {item.badge > 9 ? "9+" : item.badge}
-              </span>
-            )}
-          </Link>
+          </div>
         ))}
       </nav>
 
