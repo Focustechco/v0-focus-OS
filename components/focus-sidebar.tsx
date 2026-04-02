@@ -38,13 +38,17 @@ const projetosSubItems = [
   { id: "prazos", href: "/prazos", icon: CalendarClock, label: "PRAZOS & ENTREGAS" },
 ]
 
+// Subitems do módulo Intelligence
+const intelligenceSubItems = [
+  { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
+]
+
 const navigation = [
   { id: "command-center", href: "/", icon: LayoutDashboard, label: "COMMAND CENTER" },
   { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
-  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: true },
+  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: "projetos" },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
-  { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
-  { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE" },
+  { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE", hasSubmenu: "intelligence" },
   { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
   { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
   { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
@@ -59,19 +63,26 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   const pathname = usePathname()
   const [uptime, setUptime] = useState("00:00:00")
   const [projetosExpanded, setProjetosExpanded] = useState(false)
+  const [intelligenceExpanded, setIntelligenceExpanded] = useState(false)
   const { isSidebarItemVisible } = useModules()
 
   // Filtrar navegacao baseado nos modulos ativos
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
   const visibleProjetosSubItems = projetosSubItems.filter(item => isSidebarItemVisible(item.id))
+  const visibleIntelligenceSubItems = intelligenceSubItems.filter(item => isSidebarItemVisible(item.id))
 
   // Auto-expand Projetos if a subitem is active
   const isProjetosSubItemActive = projetosSubItems.some(item => pathname.startsWith(item.href))
+  const isIntelligenceSubItemActive = intelligenceSubItems.some(item => pathname.startsWith(item.href))
+  
   useEffect(() => {
     if (isProjetosSubItemActive) {
       setProjetosExpanded(true)
     }
-  }, [isProjetosSubItemActive])
+    if (isIntelligenceSubItemActive) {
+      setIntelligenceExpanded(true)
+    }
+  }, [isProjetosSubItemActive, isIntelligenceSubItemActive])
 
   useEffect(() => {
     const startTime = Date.now()
@@ -123,19 +134,27 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-        {visibleNavigation.map((item) => (
+        {visibleNavigation.map((item) => {
+          const isProjetos = item.hasSubmenu === "projetos"
+          const isIntelligence = item.hasSubmenu === "intelligence"
+          const subItems = isProjetos ? visibleProjetosSubItems : isIntelligence ? visibleIntelligenceSubItems : []
+          const isExpanded = isProjetos ? projetosExpanded : isIntelligence ? intelligenceExpanded : false
+          const setExpanded = isProjetos ? setProjetosExpanded : isIntelligence ? setIntelligenceExpanded : () => {}
+          const isSubItemActive = isProjetos ? isProjetosSubItemActive : isIntelligence ? isIntelligenceSubItemActive : false
+
+          return (
           <div key={item.id}>
             {item.hasSubmenu ? (
               <>
-                {/* Projetos com submenu */}
+                {/* Item com submenu */}
                 <div className="flex flex-col">
                   <div className="flex items-center">
                     <Link
                       href={item.href}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative flex-1 ${
-                        isActive(item.href) && !isProjetosSubItemActive
+                        isActive(item.href) && !isSubItemActive
                           ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                          : isProjetosSubItemActive || projetosExpanded
+                          : isSubItemActive || isExpanded
                           ? "bg-orange-500/10 text-orange-500"
                           : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
                       }`}
@@ -148,7 +167,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                             <Badge
                               variant="secondary"
                               className={`text-[10px] px-1.5 py-0 h-5 ${
-                                isActive(item.href) && !isProjetosSubItemActive
+                                isActive(item.href) && !isSubItemActive
                                   ? "bg-white/20 text-white"
                                   : "bg-orange-500/20 text-orange-500"
                               }`}
@@ -168,10 +187,10 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setProjetosExpanded(!projetosExpanded)}
+                        onClick={() => setExpanded(!isExpanded)}
                         className="h-8 w-8 text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
                       >
-                        {projetosExpanded ? (
+                        {isExpanded ? (
                           <ChevronDown className="w-4 h-4" />
                         ) : (
                           <ChevronRight className="w-4 h-4" />
@@ -180,9 +199,9 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                     )}
                   </div>
                   {/* Subitems */}
-                  {!collapsed && projetosExpanded && (
+                  {!collapsed && isExpanded && (
                     <div className="ml-4 mt-1 space-y-1 border-l border-[#2A2A2A] pl-2">
-                      {visibleProjetosSubItems.map((subItem) => (
+                      {subItems.map((subItem) => (
                         <Link
                           key={subItem.id}
                           href={subItem.href}
@@ -247,7 +266,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
               </Link>
             )}
           </div>
-        ))}
+        )})}
       </nav>
 
       {/* System Status */}
