@@ -44,10 +44,10 @@ const intelligenceSubItems = [
 ]
 
 const navigation = [
-  { id: "command-center", href: "/", icon: LayoutDashboard, label: "COMMAND CENTER" },
-  { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
+  { id: "command-center", href: "/", icon: LayoutDashboard, label: "DASHBOARD" },
   { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: "projetos" },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
+  { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
   { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE", hasSubmenu: "intelligence" },
   { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
   { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
