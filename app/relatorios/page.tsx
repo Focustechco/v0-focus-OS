@@ -194,7 +194,6 @@ function RelatoriosContent() {
 
   const savedCount = reports.filter(r => r.saved).length
 
-  // Se estiver no editor, mostrar apenas ele
   if (editorConfig) {
     return <ReportEditor config={editorConfig} onBack={handleBackFromEditor} />
   }
