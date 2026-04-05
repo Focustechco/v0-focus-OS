@@ -7,6 +7,7 @@ import { Juridico } from "./juridico"
 import { Adm } from "./adm"
 import { Clientes } from "./clientes"
 import { Produtividade } from "./produtividade"
+import { DriveDocumentos } from "./drive-documentos"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -36,6 +37,7 @@ export function BacklogModule() {
         <TabsList className="bg-transparent border-b border-[#2a2a2a] rounded-none w-full justify-start gap-0 h-auto p-0 mb-6">
           {[
             { value: "visao-geral", label: "VISAO GERAL" },
+            { value: "drive", label: "DRIVE & DOCUMENTOS" },
             { value: "juridico", label: "JURIDICO" },
             { value: "adm", label: "ADM" },
             { value: "clientes", label: "CLIENTES" },
@@ -53,6 +55,9 @@ export function BacklogModule() {
 
         <TabsContent value="visao-geral" className="mt-0">
           <VisaoGeral />
+        </TabsContent>
+        <TabsContent value="drive" className="mt-0">
+          <DriveDocumentos />
         </TabsContent>
         <TabsContent value="juridico" className="mt-0">
           <Juridico />
