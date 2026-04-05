@@ -5,10 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   X,
-  ChevronDown,
-  ChevronRight,
   FolderKanban,
-  Cpu,
   BarChart3,
   Settings,
   Briefcase,
@@ -20,18 +17,13 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useModules } from "@/contexts/modules-context"
 
-// Subitems do módulo Intelligence
-const intelligenceSubItems = [
-  { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
-]
-
 const navigation = [
-  { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "PAINEL", hasSubmenu: "intelligence" },
   { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23 },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
   { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
   { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
   { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
+  { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE" },
   { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
 ]
 
@@ -43,21 +35,10 @@ interface MobileSidebarProps {
 export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
   const pathname = usePathname()
   const [uptime, setUptime] = useState("00:00:00")
-  const [intelligenceExpanded, setIntelligenceExpanded] = useState(false)
   const { isSidebarItemVisible } = useModules()
 
   // Filtrar navegacao baseado nos modulos ativos
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
-  const visibleIntelligenceSubItems = intelligenceSubItems.filter(item => isSidebarItemVisible(item.id))
-
-  // Auto-expand Intelligence if a subitem is active
-  const isIntelligenceSubItemActive = intelligenceSubItems.some(item => pathname.startsWith(item.href))
-  
-  useEffect(() => {
-    if (isIntelligenceSubItemActive) {
-      setIntelligenceExpanded(true)
-    }
-  }, [isIntelligenceSubItemActive])
 
   useEffect(() => {
     const startTime = Date.now()
@@ -124,121 +105,33 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-1 overflow-y-auto overscroll-contain">
-          {visibleNavigation.map((item) => {
-            const isIntelligence = item.hasSubmenu === "intelligence"
-            const subItems = isIntelligence ? visibleIntelligenceSubItems : []
-            const isExpanded = isIntelligence ? intelligenceExpanded : false
-            const setExpanded = isIntelligence ? setIntelligenceExpanded : () => {}
-            const isSubItemActive = isIntelligence ? isIntelligenceSubItemActive : false
-
-            return (
-            <div key={item.id}>
-              {item.hasSubmenu ? (
-                <>
-                  {/* Item com submenu */}
-                  <div className="flex flex-col">
-                    <div className="flex items-center">
-                      <Link
-                        href={item.href}
-                        onClick={onClose}
-                        className={`flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group relative flex-1 ${
-                          isActive(item.href) && !isSubItemActive
-                            ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                            : isSubItemActive || isExpanded
-                            ? "bg-orange-500/10 text-orange-500"
-                            : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
-                        }`}
-                      >
-                        <item.icon className="w-5 h-5 flex-shrink-0" />
-                        <span className="text-sm font-medium tracking-wide flex-1">{item.label}</span>
-                        {item.badge && (
-                          <Badge
-                            variant="secondary"
-                            className={`text-[10px] px-1.5 py-0 h-5 ${
-                              isActive(item.href) && !isSubItemActive
-                                ? "bg-white/20 text-white"
-                                : "bg-orange-500/20 text-orange-500"
-                            }`}
-                          >
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setExpanded(!isExpanded)}
-                        className="h-10 w-10 text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
-                      >
-                        {isExpanded ? (
-                          <ChevronDown className="w-4 h-4" />
-                        ) : (
-                          <ChevronRight className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
-                    {/* Subitems */}
-                    {isExpanded && (
-                      <div className="ml-4 mt-1 space-y-1 border-l border-[#2A2A2A] pl-2">
-                        {subItems.map((subItem) => (
-                          <Link
-                            key={subItem.id}
-                            href={subItem.href}
-                            onClick={onClose}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative ${
-                              isActive(subItem.href)
-                                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                                : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
-                            }`}
-                          >
-                            <subItem.icon className="w-4 h-4 flex-shrink-0" />
-                            <span className="text-sm font-medium tracking-wide flex-1">{subItem.label}</span>
-                            {subItem.badge && (
-                              <Badge
-                                variant="secondary"
-                                className={`text-[10px] px-1.5 py-0 h-5 ${
-                                  isActive(subItem.href)
-                                    ? "bg-white/20 text-white"
-                                    : "bg-orange-500/20 text-orange-500"
-                                }`}
-                              >
-                                {subItem.badge}
-                              </Badge>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <Link
-                  href={item.href}
-                  onClick={onClose}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group relative ${
+          {visibleNavigation.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              onClick={onClose}
+              className={`flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group relative ${
+                isActive(item.href)
+                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                  : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
+              }`}
+            >
+              <item.icon className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm font-medium tracking-wide flex-1">{item.label}</span>
+              {item.badge && (
+                <Badge
+                  variant="secondary"
+                  className={`text-[10px] px-1.5 py-0 h-5 ${
                     isActive(item.href)
-                      ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                      : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
+                      ? "bg-white/20 text-white"
+                      : "bg-orange-500/20 text-orange-500"
                   }`}
                 >
-                  <item.icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium tracking-wide flex-1">{item.label}</span>
-                  {item.badge && (
-                    <Badge
-                      variant="secondary"
-                      className={`text-[10px] px-1.5 py-0 h-5 ${
-                        isActive(item.href)
-                          ? "bg-white/20 text-white"
-                          : "bg-orange-500/20 text-orange-500"
-                      }`}
-                    >
-                      {item.badge}
-                    </Badge>
-                  )}
-                </Link>
+                  {item.badge}
+                </Badge>
               )}
-            </div>
-          )})}
+            </Link>
+          ))}
         </nav>
 
         {/* System Status */}
