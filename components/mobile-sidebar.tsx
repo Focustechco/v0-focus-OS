@@ -8,12 +8,6 @@ import {
   ChevronDown,
   ChevronRight,
   FolderKanban,
-  GitBranch,
-  Zap,
-  ListTodo,
-  CheckSquare,
-  Clock,
-  CalendarClock,
   Cpu,
   BarChart3,
   Settings,
@@ -26,16 +20,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useModules } from "@/contexts/modules-context"
 
-// Subitems do módulo Projetos
-const projetosSubItems = [
-  { id: "fluxo", href: "/fluxo", icon: GitBranch, label: "FLUXO DE ETAPAS" },
-  { id: "sprints", href: "/sprints", icon: Zap, label: "SPRINTS", badge: 7 },
-  { id: "tasks", href: "/tasks", icon: ListTodo, label: "TAREFAS", badge: 89 },
-  { id: "checklists", href: "/checklists", icon: CheckSquare, label: "CHECKLISTS" },
-  { id: "aprovacoes", href: "/aprovacoes", icon: Clock, label: "APROVACOES", badge: 5 },
-  { id: "prazos", href: "/prazos", icon: CalendarClock, label: "PRAZOS & ENTREGAS" },
-]
-
 // Subitems do módulo Intelligence
 const intelligenceSubItems = [
   { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
@@ -43,7 +27,7 @@ const intelligenceSubItems = [
 
 const navigation = [
   { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "PAINEL", hasSubmenu: "intelligence" },
-  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: "projetos" },
+  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23 },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
   { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
   { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
@@ -59,27 +43,21 @@ interface MobileSidebarProps {
 export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
   const pathname = usePathname()
   const [uptime, setUptime] = useState("00:00:00")
-  const [projetosExpanded, setProjetosExpanded] = useState(false)
   const [intelligenceExpanded, setIntelligenceExpanded] = useState(false)
   const { isSidebarItemVisible } = useModules()
 
   // Filtrar navegacao baseado nos modulos ativos
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
-  const visibleProjetosSubItems = projetosSubItems.filter(item => isSidebarItemVisible(item.id))
   const visibleIntelligenceSubItems = intelligenceSubItems.filter(item => isSidebarItemVisible(item.id))
 
-  // Auto-expand menus if a subitem is active
-  const isProjetosSubItemActive = projetosSubItems.some(item => pathname.startsWith(item.href))
+  // Auto-expand Intelligence if a subitem is active
   const isIntelligenceSubItemActive = intelligenceSubItems.some(item => pathname.startsWith(item.href))
   
   useEffect(() => {
-    if (isProjetosSubItemActive) {
-      setProjetosExpanded(true)
-    }
     if (isIntelligenceSubItemActive) {
       setIntelligenceExpanded(true)
     }
-  }, [isProjetosSubItemActive, isIntelligenceSubItemActive])
+  }, [isIntelligenceSubItemActive])
 
   useEffect(() => {
     const startTime = Date.now()
@@ -147,12 +125,11 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-1 overflow-y-auto overscroll-contain">
           {visibleNavigation.map((item) => {
-            const isProjetos = item.hasSubmenu === "projetos"
             const isIntelligence = item.hasSubmenu === "intelligence"
-            const subItems = isProjetos ? visibleProjetosSubItems : isIntelligence ? visibleIntelligenceSubItems : []
-            const isExpanded = isProjetos ? projetosExpanded : isIntelligence ? intelligenceExpanded : false
-            const setExpanded = isProjetos ? setProjetosExpanded : isIntelligence ? setIntelligenceExpanded : () => {}
-            const isSubItemActive = isProjetos ? isProjetosSubItemActive : isIntelligence ? isIntelligenceSubItemActive : false
+            const subItems = isIntelligence ? visibleIntelligenceSubItems : []
+            const isExpanded = isIntelligence ? intelligenceExpanded : false
+            const setExpanded = isIntelligence ? setIntelligenceExpanded : () => {}
+            const isSubItemActive = isIntelligence ? isIntelligenceSubItemActive : false
 
             return (
             <div key={item.id}>
