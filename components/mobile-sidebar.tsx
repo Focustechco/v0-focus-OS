@@ -128,9 +128,9 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
         {/* Header */}
         <div className="p-4 border-b border-[#2A2A2A] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo.svg" alt="Focus OS" className="w-10 h-10" />
-            <div>
-              <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider">FOCUS OS</h1>
+            <img src="/logo.svg" alt="Focus OS" className="w-10 h-10 flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider whitespace-nowrap">FOCUS OS</h1>
               <p className="text-neutral-600 text-xs font-mono">v3.0 CLASSIFIED</p>
             </div>
           </div>
