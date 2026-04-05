@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 
 // Mapeamento de modulos do sidebar para IDs das configuracoes
 const MODULE_MAPPING: Record<string, string[]> = {
+  "dashboard": ["command-center"],
   "command-center": ["command-center"],
   "comercial": ["pipeline"],
   "projetos": ["projetos"],
