@@ -77,24 +77,25 @@ export function Juridico() {
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded bg-orange-500/10 flex items-center justify-center">
-            <Scale className="w-5 h-5 text-orange-500" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+            <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
           </div>
-          <div>
-            <h2 className="text-xl font-display font-bold text-white tracking-wide">GESTAO JURIDICA</h2>
-            <p className="text-neutral-500 text-sm font-mono">contratos e documentos legais</p>
+          <div className="min-w-0">
+            <h2 className="text-base sm:text-xl font-display font-bold text-white tracking-wide">GESTAO JURIDICA</h2>
+            <p className="text-neutral-500 text-xs sm:text-sm font-mono truncate">contratos e documentos legais</p>
           </div>
         </div>
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs tracking-widest uppercase">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] sm:text-xs tracking-widest uppercase w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Novo Contrato
+              <span className="hidden sm:inline">Novo Contrato</span>
+              <span className="sm:hidden">Novo</span>
             </Button>
           </SheetTrigger>
           <SheetContent className="bg-[#141414] border-[#2a2a2a] w-[500px]">
@@ -161,34 +162,35 @@ export function Juridico() {
 
       {/* Filter Bar */}
       <Card className="bg-[#141414] border-[#2a2a2a]">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px] relative">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <Input
                 placeholder="Buscar contratos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                className="pl-10 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono text-sm focus:ring-orange-500"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[200px] bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
-                <SelectItem value="all">Todos os Status</SelectItem>
-                <SelectItem value="ATIVO">Ativo</SelectItem>
-                <SelectItem value="EM REVISAO">Em Revisao</SelectItem>
-                <SelectItem value="PENDENTE APROVACAO">Pendente Aprovacao</SelectItem>
-                <SelectItem value="VENCIDO">Vencido</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono">
-              <Calendar className="w-4 h-4 mr-2" />
-              Data
-            </Button>
+            <div className="flex gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="flex-1 sm:w-[160px] bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono text-xs sm:text-sm">
+                  <Filter className="w-4 h-4 mr-1 sm:mr-2" />
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="ATIVO">Ativo</SelectItem>
+                  <SelectItem value="EM REVISAO">Em Revisao</SelectItem>
+                  <SelectItem value="PENDENTE APROVACAO">Pendente</SelectItem>
+                  <SelectItem value="VENCIDO">Vencido</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" size="icon" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white flex-shrink-0">
+                <Calendar className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

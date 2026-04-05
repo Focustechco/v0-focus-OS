@@ -17,23 +17,28 @@ export function PageWrapper({ title, breadcrumb, children }: PageWrapperProps) {
 
   return (
     <div className="flex h-[100dvh] bg-[#0A0A0A] overflow-hidden">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
+      {/* Desktop Sidebar - Hidden on mobile */}
+      <div className="hidden lg:block flex-shrink-0">
         <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
       </div>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Sidebar Overlay */}
       <MobileSidebar isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 h-[100dvh] overflow-hidden">
+        {/* Fixed Header */}
         <FocusHeader 
           title={title}
           breadcrumb={breadcrumb}
           onMenuClick={() => setMobileMenuOpen(true)} 
         />
         
-        <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6 overscroll-contain">
-          {children}
+        {/* Main Content - Takes remaining space, no scroll on mobile unless needed */}
+        <main className="flex-1 overflow-hidden lg:overflow-auto">
+          <div className="h-full overflow-y-auto overscroll-contain">
+            {children}
+          </div>
         </main>
       </div>
     </div>

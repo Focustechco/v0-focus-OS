@@ -162,32 +162,32 @@ export function DriveDocumentos() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header with search and actions */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded bg-[#141414] border border-[#2a2a2a] flex items-center justify-center">
-            <HardDrive className="w-5 h-5 text-yellow-500" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded bg-[#141414] border border-[#2a2a2a] flex items-center justify-center flex-shrink-0">
+            <HardDrive className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
           </div>
-          <div>
-            <h2 className="text-white font-semibold">Drive & Documentos</h2>
-            <p className="text-neutral-500 text-sm">Gerencie contratos, planilhas e arquivos</p>
+          <div className="min-w-0">
+            <h2 className="text-white font-semibold text-sm sm:text-base">Drive & Documentos</h2>
+            <p className="text-neutral-500 text-xs sm:text-sm truncate">Gerencie contratos, planilhas e arquivos</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative flex-1 sm:flex-none">
+        <div className="flex items-center gap-2 w-full">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
             <Input
-              placeholder="Buscar arquivos..."
+              placeholder="Buscar arquivos.."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-[#141414] border-[#2a2a2a] text-white w-full sm:w-64"
+              className="pl-9 bg-[#141414] border-[#2a2a2a] text-white w-full text-sm"
             />
           </div>
           <Button
             variant="outline"
             size="icon"
-            className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white"
+            className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white flex-shrink-0"
             onClick={() => {
               focusOS.syncIntegration("googleDrive")
               focusOS.syncIntegration("googleSheets")
@@ -200,27 +200,33 @@ export function DriveDocumentos() {
 
       {/* Content tabs */}
       <Tabs defaultValue="contratos" className="w-full">
-        <TabsList className="bg-[#141414] border border-[#2a2a2a] p-1 h-auto">
+        <TabsList className="bg-[#141414] border border-[#2a2a2a] p-1 h-auto w-full flex flex-wrap sm:flex-nowrap gap-1">
           <TabsTrigger
             value="contratos"
-            className="data-[state=active]:bg-orange-500/20 data-[state=active]:text-orange-500 text-neutral-400 font-mono text-xs"
+            className="flex-1 sm:flex-none data-[state=active]:bg-orange-500/20 data-[state=active]:text-orange-500 text-neutral-400 font-mono text-[10px] sm:text-xs px-2 sm:px-3"
           >
-            <FileText className="w-4 h-4 mr-2" />
-            CONTRATOS ({focusOS.backlog.contracts.length})
+            <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">CONTRATOS</span>
+            <span className="sm:hidden">CONTR.</span>
+            <span className="ml-1">({focusOS.backlog.contracts.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="planilhas"
-            className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-500 text-neutral-400 font-mono text-xs"
+            className="flex-1 sm:flex-none data-[state=active]:bg-green-500/20 data-[state=active]:text-green-500 text-neutral-400 font-mono text-[10px] sm:text-xs px-2 sm:px-3"
           >
-            <FileSpreadsheet className="w-4 h-4 mr-2" />
-            PLANILHAS ({focusOS.backlog.importedSheets.length})
+            <FileSpreadsheet className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">PLANILHAS</span>
+            <span className="sm:hidden">PLAN.</span>
+            <span className="ml-1">({focusOS.backlog.importedSheets.length})</span>
           </TabsTrigger>
           <TabsTrigger
             value="arquivos"
-            className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-500 text-neutral-400 font-mono text-xs"
+            className="flex-1 sm:flex-none data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-500 text-neutral-400 font-mono text-[10px] sm:text-xs px-2 sm:px-3"
           >
-            <FolderOpen className="w-4 h-4 mr-2" />
-            ARQUIVOS ({focusOS.backlog.driveFiles.length})
+            <FolderOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">ARQUIVOS</span>
+            <span className="sm:hidden">ARQ.</span>
+            <span className="ml-1">({focusOS.backlog.driveFiles.length})</span>
           </TabsTrigger>
         </TabsList>
 

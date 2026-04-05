@@ -63,26 +63,26 @@ const typeColors: Record<string, string> = {
 
 export function VisaoGeral() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-display font-bold text-white tracking-wide">BACKLOG / COMMAND CENTER</h2>
-        <p className="text-neutral-500 text-sm font-mono mt-1">administracao centralizada</p>
+        <h2 className="text-base sm:text-xl font-display font-bold text-white tracking-wide">BACKLOG / COMMAND CENTER</h2>
+        <p className="text-neutral-500 text-xs sm:text-sm font-mono mt-1">administracao centralizada</p>
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         {stats.map((stat) => (
           <Card key={stat.label} className="bg-[#141414] border-[#2a2a2a] hover:border-orange-500/30 transition-colors">
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-neutral-500 text-xs font-mono tracking-wider mb-1">{stat.label.toUpperCase()}</p>
-                  <p className="text-3xl font-display font-bold text-white">{stat.value}</p>
-                  <p className="text-neutral-600 text-xs font-mono mt-1">{stat.change}</p>
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-neutral-500 text-[10px] sm:text-xs font-mono tracking-wider mb-1 truncate">{stat.label.toUpperCase()}</p>
+                  <p className="text-xl sm:text-3xl font-display font-bold text-white">{stat.value}</p>
+                  <p className="text-neutral-600 text-[10px] sm:text-xs font-mono mt-1 truncate">{stat.change}</p>
                 </div>
-                <div className="w-10 h-10 rounded bg-orange-500/10 flex items-center justify-center">
-                  <stat.icon className="w-5 h-5 text-orange-500" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                  <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
                 </div>
               </div>
             </CardContent>
@@ -90,22 +90,22 @@ export function VisaoGeral() {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
+      {/* Quick Actions - Scrollable on mobile */}
+      <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible">
         {quickActions.map((action) => (
           <Button
             key={action.label}
             variant="outline"
-            className="bg-transparent border-orange-500/30 text-orange-500 hover:bg-orange-500/10 hover:border-orange-500 font-mono text-xs tracking-widest uppercase"
+            className="bg-transparent border-orange-500/30 text-orange-500 hover:bg-orange-500/10 hover:border-orange-500 font-mono text-[10px] sm:text-xs tracking-widest uppercase whitespace-nowrap flex-shrink-0"
           >
-            <action.icon className="w-4 h-4 mr-2" />
+            <action.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             {action.label}
           </Button>
         ))}
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Recent Activity */}
         <Card className="bg-[#141414] border-[#2a2a2a]">
           <CardHeader className="pb-3">
@@ -115,25 +115,25 @@ export function VisaoGeral() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[360px]">
-              <div className="px-4 pb-4 space-y-1">
+            <ScrollArea className="h-[240px] sm:h-[360px]">
+              <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-1">
                 {recentActivity.map((activity, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 p-3 rounded hover:bg-[#1a1a1a] transition-colors group"
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded hover:bg-[#1a1a1a] transition-colors group"
                   >
-                    <div className="w-8 h-8 rounded bg-[#1a1a1a] group-hover:bg-[#222] flex items-center justify-center text-orange-500 text-xs font-bold font-mono">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-[#1a1a1a] group-hover:bg-[#222] flex items-center justify-center text-orange-500 text-[10px] sm:text-xs font-bold font-mono flex-shrink-0">
                       {activity.user.split(" ").map((n) => n[0]).join("")}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-white truncate">
+                      <p className="text-xs sm:text-sm text-white truncate">
                         <span className="font-medium">{activity.user}</span>{" "}
                         <span className="text-neutral-500">{activity.action}</span>{" "}
-                        <span className="text-orange-500">{activity.target}</span>
+                        <span className="text-orange-500 hidden sm:inline">{activity.target}</span>
                       </p>
-                      <p className="text-xs text-neutral-600 font-mono">{activity.time} atras</p>
+                      <p className="text-[10px] sm:text-xs text-neutral-600 font-mono">{activity.time} atras</p>
                     </div>
-                    <Badge className={`${typeColors[activity.type]} text-[10px] font-mono`}>
+                    <Badge className={`${typeColors[activity.type]} text-[8px] sm:text-[10px] font-mono hidden sm:flex`}>
                       {activity.type}
                     </Badge>
                   </div>
@@ -152,19 +152,19 @@ export function VisaoGeral() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[360px]">
-              <div className="px-4 pb-4 space-y-2">
+            <ScrollArea className="h-[240px] sm:h-[360px]">
+              <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-2">
                 {pendingItems.map((item, index) => (
                   <div
                     key={index}
-                    className="p-3 rounded bg-[#1a1a1a] border border-[#2a2a2a] hover:border-l-2 hover:border-l-orange-500 hover:bg-[#1f1f1f] transition-all"
+                    className="p-2 sm:p-3 rounded bg-[#1a1a1a] border border-[#2a2a2a] hover:border-l-2 hover:border-l-orange-500 hover:bg-[#1f1f1f] transition-all"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <p className="text-sm text-white font-medium">{item.title}</p>
-                        <p className="text-xs text-neutral-600 font-mono mt-1">Prazo: {item.dueDate}</p>
+                    <div className="flex items-start justify-between gap-2 sm:gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm text-white font-medium line-clamp-2">{item.title}</p>
+                        <p className="text-[10px] sm:text-xs text-neutral-600 font-mono mt-1">Prazo: {item.dueDate}</p>
                       </div>
-                      <Badge className={`${priorityColors[item.priority]} text-[10px] font-mono border`}>
+                      <Badge className={`${priorityColors[item.priority]} text-[8px] sm:text-[10px] font-mono border flex-shrink-0`}>
                         {item.priority}
                       </Badge>
                     </div>
