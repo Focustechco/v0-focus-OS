@@ -70,30 +70,30 @@ export function Produtividade() {
   }, [period])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-display font-bold text-white tracking-wide">
-            PRODUTIVIDADE POR SETOR — {period === "SEMANA" ? "SEMANA ATUAL" : period === "MES" ? "MES ATUAL" : "TRIMESTRE ATUAL"}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="text-sm sm:text-xl font-display font-bold text-white tracking-wide truncate">
+            PRODUTIVIDADE — {period === "SEMANA" ? "SEMANA" : period === "MES" ? "MES" : "TRIMESTRE"}
           </h2>
-          <p className="text-neutral-500 text-sm font-mono mt-1">analise de performance por area</p>
+          <p className="text-neutral-500 text-xs sm:text-sm font-mono mt-1">analise de performance</p>
         </div>
 
-        <div className="flex items-center gap-1 bg-[#141414] border border-[#2a2a2a] rounded p-1">
+        <div className="flex items-center gap-1 bg-[#141414] border border-[#2a2a2a] rounded p-1 w-full sm:w-auto">
           {(["SEMANA", "MES", "TRIMESTRE"] as Period[]).map((p) => (
             <Button
               key={p}
               variant="ghost"
               size="sm"
               onClick={() => setPeriod(p)}
-              className={`font-mono text-xs tracking-widest ${
+              className={`flex-1 sm:flex-none font-mono text-[10px] sm:text-xs tracking-widest ${
                 period === p
                   ? "bg-orange-500 text-white hover:bg-orange-600"
                   : "text-neutral-400 hover:text-white hover:bg-[#1a1a1a]"
               }`}
             >
-              {p}
+              {p === "SEMANA" ? "SEM" : p === "MES" ? "MES" : "TRI"}
             </Button>
           ))}
         </div>
