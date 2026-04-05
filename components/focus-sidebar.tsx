@@ -291,6 +291,30 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
         </div>
       )}
 
+      {/* System Status (2) */}
+      {!collapsed && (
+        <div className="p-3 m-2 bg-[#141414] border border-[#2A2A2A] rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-xs text-green-500 font-mono tracking-wider">SISTEMA ONLINE</span>
+          </div>
+          <div className="text-[10px] text-neutral-500 space-y-1 font-mono">
+            <div className="flex justify-between">
+              <span>UPTIME:</span>
+              <span className="text-neutral-400">{uptime}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>PROJETOS ATIVOS:</span>
+              <span className="text-orange-500">23</span>
+            </div>
+            <div className="flex justify-between">
+              <span>SPRINTS EM CURSO:</span>
+              <span className="text-orange-500">7</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {collapsed && (
         <div className="p-2 flex justify-center">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
