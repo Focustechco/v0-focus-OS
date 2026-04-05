@@ -12,6 +12,7 @@ import { TarefasTab } from "./tabs/tarefas-tab"
 import { ChecklistsTab } from "./tabs/checklists-tab"
 import { AprovacoesTab } from "./tabs/aprovacoes-tab"
 import { PrazosEntregasTab } from "./tabs/prazos-entregas-tab"
+import { LinksFocusTab } from "./tabs/links-focus-tab"
 
 export function ProjetosModule() {
   const [activeTab, setActiveTab] = useState("prazos")
@@ -23,6 +24,7 @@ export function ProjetosModule() {
     { value: "checklists", label: "CHECKLISTS", badge: null },
     { value: "aprovacoes", label: "APROVACOES", badge: 5 },
     { value: "prazos", label: "PRAZOS & ENTREGAS", badge: null },
+    { value: "links", label: "LINKS FOCUS", badge: null },
   ]
 
   return (
@@ -83,6 +85,11 @@ export function ProjetosModule() {
           <TabsContent value="prazos" className="h-full m-0 data-[state=inactive]:hidden">
             <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
               <PrazosEntregasTab />
+            </div>
+          </TabsContent>
+          <TabsContent value="links" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <LinksFocusTab />
             </div>
           </TabsContent>
         </div>
