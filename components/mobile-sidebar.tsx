@@ -12,12 +12,14 @@ import {
   FileText,
   Layers,
   Cog,
+  LayoutDashboard,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useModules } from "@/contexts/modules-context"
 
 const navigation = [
+  { id: "dashboard", href: "/command-center", icon: LayoutDashboard, label: "DASHBOARD" },
   { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23 },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
   { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
