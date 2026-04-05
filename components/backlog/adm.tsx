@@ -63,22 +63,22 @@ const columnColors: Record<string, string> = {
 
 export function Adm() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Quick Links Section */}
       <div>
-        <h2 className="text-sm font-mono tracking-widest text-neutral-400 uppercase mb-4 flex items-center gap-2 border-l-2 border-orange-500 pl-3">
-          Links Rapidos — Planilhas & Ferramentas
+        <h2 className="text-xs sm:text-sm font-mono tracking-widest text-neutral-400 uppercase mb-3 sm:mb-4 flex items-center gap-2 border-l-2 border-orange-500 pl-3">
+          Links Rapidos
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {sheets.map((sheet) => (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+          {sheets.slice(0, 4).map((sheet) => (
             <Card
               key={sheet.name}
               className="bg-[#141414] border-[#2a2a2a] hover:border-orange-500/30 transition-all group cursor-pointer"
             >
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded bg-green-500/10 flex items-center justify-center">
-                    <FileSpreadsheet className="w-5 h-5 text-green-500" />
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-start justify-between mb-2 sm:mb-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded bg-green-500/10 flex items-center justify-center">
+                    <FileSpreadsheet className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
                   </div>
                   {sheet.recent && (
                     <span className="relative flex h-2 w-2">
@@ -87,18 +87,18 @@ export function Adm() {
                     </span>
                   )}
                 </div>
-                <h3 className="text-white font-medium text-sm mb-1">{sheet.name}</h3>
-                <p className="text-neutral-600 text-xs font-mono flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
+                <h3 className="text-white font-medium text-xs sm:text-sm mb-1 truncate">{sheet.name}</h3>
+                <p className="text-neutral-600 text-[10px] sm:text-xs font-mono flex items-center gap-1">
+                  <Clock className="w-3 h-3 hidden sm:inline" />
                   {sheet.updatedAt}
                 </p>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full mt-3 bg-transparent text-orange-500 hover:text-orange-400 hover:bg-orange-500/10 font-mono text-xs tracking-widest uppercase"
+                  className="w-full mt-2 sm:mt-3 bg-transparent text-orange-500 hover:text-orange-400 hover:bg-orange-500/10 font-mono text-[10px] sm:text-xs tracking-widest uppercase h-7 sm:h-9"
                 >
                   Abrir
-                  <ExternalLink className="w-3 h-3 ml-2" />
+                  <ExternalLink className="w-3 h-3 ml-1 sm:ml-2" />
                 </Button>
               </CardContent>
             </Card>
@@ -108,10 +108,10 @@ export function Adm() {
 
       {/* Kanban Section */}
       <div>
-        <h2 className="text-sm font-mono tracking-widest text-neutral-400 uppercase mb-4 flex items-center gap-2 border-l-2 border-orange-500 pl-3">
+        <h2 className="text-xs sm:text-sm font-mono tracking-widest text-neutral-400 uppercase mb-3 sm:mb-4 flex items-center gap-2 border-l-2 border-orange-500 pl-3">
           Tarefas Administrativas
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
           {Object.entries(kanbanTasks).map(([column, tasks]) => (
             <Card key={column} className={`bg-[#141414] border-[#2a2a2a] border-t-2 ${columnColors[column]}`}>
               <CardHeader className="pb-2">

@@ -152,21 +152,22 @@ export function Clientes() {
   const segments = [...new Set(clients.map((c) => c.segment))]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xl font-display font-bold text-white tracking-wide">CLIENTES</h2>
-          <Badge className="bg-orange-500/20 text-orange-500 font-mono text-xs">
-            {clients.length} cadastrados
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <h2 className="text-base sm:text-xl font-display font-bold text-white tracking-wide">CLIENTES</h2>
+          <Badge className="bg-orange-500/20 text-orange-500 font-mono text-[10px] sm:text-xs">
+            {clients.length}
           </Badge>
         </div>
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs tracking-widest uppercase">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] sm:text-xs tracking-widest uppercase w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Novo Cliente
+              <span className="hidden sm:inline">Novo Cliente</span>
+              <span className="sm:hidden">Novo</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-[#141414] border-[#2a2a2a] max-w-lg">

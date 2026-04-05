@@ -7,6 +7,7 @@ import { Juridico } from "./juridico"
 import { Adm } from "./adm"
 import { Clientes } from "./clientes"
 import { Produtividade } from "./produtividade"
+import { DriveDocumentos } from "./drive-documentos"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,6 +18,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 export function BacklogModule() {
   const [activeTab, setActiveTab] = useState("visao-geral")
@@ -30,42 +32,69 @@ export function BacklogModule() {
     { label: "Novo Link Rapido", action: "link" },
   ]
 
-  return (
-    <div className="min-h-full bg-[#0d0d0d] p-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-transparent border-b border-[#2a2a2a] rounded-none w-full justify-start gap-0 h-auto p-0 mb-6">
-          {[
-            { value: "visao-geral", label: "VISAO GERAL" },
-            { value: "juridico", label: "JURIDICO" },
-            { value: "adm", label: "ADM" },
-            { value: "clientes", label: "CLIENTES" },
-            { value: "produtividade", label: "PRODUTIVIDADE" },
-          ].map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="relative px-6 py-3 rounded-none bg-transparent text-neutral-500 font-mono text-xs tracking-widest data-[state=active]:text-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-neutral-300 transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-orange-500 after:scale-x-0 data-[state=active]:after:scale-x-100 after:transition-transform"
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+  const tabs = [
+    { value: "visao-geral", label: "VISAO GERAL" },
+    { value: "drive", label: "DRIVE & DOCUMENTOS" },
+    { value: "juridico", label: "JURIDICO" },
+    { value: "adm", label: "ADM" },
+    { value: "clientes", label: "CLIENTES" },
+    { value: "produtividade", label: "PRODUTIVIDADE" },
+  ]
 
-        <TabsContent value="visao-geral" className="mt-0">
-          <VisaoGeral />
-        </TabsContent>
-        <TabsContent value="juridico" className="mt-0">
-          <Juridico />
-        </TabsContent>
-        <TabsContent value="adm" className="mt-0">
-          <Adm />
-        </TabsContent>
-        <TabsContent value="clientes" className="mt-0">
-          <Clientes />
-        </TabsContent>
-        <TabsContent value="produtividade" className="mt-0">
-          <Produtividade />
-        </TabsContent>
+  return (
+    <div className="h-full flex flex-col bg-[#0d0d0d]">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+        {/* Tabs Navigation - Horizontally scrollable on mobile */}
+        <div className="flex-shrink-0 border-b border-[#2a2a2a]">
+          <ScrollArea className="w-full">
+            <TabsList className="bg-transparent rounded-none w-max min-w-full justify-start gap-0 h-auto p-0 px-3 lg:px-6">
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="relative px-3 sm:px-6 py-3 rounded-none bg-transparent text-neutral-500 font-mono text-[10px] sm:text-xs tracking-widest whitespace-nowrap data-[state=active]:text-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-neutral-300 transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-orange-500 after:scale-x-0 data-[state=active]:after:scale-x-100 after:transition-transform"
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <ScrollBar orientation="horizontal" className="h-1.5" />
+          </ScrollArea>
+        </div>
+
+        {/* Tab Content - Scrollable area */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <TabsContent value="visao-geral" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <VisaoGeral />
+            </div>
+          </TabsContent>
+          <TabsContent value="drive" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <DriveDocumentos />
+            </div>
+          </TabsContent>
+          <TabsContent value="juridico" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <Juridico />
+            </div>
+          </TabsContent>
+          <TabsContent value="adm" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <Adm />
+            </div>
+          </TabsContent>
+          <TabsContent value="clientes" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <Clientes />
+            </div>
+          </TabsContent>
+          <TabsContent value="produtividade" className="h-full m-0 data-[state=inactive]:hidden">
+            <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6">
+              <Produtividade />
+            </div>
+          </TabsContent>
+        </div>
       </Tabs>
 
       {/* FAB Button */}
