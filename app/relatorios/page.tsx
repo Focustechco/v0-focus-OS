@@ -195,7 +195,9 @@ function RelatoriosContent() {
   const savedCount = reports.filter(r => r.saved).length
 
   if (editorConfig) {
-    return <ReportEditor config={editorConfig} onBack={handleBackFromEditor} />
+    return (
+      <ReportEditor config={editorConfig} onBack={handleBackFromEditor} />
+    )
   }
 
   return (
