@@ -79,18 +79,18 @@ export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps
   return (
     <header className="h-14 bg-[#111111] border-b border-[#2A2A2A] flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button - Visible on screens smaller than xl */}
         <Button
           variant="ghost"
           size="icon"
           onClick={onMenuClick}
-          className="lg:hidden text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
+          className="xl:hidden text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
         >
           <Menu className="w-5 h-5" />
         </Button>
 
-        {/* Logo for mobile */}
-        <img src="/logo.svg" alt="Focus OS" className="w-7 h-7 lg:hidden" />
+        {/* Logo for mobile/tablet - Visible on screens smaller than xl */}
+        <img src="/logo.svg" alt="Focus OS" className="w-7 h-7 xl:hidden" />
 
         <div className="text-xs sm:text-sm text-neutral-400 font-mono tracking-wide truncate max-w-[140px] sm:max-w-none">
           <span className="hidden sm:inline">FOCUS OS / </span>
@@ -121,8 +121,8 @@ export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps
           <Search className="w-4 h-4" />
         </Button>
 
-        {/* Last Update - Hidden on mobile */}
-        <div className="hidden lg:flex items-center gap-2 text-xs text-neutral-500 font-mono">
+        {/* Last Update - Only visible on xl screens */}
+        <div className="hidden xl:flex items-center gap-2 text-xs text-neutral-500 font-mono">
           <span>LAST UPDATE:</span>
           <span className="text-neutral-400">{lastUpdateText}</span>
         </div>
