@@ -22,7 +22,7 @@ const MODULE_MAPPING: Record<string, string[]> = {
 }
 
 // Modulos que sempre devem estar visiveis (essenciais)
-const ESSENTIAL_MODULES = ["command-center", "configuracoes"]
+const ESSENTIAL_MODULES = ["intelligence", "configuracoes"]
 
 // Estado inicial dos modulos
 const DEFAULT_MODULE_STATES: Record<string, boolean> = {
