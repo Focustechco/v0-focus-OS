@@ -1,8 +1,47 @@
-import { type NextRequest } from "next/server"
-import { updateSession } from "./lib/supabase/middleware"
+function isPublicRoute(pathname: string) {
+  return (
+    pathname === "/login" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/api/auth") ||
+    pathname === "/manifest.json" ||
+    pathname === "/logo.svg"
+  )
+}
 
-export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+function hasSupabaseSessionCookie(request: MiddlewareRequest) {
+  return request.cookies
+    .getAll()
+    .some(
+      (cookie) =>
+        cookie.name.startsWith("sb-") &&
+        cookie.name.includes("auth-token")
+    )
+}
+
+type MiddlewareRequest = {
+  nextUrl: URL & { clone(): URL }
+  cookies: {
+    getAll(): Array<{ name: string; value: string }>
+  }
+}
+
+export function middleware(request: MiddlewareRequest) {
+  const { pathname } = request.nextUrl
+  const routeIsPublic = isPublicRoute(pathname)
+  const hasSession = hasSupabaseSessionCookie(request)
+
+  if (!hasSession && !routeIsPublic) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/login"
+    url.searchParams.set("redirectTo", pathname)
+    return Response.redirect(url)
+  }
+
+  if (hasSession && pathname === "/login") {
+    const url = request.nextUrl.clone()
+    url.pathname = "/"
+    return Response.redirect(url)
+  }
 }
 
 export const config = {
