@@ -21,9 +21,10 @@ export default function HomePage() {
       <MobileSidebar isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       
       <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader 
-          title="COMMAND CENTER" 
-          onMenuClick={() => setMobileMenuOpen(true)} 
+        <FocusHeader
+          title="DASHBOARD"
+          breadcrumb="DASHBOARD"
+          onMenuClick={() => setMobileMenuOpen(true)}
         />
         
         <main className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6 overscroll-contain">

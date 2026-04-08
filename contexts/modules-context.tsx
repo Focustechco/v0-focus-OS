@@ -6,6 +6,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 const MODULE_MAPPING: Record<string, string[]> = {
   "command-center": ["command-center"],
   "comercial": ["pipeline"],
+  "equipe": ["usuarios"],
   "projetos": ["projetos"],
   "fluxo": ["projetos"],
   "sprints": ["sprint-board"],

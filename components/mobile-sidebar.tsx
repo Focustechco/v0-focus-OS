@@ -22,6 +22,7 @@ import {
   FileText,
   Layers,
   Cog,
+  Users,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -47,6 +48,7 @@ const navigation = [
   { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: "projetos" },
   { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
   { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
+  { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
   { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE", hasSubmenu: "intelligence" },
   { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
   { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },

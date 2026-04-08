@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Bell, RefreshCw, Search, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { UserMenu } from "@/components/user-menu"
 
 interface FocusHeaderProps {
   title: string
@@ -106,6 +107,9 @@ export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
+
+        {/* User Menu */}
+        <UserMenu />
       </div>
     </header>
   )
