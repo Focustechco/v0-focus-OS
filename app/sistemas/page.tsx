@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
+import { PageWrapper } from "@/components/page-wrapper"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -42,20 +41,13 @@ const integrations = [
 ]
 
 export default function SistemasPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [notifications, setNotifications] = useState(true)
   const [darkMode, setDarkMode] = useState(true)
   const [autoBackup, setAutoBackup] = useState(true)
   const [twoFactor, setTwoFactor] = useState(false)
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="SISTEMAS" />
-        
-        <main className="flex-1 overflow-auto p-6">
+    <PageWrapper title="SISTEMAS" breadcrumb="SISTEMAS">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
@@ -278,8 +270,6 @@ export default function SistemasPage() {
               </div>
             </CardContent>
           </Card>
-        </main>
-      </div>
-    </div>
+    </PageWrapper>
   )
 }

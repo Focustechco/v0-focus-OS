@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
+import { PageWrapper } from "@/components/page-wrapper"
 import { useClientes } from "@/lib/hooks/use-clientes"
 import { useProjects } from "@/lib/hooks/use-projetos"
 import { Button } from "@/components/ui/button"
@@ -27,7 +26,6 @@ import { ClienteCard } from "@/components/clientes/cliente-card"
 import { ClienteDetalhesDrawer } from "@/components/clientes/cliente-detalhes-drawer"
 
 export default function ClientesPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const { clientes, isLoading, refetch } = useClientes()
   const { projects } = useProjects()
   
@@ -51,13 +49,7 @@ export default function ClientesPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="CLIENTES" />
-
-        <main className="flex-1 overflow-auto p-6">
+    <PageWrapper title="CLIENTES" breadcrumb="CLIENTES">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="text-xl font-display font-bold text-white tracking-tight">Clientes</h1>
@@ -121,9 +113,6 @@ export default function ClientesPage() {
               ))}
             </div>
           )}
-        </main>
-      </div>
-
       <NovoClienteModal 
         open={novoClienteOpen} 
         onOpenChange={setNovoClienteOpen} 
@@ -136,6 +125,6 @@ export default function ClientesPage() {
         onOpenChange={setDetalhesOpen}
         onUpdate={refetch}
       />
-    </div>
+    </PageWrapper>
   )
 }

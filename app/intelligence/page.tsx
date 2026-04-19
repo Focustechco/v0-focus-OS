@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
+import { PageWrapper } from "@/components/page-wrapper"
 import { ReportWizard } from "@/components/reports/report-wizard"
 import { ReportEditor } from "@/components/reports/report-editor"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -82,7 +81,6 @@ interface EditorConfig {
 }
 
 export default function IntelligencePage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [editorConfig, setEditorConfig] = useState<EditorConfig | null>(null)
   
   // Real DB Hooks
@@ -164,13 +162,7 @@ export default function IntelligencePage() {
   }
 
   return (
-    <div className="flex h-screen h-[100dvh] bg-[#0A0A0A] overflow-hidden">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="INTELLIGENCE CENTER" />
-
-        <main className="flex-1 overflow-auto p-6">
+    <PageWrapper title="INTELLIGENCE" breadcrumb="INTELLIGENCE CENTER">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
@@ -446,15 +438,11 @@ export default function IntelligencePage() {
               </div>
             </>
           )}
-        </main>
-      </div>
-
-      {/* Legacy Wizard Modal */}
       <ReportWizard
         open={false}
         onOpenChange={() => {}}
         onComplete={handleWizardComplete}
       />
-    </div>
+    </PageWrapper>
   )
 }

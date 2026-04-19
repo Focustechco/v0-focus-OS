@@ -165,9 +165,9 @@ export function AbaTarefas({ userType }: { userType: string }) {
 
   return (
     <div className="space-y-6">
-      {/* View Colaborador/Estagiário: Apenas meu card */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 space-y-4">
+      {/* Container Grid */}
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-4 space-y-4 order-1 lg:order-1">
             <Card className="bg-[#141414] border-[#2A2A2A] relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 font-mono text-[8px] text-orange-500/20 uppercase tracking-widest leading-none">
                     Dailies
@@ -222,18 +222,18 @@ export function AbaTarefas({ userType }: { userType: string }) {
         </div>
 
         {/* View Admin: Todos os Membros */}
-            <div className="lg:col-span-8 space-y-4">
-                <div className="flex items-center justify-between">
-                    <h3 className="text-[11px] font-mono font-bold text-neutral-500 uppercase tracking-[0.2em]">Dinâmica da Equipe</h3>
-                    <Button 
-                        onClick={() => setIsAddModalOpen(true)}
-                        variant="outline"
-                        className="h-8 px-4 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all font-mono text-[10px] tracking-widest rounded-sm"
-                    >
-                        <Plus className="w-3.5 h-3.5 mr-2" />
-                        NOVA TAREFA / ATRIBUIR
-                    </Button>
-                </div>
+        <div className="lg:col-span-8 space-y-4 order-2 lg:order-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <h3 className="text-[11px] font-mono font-bold text-neutral-500 uppercase tracking-[0.2em]">Dinâmica da Equipe</h3>
+                <Button 
+                    onClick={() => setIsAddModalOpen(true)}
+                    variant="outline"
+                    className="w-full sm:w-auto h-8 px-4 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all font-mono text-[10px] tracking-widest rounded-sm"
+                >
+                    <Plus className="w-3.5 h-3.5 mr-2" />
+                    NOVA TAREFA / ATRIBUIR
+                </Button>
+            </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {team.filter(m => m.id !== currentEquipeId).map(member => {

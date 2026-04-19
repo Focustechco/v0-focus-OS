@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
+import { PageWrapper } from "@/components/page-wrapper"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -216,20 +215,12 @@ function SectorCard({ sector }: { sector: typeof sectors[0] }) {
 }
 
 export default function SetoresPage() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-
   const totalProjects = sectors.reduce((acc, s) => acc + (s.stats.projects || 0), 0)
   const totalTeam = sectors.reduce((acc, s) => acc + (s.stats.team || s.team.length), 0)
   const avgLoad = Math.round(sectors.reduce((acc, s) => acc + s.stats.load, 0) / sectors.length)
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="SETORES TECH" />
-        
-        <main className="flex-1 overflow-auto p-6">
+    <PageWrapper title="SETORES TECH" breadcrumb="SETORES TECH">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
@@ -286,8 +277,6 @@ export default function SetoresPage() {
               <SectorCard key={sector.id} sector={sector} />
             ))}
           </div>
-        </main>
-      </div>
-    </div>
+    </PageWrapper>
   )
 }

@@ -2,8 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
+import { PageWrapper } from "@/components/page-wrapper"
 import { supabase } from "@/lib/supabase"
 import { ClientLogoPopover } from "@/components/reports/client-logo-popover"
 import { ReportEditorV2 } from "@/components/reports/report-editor-v2"
@@ -60,7 +59,6 @@ function RelatoriosContent() {
   const { addReport } = useReports() 
   const { projects } = useProjects()
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [transcriptOpen, setTranscriptOpen] = useState(false)
   const [editorReportId, setEditorReportId] = useState<string | null>(null)
 
@@ -145,13 +143,7 @@ function RelatoriosContent() {
   }
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
-      <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <FocusHeader title="RELATORIOS" />
-
-        <main className="flex-1 overflow-auto p-6">
+    <PageWrapper title="RELATORIOS" breadcrumb="RELATORIOS">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-xl font-display font-bold text-white">Relatorios de Projeto</h1>
@@ -445,14 +437,11 @@ function RelatoriosContent() {
             </>
           )}
 
-        </main>
-      </div>
-
       <TranscriptModal
         open={transcriptOpen}
         onOpenChange={setTranscriptOpen}
       />
-    </div>
+    </PageWrapper>
   )
 }
 
