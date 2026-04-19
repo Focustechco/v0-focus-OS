@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next"
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { ModulesProvider } from "@/contexts/modules-context"
+import { PwaProvider } from "@/contexts/pwa-context"
+import { ToastProvider } from "@/components/reports/toast-notification"
 
 const syne = Syne({ 
   subsets: ["latin"],
@@ -23,10 +25,10 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "FOCUS PROJECT OS | Sistema de Gestao de Projetos",
-  description: "Sistema operacional interno de gestao de projetos da Focus - Desenvolvimento de Software, Apps e Automacoes",
+  title: "Focus OS | Sistema de Gestão de Projetos",
+  description: "Sistema operacional interno de gestão de projetos da Focus - Desenvolvimento de Software, Apps e Automações",
   generator: 'v0.app',
-  applicationName: "FOCUS PROJECT OS",
+  applicationName: "FOCUS OS",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -92,7 +94,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0A0A0A",
+  themeColor: "#ff6b00",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -110,16 +112,22 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Focus OS" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png" />
-        <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167x167.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
       </head>
       <body className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans bg-[#0A0A0A] text-white antialiased overscroll-none`}>
-        <ModulesProvider>
-          {children}
-        </ModulesProvider>
+        <ToastProvider>
+          <PwaProvider>
+            <ModulesProvider>
+              {children}
+            </ModulesProvider>
+          </PwaProvider>
+        </ToastProvider>
       </body>
     </html>
   )

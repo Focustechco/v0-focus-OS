@@ -5,6 +5,7 @@ import { Bell, RefreshCw, Search, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { UserMenu } from "@/components/user-menu"
+import { NotificationsPanel } from "./notifications-panel"
 
 interface FocusHeaderProps {
   title: string
@@ -36,6 +37,23 @@ export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps
     const interval = setInterval(updateTime, 1000)
     return () => clearInterval(interval)
   }, [])
+
+  // Atualiza o título da aba do navegador
+  useEffect(() => {
+    const formatTitle = (str: string) => {
+      if (!str) return "Focus OS"
+      return str
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+    }
+
+    const displayTitle = formatTitle(breadcrumb || title)
+    
+    // Todos os módulos seguem o padrão [Módulo] | Focus OS
+    document.title = `${displayTitle} | Focus OS`
+  }, [title, breadcrumb])
 
   return (
     <header className="h-14 bg-[#111111] border-b border-[#2A2A2A] flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
@@ -88,16 +106,7 @@ export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps
         </div>
 
         {/* Notifications */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A] relative"
-        >
-          <Bell className="w-4 h-4" />
-          <Badge className="absolute -top-1 -right-1 w-4 h-4 p-0 flex items-center justify-center text-[9px] bg-orange-500 text-white border-0">
-            3
-          </Badge>
-        </Button>
+        <NotificationsPanel />
 
         {/* Refresh - Hidden on mobile */}
         <Button

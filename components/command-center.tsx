@@ -1,10 +1,10 @@
 "use client"
 
-import useSWR from "swr"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
 import {
   FolderKanban,
   Clock,
@@ -16,340 +16,368 @@ import {
   Zap,
   Activity as ActivityIcon,
   Loader2,
+  Users,
+  Layers,
+  TrendingUp,
+  FileText,
 } from "lucide-react"
 
-interface DashboardStats {
-  projects: { total: number; active: number; at_risk: number }
-  tasks: { open: number }
-  sprints: { active: number }
-  approvals: { pending: number }
-  deals: {
-    open: number
-    pipeline_by_stage: Record<string, { count: number; value: number; mrr: number }>
-  }
-  activity: Array<{
-    id: string
-    actor_name: string
-    action: string
-    entity_type: string
-    entity_name: string | null
-    created_at: string
-  }>
-  updated_at: string
-}
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url)
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    throw new Error(body.error || `Erro ${res.status}`)
-  }
-  return res.json() as Promise<DashboardStats>
-}
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    maximumFractionDigits: 0,
-  }).format(value)
-}
-
-function formatRelativeTime(iso: string) {
-  const now = Date.now()
-  const then = new Date(iso).getTime()
-  const diffMs = now - then
-  const diffMin = Math.round(diffMs / 60000)
-  if (diffMin < 1) return "agora"
-  if (diffMin < 60) return `${diffMin}min atrás`
-  const diffHr = Math.round(diffMin / 60)
-  if (diffHr < 24) return `${diffHr}h atrás`
-  const diffDay = Math.round(diffHr / 24)
-  return `${diffDay}d atrás`
-}
+import { useDashboard } from "@/lib/hooks/use-dashboard"
+import { cn } from "@/lib/utils"
+import { PerformanceSection } from "./dashboard/performance-section"
 
 export function CommandCenter() {
-  const { data, error, isLoading } = useSWR<DashboardStats>(
-    "/api/dashboard/stats",
-    fetcher,
-    { refreshInterval: 60_000 }
-  )
+  const { data, isLoading, isError } = useDashboard()
 
-  if (isLoading) {
-    return (
-      <div className="flex h-96 items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-orange-500" />
-          <p className="text-sm text-neutral-500">Carregando dashboard...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
+  if (isError) {
     return (
       <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-6">
         <div className="flex items-start gap-3">
           <AlertTriangle className="mt-0.5 h-5 w-5 text-red-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-red-400">
-              Erro ao carregar dashboard
+              Erro de Autenticacao / Conexao
             </p>
             <p className="mt-1 text-xs text-neutral-400">
-              {(error as Error).message}
+              Verifique se as variaveis <code className="rounded bg-[#0A0A0A] px-1 font-mono text-orange-500">NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
+              <code className="rounded bg-[#0A0A0A] px-1 font-mono text-orange-500">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> estao definidas no seu arquivo .env.local.
             </p>
-            <p className="mt-3 text-[11px] text-neutral-500">
-              Verifique se as variáveis <code className="rounded bg-[#0A0A0A] px-1 font-mono">NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
-              <code className="rounded bg-[#0A0A0A] px-1 font-mono">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> estão definidas e o schema SQL foi aplicado.
-            </p>
+            <Button 
+               variant="outline" 
+               size="sm" 
+               className="mt-4 border-red-500/30 text-red-500 hover:bg-red-500/10"
+               onClick={() => window.location.reload()}
+            >
+              Tentar Novamente
+            </Button>
           </div>
         </div>
       </div>
     )
   }
 
-  if (!data) return null
-
-  const totalPipelineValue = Object.values(data.deals.pipeline_by_stage).reduce(
-    (sum, s) => sum + s.value,
-    0
-  )
-  const totalMrr = Object.values(data.deals.pipeline_by_stage).reduce(
-    (sum, s) => sum + s.mrr,
-    0
-  )
-
   return (
     <div className="space-y-6">
-      {/* KPI Grid */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
-        <KpiCard
-          label="Projetos Ativos"
-          value={data.projects.active}
+      {/* 1. Alertas Globais */}
+      <section>
+        <div className="flex items-center gap-2 mb-4">
+          <AlertTriangle className="w-4 h-4 text-orange-500" />
+          <h2 className="text-xs font-mono font-bold tracking-[0.2em] text-neutral-400 uppercase">Alertas de Sistema</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {isLoading ? (
+             Array(3).fill(0).map((_, i) => <SkeletonCard key={i} className="h-16" />)
+          ) : !data?.alerts || data.alerts.length === 0 ? (
+            <div className="col-span-full p-4 border border-dashed border-[#2A2A2A] rounded-lg text-center text-[10px] text-neutral-600 uppercase font-mono tracking-widest">
+              Nenhum alerta critico detectado no momento
+            </div>
+          ) : (
+            data.alerts.map((alert: any) => (
+              <Link key={alert.id} href={alert.href}>
+                <div className={cn(
+                  "p-3 rounded-lg border flex items-center gap-3 transition-colors hover:bg-opacity-80 active:scale-[0.98]",
+                  alert.severity === 'danger' ? "bg-red-500/10 border-red-500/30 text-red-500" :
+                  alert.severity === 'warning' ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" :
+                  "bg-blue-500/10 border-blue-500/30 text-blue-500"
+                )}>
+                  <div className={cn(
+                    "w-2 h-2 rounded-full animate-pulse",
+                    alert.severity === 'danger' ? "bg-red-500" : alert.severity === 'warning' ? "bg-yellow-500" : "bg-blue-500"
+                  )} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-bold uppercase font-mono opacity-70 mb-0.5">{alert.type}</p>
+                    <p className="text-[11px] font-medium truncate">{alert.message}</p>
+                  </div>
+                  <ArrowRight className="w-3 h-3 opacity-50" />
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* 2. Grid de Cards de Modulos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        {/* Card Projetos */}
+        <DashboardCard 
+          title="PROJETOS" 
           icon={FolderKanban}
           href="/projetos"
-          accent="text-orange-500"
-        />
-        <KpiCard
-          label="Em Risco"
-          value={data.projects.at_risk}
-          icon={AlertTriangle}
-          href="/projetos?health=at_risk"
-          accent="text-red-400"
-        />
-        <KpiCard
-          label="Sprints Ativas"
-          value={data.sprints.active}
-          icon={Zap}
-          href="/sprints"
-          accent="text-yellow-400"
-        />
-        <KpiCard
-          label="Tasks Abertas"
-          value={data.tasks.open}
-          icon={ListTodo}
-          href="/tasks"
-          accent="text-blue-400"
-        />
-        <KpiCard
-          label="Aprovações"
-          value={data.approvals.pending}
-          icon={Clock}
-          href="/aprovacoes"
-          accent="text-purple-400"
-        />
-        <KpiCard
-          label="Deals em Aberto"
-          value={data.deals.open}
-          icon={Briefcase}
-          href="/comercial"
-          accent="text-green-400"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Pipeline Overview */}
-        <Card className="border-[#2A2A2A] bg-[#141414] lg:col-span-5">
-          <CardHeader className="border-b border-[#2A2A2A] pb-3">
-            <CardTitle className="flex items-center justify-between text-sm font-medium tracking-wider text-neutral-300">
-              PIPELINE COMERCIAL
-              <Link
-                href="/comercial"
-                className="text-[10px] text-orange-500 hover:text-orange-400"
-              >
-                VER TUDO →
-              </Link>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="mb-4 grid grid-cols-2 gap-4 border-b border-[#2A2A2A] pb-4">
-              <div>
-                <p className="font-mono text-[10px] uppercase text-neutral-500">
-                  Valor em Pipeline
-                </p>
-                <p className="mt-1 font-display text-xl font-bold text-white">
-                  {formatCurrency(totalPipelineValue)}
-                </p>
-              </div>
-              <div>
-                <p className="font-mono text-[10px] uppercase text-neutral-500">
-                  MRR Previsto
-                </p>
-                <p className="mt-1 font-display text-xl font-bold text-green-400">
-                  {formatCurrency(totalMrr)}
-                </p>
+          isLoading={isLoading}
+          footer="Ver projetos em Visao Geral"
+        >
+          <div className="space-y-4">
+            <div className="flex items-end justify-between">
+              <span className="text-3xl font-display font-bold text-white">{data?.projects?.active || 0}</span>
+              <div className="flex items-center gap-1 text-[10px] text-green-500 font-mono">
+                <TrendingUp className="w-3 h-3" />
+                +{data?.projects?.recentCount || 0} novos
               </div>
             </div>
-
             <div className="space-y-2">
-              {Object.entries(data.deals.pipeline_by_stage).length === 0 ? (
-                <p className="py-4 text-center text-xs text-neutral-600">
-                  Nenhum deal cadastrado ainda.
-                </p>
-              ) : (
-                Object.entries(data.deals.pipeline_by_stage).map(([stage, s]) => (
-                  <div
-                    key={stage}
-                    className="flex items-center justify-between rounded bg-[#0A0A0A] px-3 py-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs uppercase text-neutral-400">
-                        {stage}
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className="border-orange-500/30 bg-orange-500/10 text-[10px] text-orange-400"
-                      >
-                        {s.count}
-                      </Badge>
-                    </div>
-                    <span className="font-mono text-xs text-neutral-300">
-                      {formatCurrency(s.value)}
-                    </span>
+              {['Diagnóstico', 'MVP', 'Proposta', 'Sprints'].map((stage) => (
+                <div key={stage} className="space-y-1">
+                  <div className="flex justify-between text-[9px] text-neutral-500 font-mono uppercase">
+                    <span>{stage}</span>
+                    <span>{data?.projects?.byStage?.[stage] || 0}</span>
                   </div>
-                ))
+                  <Progress 
+                    value={data?.projects?.total ? ((data?.projects?.byStage?.[stage] || 0) / data?.projects?.total) * 100 : 0} 
+                    className="h-1 bg-[#1a1a1a]" 
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </DashboardCard>
+
+        {/* Card Tarefas */}
+        <DashboardCard 
+          title="TAREFAS" 
+          icon={ListTodo}
+          href="/projetos?tab=tasks"
+          isLoading={isLoading}
+          footer="Ver lista completa de tasks"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-3xl font-display font-bold text-white text-blue-400">{data?.tasks?.total || 0}</span>
+                <p className="text-[10px] text-neutral-500 font-mono">EM ABERTO</p>
+              </div>
+              {data?.tasks?.overdue && data?.tasks?.overdue > 0 ? (
+                <Badge variant="destructive" className="bg-red-500 animate-bounce">
+                  {data?.tasks?.overdue} VENCIDAS
+                </Badge>
+              ): null}
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+               <div className="p-2 bg-[#0A0A0A] rounded border border-[#2A2A2A]">
+                  <p className="text-[9px] text-neutral-500 font-mono">EM ANDAMENTO</p>
+                  <p className="text-lg font-bold text-white">{data?.tasks?.inProgress || 0}</p>
+               </div>
+               <div className="p-2 bg-[#0A0A0A] rounded border border-[#2A2A2A]">
+                  <p className="text-[9px] text-neutral-500 font-mono">CONCLUIDAS (MES)</p>
+                  <p className="text-lg font-bold text-green-500">{data?.tasks?.completionRate || 0}%</p>
+               </div>
+            </div>
+          </div>
+        </DashboardCard>
+
+        {/* Card Sprints */}
+        <DashboardCard 
+          title="SPRINTS" 
+          icon={Zap}
+          href="/projetos?tab=sprints"
+          isLoading={isLoading}
+          footer="Acompanhar ciclos ativos"
+        >
+          <div className="space-y-4">
+            <div className="flex items-end gap-2">
+              <span className="text-3xl font-display font-bold text-yellow-500">{data?.sprints?.active || 0}</span>
+              <span className="text-[10px] text-neutral-500 font-mono mb-1.5 uppercase">ATIVAS HOJE</span>
+            </div>
+            <div className="space-y-2">
+              {data?.sprints?.upcoming?.map((s: any, i: number) => {
+                const isUrgent = Math.ceil((new Date(s.data_fim).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) < 7
+                return (
+                  <div key={i} className={cn(
+                    "p-2 rounded border text-[10px] flex items-center justify-between",
+                    isUrgent ? "bg-orange-500/5 border-orange-500/20 text-orange-500" : "bg-[#0A0A0A] border-[#2A2A2A] text-neutral-400"
+                  )}>
+                    <span className="font-medium truncate mr-2">{s.nome}</span>
+                    <span className="font-mono flex-shrink-0">{new Date(s.data_fim).toLocaleDateString()}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </DashboardCard>
+
+        {/* Card Aprovações */}
+        <DashboardCard 
+          title="APROVACOES" 
+          icon={CheckCircle2}
+          href="/projetos?tab=aprovacoes"
+          isLoading={isLoading}
+          footer="Liberar pendencias de clientes"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-display font-bold text-purple-400">{data?.approvals?.pending || 0}</span>
+              {data?.approvals?.pending && data?.approvals?.pending > 0 ? (
+                <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              {data?.approvals?.oldest?.map((a: any, i: number) => (
+                <div key={i} className="p-2 bg-[#0A0A0A] border border-[#2A2A2A] rounded">
+                   <p className="text-[10px] text-white font-medium truncate">{a.titulo}</p>
+                   <p className="text-[9px] text-neutral-600 font-mono uppercase truncate">{a.projeto_nome}</p>
+                </div>
+              ))}
+              {(!data?.approvals?.oldest || data?.approvals?.oldest?.length === 0) && (
+                <p className="text-center py-4 text-[10px] text-neutral-600 font-mono uppercase italic">Nenhuma pendencia</p>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </DashboardCard>
 
-        {/* Recent Activity */}
-        <Card className="border-[#2A2A2A] bg-[#141414] lg:col-span-7">
-          <CardHeader className="border-b border-[#2A2A2A] pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-300">
-              <ActivityIcon className="h-4 w-4 text-orange-500" />
-              ATIVIDADE RECENTE
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="max-h-96 overflow-y-auto pt-4">
-            {data.activity.length === 0 ? (
-              <div className="py-8 text-center">
-                <CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-neutral-700" />
-                <p className="text-xs text-neutral-600">
-                  Sem atividade registrada ainda.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {data.activity.map((log) => (
-                  <div
-                    key={log.id}
-                    className="flex items-start gap-3 border-l-2 border-orange-500/40 py-1 pl-3"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-neutral-300">
-                        <span className="font-medium text-orange-500">
-                          {log.actor_name}
-                        </span>{" "}
-                        {log.action}
-                        {log.entity_name && (
-                          <span className="text-neutral-400"> · {log.entity_name}</span>
-                        )}
-                      </p>
-                      <p className="mt-0.5 font-mono text-[10px] text-neutral-600">
-                        {formatRelativeTime(log.created_at)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+
+        {/* Card Intelligence */}
+        <DashboardCard 
+          title="INTELLIGENCE" 
+          icon={ActivityIcon}
+          href="/intelligence"
+          isLoading={isLoading}
+          footer="Ver metricas estrategicas"
+        >
+          <div className="space-y-4">
+             <div className="grid grid-cols-3 gap-2">
+                <div>
+                   <p className="text-[8px] text-neutral-500 font-mono">ATIVOS</p>
+                   <p className="text-lg font-bold text-white">{data?.intelligence?.activeProjects || 0}</p>
+                </div>
+                <div>
+                   <p className="text-[8px] text-neutral-500 font-mono">TASKS/M</p>
+                   <p className="text-lg font-bold text-blue-400">{data?.intelligence?.completedTasksMonth || 0}</p>
+                </div>
+                <div>
+                   <p className="text-[8px] text-neutral-500 font-mono">ON-TIME</p>
+                   <p className="text-lg font-bold text-green-500">{data?.intelligence?.deliveryRate || 0}%</p>
+                </div>
+             </div>
+             <div className="h-10 flex items-center justify-center p-2 bg-[#0A0A0A] rounded border border-orange-500/10">
+                <p className="text-[10px] text-neutral-500 text-center italic">Sugerindo otimizacao de prazos...</p>
+             </div>
+          </div>
+        </DashboardCard>
+
+        {/* Card Comercial */}
+        <DashboardCard 
+          title="COMERCIAL" 
+          icon={Briefcase}
+          href="/comercial"
+          isLoading={isLoading}
+          footer="Gestao de leads e deals"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+               <div>
+                  <span className="text-3xl font-display font-bold text-green-500">{data?.crm?.totalLeads || 0}</span>
+                  <p className="text-[10px] text-neutral-500 font-mono uppercase">LEADS ATIVOS</p>
+               </div>
+               <Badge className="bg-green-500/10 text-green-500 border-green-500/20">+{data?.crm?.newMonth || 0} MES</Badge>
+            </div>
+            <div className="p-3 bg-green-500/5 border border-green-500/10 rounded-lg flex items-center justify-between">
+               <span className="text-[10px] text-neutral-400 font-mono">EM NEGOCIACAO:</span>
+               <span className="text-sm font-bold text-white">{data?.crm?.negotiating || 0}</span>
+            </div>
+          </div>
+        </DashboardCard>
+
+        {/* Card Equipe */}
+        <DashboardCard 
+          title="EQUIPE" 
+          icon={Users}
+          href="/equipe"
+          isLoading={isLoading}
+          footer="Performance e disponibilidade"
+        >
+          <div className="space-y-4">
+             <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 text-center p-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg">
+                   <p className="text-[10px] text-neutral-500 mb-1">MEMBROS</p>
+                   <p className="text-2xl font-bold text-white">{data?.equipe?.activeMembers || 0}</p>
+                </div>
+                <div className="flex-1 text-center p-3 bg-[#1A1A1A] border border-orange-500/20 rounded-lg">
+                   <p className="text-[10px] text-orange-500 mb-1">OCUPADOS</p>
+                   <p className="text-2xl font-bold text-white">{data?.equipe?.busyMembers || 0}</p>
+                </div>
+             </div>
+             <p className="text-[10px] text-neutral-600 text-center font-mono uppercase tracking-widest">Capacidade Atual: 89%</p>
+          </div>
+        </DashboardCard>
       </div>
 
-      {/* Quick Actions */}
-      <Card className="border-[#2A2A2A] bg-[#141414]">
-        <CardHeader className="border-b border-[#2A2A2A] pb-3">
-          <CardTitle className="text-sm font-medium tracking-wider text-neutral-300">
-            ACESSO RÁPIDO
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <QuickAction href="/projetos" icon={FolderKanban} label="Projetos" />
-            <QuickAction href="/sprints" icon={Zap} label="Sprints" />
-            <QuickAction href="/comercial" icon={Briefcase} label="CRM" />
-            <QuickAction href="/relatorios" icon={ArrowRight} label="Relatórios" />
-          </div>
-        </CardContent>
-      </Card>
+      {/* 3. Performance & Desempenho */}
+      <PerformanceSection />
 
-      <p className="text-right font-mono text-[10px] text-neutral-600">
-        Última atualização: {new Date(data.updated_at).toLocaleTimeString("pt-BR")}
-      </p>
+      {/* Footer info */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#1a1a1a]">
+        <div className="flex items-center gap-3">
+           <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/5 text-[9px]">
+             SUPABASE REALTIME ACTIVE
+           </Badge>
+           <span className="text-[10px] text-neutral-600 font-mono">
+             REFRESH: AUTO (120S)
+           </span>
+        </div>
+        <p className="text-right font-mono text-[10px] text-neutral-600 uppercase">
+          Ultima atualizacao: {data?.updatedAt ? new Date(data.updatedAt).toLocaleTimeString("pt-BR") : "--:--:--"}
+        </p>
+      </div>
     </div>
   )
 }
 
-function KpiCard({
-  label,
-  value,
-  icon: Icon,
-  href,
-  accent,
-}: {
-  label: string
-  value: number
-  icon: React.ComponentType<{ className?: string }>
+function DashboardCard({ 
+  title, 
+  icon: Icon, 
+  children, 
+  href, 
+  isLoading,
+  footer 
+}: { 
+  title: string
+  icon: any
+  children: React.ReactNode
   href: string
-  accent: string
+  isLoading?: boolean
+  footer?: string
 }) {
   return (
-    <Link
-      href={href}
-      className="group rounded-lg border border-[#2A2A2A] bg-[#141414] p-4 transition-colors hover:border-orange-500/50 hover:bg-[#1A1A1A]"
-    >
-      <div className="flex items-start justify-between">
-        <p className="font-mono text-[10px] uppercase leading-tight text-neutral-500">
-          {label}
-        </p>
-        <Icon className={`h-4 w-4 ${accent} opacity-70 group-hover:opacity-100`} />
-      </div>
-      <p className={`mt-2 font-display text-2xl font-bold ${accent}`}>{value}</p>
-    </Link>
+    <Card className="border-[#2A2A2A] bg-[#141414] overflow-hidden group hover:border-orange-500/30 transition-all flex flex-col">
+      <CardHeader className="border-b border-[#2A2A2A] py-3 px-4 bg-[#0F0F0F]">
+        <CardTitle className="text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-400 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Icon className="w-3.5 h-3.5 text-orange-500" />
+            {title}
+          </div>
+          <Link href={href}>
+             <Button variant="ghost" size="icon" className="h-5 w-5 hover:text-orange-500">
+                <ArrowRight className="w-3 h-3" />
+             </Button>
+          </Link>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-4 flex-1">
+        {isLoading ? <SkeletonContent /> : children}
+      </CardContent>
+      {footer && (
+        <Link href={href} className="px-4 py-2 bg-[#0F0F0F] border-t border-[#2A2A2A] text-[9px] font-mono text-neutral-600 hover:text-orange-500 transition-colors uppercase">
+          {footer} →
+        </Link>
+      )}
+    </Card>
   )
 }
 
-function QuickAction({
-  href,
-  icon: Icon,
-  label,
-}: {
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-  label: string
-}) {
+function SkeletonCard({ className }: { className?: string }) {
   return (
-    <Button
-      asChild
-      variant="outline"
-      className="h-auto justify-start border-[#2A2A2A] bg-[#0A0A0A] py-3 text-neutral-300 hover:border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-500"
-    >
-      <Link href={href}>
-        <Icon className="mr-2 h-4 w-4" />
-        {label}
-      </Link>
-    </Button>
+    <div className={cn("bg-[#141414] border border-[#2A2A2A] rounded-lg animate-pulse", className)} />
+  )
+}
+
+function SkeletonContent() {
+  return (
+    <div className="space-y-4">
+      <div className="h-8 w-16 bg-[#1A1A1A] rounded" />
+      <div className="space-y-2">
+        <div className="h-4 w-full bg-[#1A1A1A] rounded" />
+        <div className="h-4 w-3/4 bg-[#1A1A1A] rounded" />
+      </div>
+    </div>
   )
 }

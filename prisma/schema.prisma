@@ -1,0 +1,289 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ─────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  MEMBER
+  LEAD
+  INTERN
+  VIEWER
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  LEAD
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum EntityType {
+  CONTRACT
+  CLIENT
+  TASK
+  LEGAL_CASE
+  REPORT
+}
+
+enum FolderEntityType {
+  CLIENT
+  CONTRACT
+  LEGAL_CASE
+  DEPARTMENT
+  GENERAL
+}
+
+enum BusinessTag {
+  PENDING_SIGNATURE
+  SIGNED
+  ACTIVE
+  EXPIRED
+  ARCHIVED
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  DRAFT
+  FINAL
+  CONFIDENTIAL
+}
+
+enum ActionType {
+  FILE_ADDED
+  FILE_MODIFIED
+  FILE_REMOVED
+  FILE_MOVED
+  CONTRACT_CREATED
+  CONTRACT_UPDATED
+  CONTRACT_EXPIRED
+  CLIENT_CREATED
+  TAG_ADDED
+  DOC_LINKED
+  REPORT_UPLOADED_TO_DRIVE
+}
+
+// ── Models ────────────────────────────────────────────
+
+model User {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email               String    @unique
+  name                String    @map("full_name")
+  role                String    @default("member") // Mantendo como string para compatibilidade com Supabase
+  googleAccountId     String?   @unique
+  googleAccessToken   String?   @db.Text
+  googleRefreshToken  String?   @db.Text
+  googleTokenExpiry   DateTime?
+  avatarUrl           String?   @map("avatar_url")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  contractsCreated    Contract[]     @relation("ContractCreator")
+  clientsCreated      Client[]       @relation("ClientCreator")
+  documentsUploaded   DocumentLink[]
+  tagsAdded           DocumentTag[]
+  activityLogs        ActivityLog[]
+  notifications       Notification[]
+
+  @@map("profiles")
+}
+
+model Client {
+  id                      String       @id @default(cuid())
+  name                    String
+  document                String?      @unique
+  email                   String?
+  phone                   String?
+  status                  ClientStatus @default(LEAD)
+
+  // Drive integration
+  driveFolderId           String?      @unique
+  driveKycFolderId        String?
+  driveContractsFolderId  String?
+  driveCommsFolderId      String?
+
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  createdBy               String       @db.Uuid
+  creator                 User         @relation("ClientCreator", fields: [createdBy], references: [id])
+
+  // Relations
+  contracts               Contract[]
+  documentLinks           DocumentLink[]
+
+  @@index([status])
+  @@index([driveFolderId])
+  @@map("clients")
+}
+
+model Contract {
+  id                  String         @id @default(cuid())
+  title               String
+  value               Decimal        @db.Decimal(15, 2)
+  currency            String         @default("BRL")
+  status              ContractStatus @default(DRAFT)
+  startDate           DateTime
+  endDate             DateTime?
+  notes               String?        @db.Text
+
+  // Drive integration
+  driveFolderId       String?
+  driveSignedFileId   String?
+
+  clientId            String
+  client              Client         @relation(fields: [clientId], references: [id])
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  createdBy               String       @db.Uuid
+  creator             User           @relation("ContractCreator", fields: [createdBy], references: [id])
+
+  // Relations
+  documentLinks       DocumentLink[]
+
+  @@index([status])
+  @@index([clientId, status])
+  @@index([endDate, status])
+  @@index([driveFolderId])
+  @@map("contracts")
+}
+
+model DocumentLink {
+  id                  String     @id @default(cuid())
+  driveFileId         String
+  driveFileName       String
+  driveMimeType       String
+  driveWebViewLink    String?
+  driveThumbnailLink  String?
+
+  entityType          EntityType
+  entityId            String
+  relatorioId         String?
+
+  // FK relations
+  contractId          String?
+  contract            Contract?  @relation(fields: [contractId], references: [id])
+  clientId            String?
+  client              Client?    @relation(fields: [clientId], references: [id])
+
+  notes               String?    @db.Text
+  uploadedBy          String     @db.Uuid
+  uploader            User       @relation(fields: [uploadedBy], references: [id])
+
+  createdAt           DateTime   @default(now())
+
+  // Relations
+  businessTags        DocumentTag[]
+
+  @@index([driveFileId])
+  @@index([entityType, entityId])
+  @@index([relatorioId])
+  @@map("document_links")
+}
+
+model DocumentTag {
+  id              String      @id @default(cuid())
+  documentLinkId  String
+  documentLink    DocumentLink @relation(fields: [documentLinkId], references: [id], onDelete: Cascade)
+  tag             BusinessTag
+  addedBy         String      @db.Uuid
+  adder           User        @relation(fields: [addedBy], references: [id])
+  addedAt         DateTime    @default(now())
+
+  @@index([tag])
+  @@index([documentLinkId])
+  @@map("document_tags")
+}
+
+model DriveFolderMapping {
+  id                String           @id @default(cuid())
+  driveFolderId     String           @unique
+  driveFolderName   String
+  entityType        FolderEntityType
+  entityId          String?
+
+  // Hierarquia
+  parentMappingId   String?
+  parent            DriveFolderMapping?  @relation("FolderHierarchy", fields: [parentMappingId], references: [id])
+  children          DriveFolderMapping[] @relation("FolderHierarchy")
+
+  // Webhook monitoring
+  isMonitored       Boolean    @default(false)
+  webhookChannelId  String?
+  webhookExpiry     DateTime?
+  lastSyncAt        DateTime?
+
+  createdAt         DateTime   @default(now())
+
+  @@index([entityType, entityId])
+  @@index([isMonitored])
+  @@index([webhookExpiry])
+  @@map("drive_folder_mappings")
+}
+
+model DriveSyncLog {
+  id              String   @id @default(cuid())
+  folderId        String
+  syncType        String
+  status          String
+  filesAdded      Int      @default(0)
+  filesModified   Int      @default(0)
+  filesRemoved    Int      @default(0)
+  errorMessage    String?  @db.Text
+  durationMs      Int?
+  syncedAt        DateTime @default(now())
+
+  @@index([folderId, syncedAt])
+  @@map("drive_sync_logs")
+}
+
+model ActivityLog {
+  id              String     @id @default(cuid())
+  actorId         String     @db.Uuid
+  actor           User       @relation(fields: [actorId], references: [id])
+  actionType      ActionType
+  entityType      String?
+  entityId        String?
+  driveFileId     String?
+  driveFileName   String?
+  metadata        Json?
+  createdAt       DateTime   @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@map("activity_logs")
+}
+
+model Notification {
+  id                  String   @id @default(cuid())
+  userId              String   @db.Uuid
+  user                User     @relation(fields: [userId], references: [id])
+  type                String
+  title               String
+  body                String
+  isRead              Boolean  @default(false)
+  relatedEntityType   String?
+  relatedEntityId     String?
+  createdAt           DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}

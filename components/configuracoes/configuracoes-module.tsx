@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
+  User,
   LayoutGrid,
   Building2,
   Users,
@@ -18,6 +19,7 @@ import {
   X,
 } from "lucide-react"
 
+import { PerfilIdentidadeSection } from "./sections/perfil-identidade-section"
 import { ModulosSection } from "./sections/modulos-section"
 import { PerfilEmpresaSection } from "./sections/perfil-empresa-section"
 import { UsuariosSection } from "./sections/usuarios-section"
@@ -30,6 +32,7 @@ import { BackupSection } from "./sections/backup-section"
 import { SistemaSection } from "./sections/sistema-section"
 
 const sections = [
+  { id: "perfil-identidade", label: "Perfil & Identidade", icon: User, group: "SISTEMA" },
   { id: "modulos", label: "Modulos do Sistema", icon: LayoutGrid, group: "SISTEMA" },
   { id: "perfil", label: "Perfil da Empresa", icon: Building2, group: "SISTEMA" },
   { id: "usuarios", label: "Usuarios & Permissoes", icon: Users, group: "EQUIPE" },
@@ -54,6 +57,8 @@ export function ConfiguracoesModule() {
 
   const renderSection = () => {
     switch (activeSection) {
+      case "perfil-identidade":
+        return <PerfilIdentidadeSection />
       case "modulos":
         return <ModulosSection onChange={() => setHasChanges(true)} />
       case "perfil":

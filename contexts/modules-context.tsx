@@ -20,6 +20,7 @@ const MODULE_MAPPING: Record<string, string[]> = {
   "relatorios": ["relatorios"],
   "sistemas": ["configuracoes"],
   "configuracoes": ["configuracoes"],
+  "focushub": ["focushub"],
 }
 
 // Modulos que sempre devem estar visiveis (essenciais)
@@ -36,6 +37,7 @@ const DEFAULT_MODULE_STATES: Record<string, boolean> = {
   "time-tracker": false,
   "relatorios": true,
   "pipeline": true,
+  "focushub": true,
   "propostas": false,
   "contratos": true,
   "canal-interno": false,

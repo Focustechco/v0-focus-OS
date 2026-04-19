@@ -24,36 +24,23 @@ import {
   Layers,
   Cog,
   Users,
+  Box,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useModules } from "@/contexts/modules-context"
+import { useIntelligence } from "@/lib/hooks/use-intelligence"
+import { usePwa } from "@/contexts/pwa-context"
+import { Download, Target } from "lucide-react"
+import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
 
 // Subitems do módulo Projetos
-const projetosSubItems = [
-  { id: "fluxo", href: "/fluxo", icon: GitBranch, label: "FLUXO DE ETAPAS" },
-  { id: "sprints", href: "/sprints", icon: Zap, label: "SPRINTS", badge: 7 },
-  { id: "tasks", href: "/tasks", icon: ListTodo, label: "TAREFAS", badge: 89 },
-  { id: "checklists", href: "/checklists", icon: CheckSquare, label: "CHECKLISTS" },
-  { id: "aprovacoes", href: "/aprovacoes", icon: Clock, label: "APROVACOES", badge: 5 },
-  { id: "prazos", href: "/prazos", icon: CalendarClock, label: "PRAZOS & ENTREGAS" },
-]
+const projetosSubItems: any[] = [];
 
-// Subitems do módulo Intelligence
 const intelligenceSubItems = [
+  { id: "fluxo", href: "/intelligence/fluxo", icon: GitBranch, label: "FLUXO DE ETAPAS" },
   { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
-]
-
-const navigation = [
-  { id: "command-center", href: "/", icon: LayoutDashboard, label: "DASHBOARD" },
-  { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: 23, hasSubmenu: "projetos" },
-  { id: "backlog", href: "/backlog", icon: Layers, label: "BACKLOG", badge: 34 },
-  { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: 12 },
-  { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
-  { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE", hasSubmenu: "intelligence" },
-  { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
-  { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
-  { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
+  { id: "comercial-intel", href: "/intelligence/comercial", icon: Briefcase, label: "SETOR COMERCIAL" },
 ]
 
 interface FocusSidebarProps {
@@ -67,7 +54,22 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   const [projetosExpanded, setProjetosExpanded] = useState(false)
   const [intelligenceExpanded, setIntelligenceExpanded] = useState(false)
   const { isSidebarItemVisible } = useModules()
+  const { metrics } = useIntelligence()
+  const { isInstallable, handleInstall } = usePwa()
+  const { stats } = useSidebarStats()
 
+  // Atualizar contagens dinamicamente no navigation
+  const navigation: any[] = [
+    { id: "command-center", href: "/", icon: LayoutDashboard, label: "DASHBOARD" },
+    { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: stats.projects > 0 ? stats.projects : null },
+    { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL", badge: stats.comercial > 0 ? stats.comercial : null },
+    { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
+    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE", hasSubmenu: "intelligence" },
+    { id: "clientes", href: "/clientes", icon: Box, label: "CLIENTES" },
+    { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
+    { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
+    { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
+  ]
   // Filtrar navegacao baseado nos modulos ativos
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
   const visibleProjetosSubItems = projetosSubItems.filter(item => isSidebarItemVisible(item.id))
@@ -116,7 +118,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
           <div className={`${collapsed ? "hidden" : "flex items-center gap-3"}`}>
             <img src="/logo.svg" alt="Focus OS" className="w-10 h-10" />
             <div>
-              <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider">FOCUS OS</h1>
+              <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider whitespace-nowrap">FOCUS OS</h1>
               <p className="text-neutral-600 text-xs font-mono">v1.0</p>
             </div>
           </div>
@@ -136,13 +138,13 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
-        {visibleNavigation.map((item) => {
-          const isProjetos = item.hasSubmenu === "projetos"
-          const isIntelligence = item.hasSubmenu === "intelligence"
-          const subItems = isProjetos ? visibleProjetosSubItems : isIntelligence ? visibleIntelligenceSubItems : []
-          const isExpanded = isProjetos ? projetosExpanded : isIntelligence ? intelligenceExpanded : false
-          const setExpanded = isProjetos ? setProjetosExpanded : isIntelligence ? setIntelligenceExpanded : () => {}
-          const isSubItemActive = isProjetos ? isProjetosSubItemActive : isIntelligence ? isIntelligenceSubItemActive : false
+          {visibleNavigation.map((item: any) => {
+            const isProjetos = item.hasSubmenu === "projetos"
+            const isIntelligence = item.hasSubmenu === "intelligence"
+            const subItems: any[] = isProjetos ? visibleProjetosSubItems : isIntelligence ? visibleIntelligenceSubItems : []
+            const isExpanded = isProjetos ? projetosExpanded : isIntelligence ? intelligenceExpanded : false
+            const setExpanded = isProjetos ? setProjetosExpanded : isIntelligence ? setIntelligenceExpanded : () => {}
+            const isSubItemActive = isProjetos ? isProjetosSubItemActive : isIntelligence ? isIntelligenceSubItemActive : false
 
           return (
           <div key={item.id}>
@@ -271,6 +273,34 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
         )})}
       </nav>
 
+      {/* PWA Install Button */}
+      {!collapsed && isInstallable && (
+        <div className="px-4 py-2 mt-auto pb-4">
+          <Button
+            onClick={handleInstall}
+            variant="outline"
+            size="sm"
+            className="w-full bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500 hover:text-white transition-all text-[10px] font-bold h-9"
+          >
+            <Download className="w-3.5 h-3.5 mr-2" />
+            INSTALAR APLICATIVO
+          </Button>
+        </div>
+      )}
+
+      {collapsed && isInstallable && (
+        <div className="p-2 flex justify-center mt-auto pb-4">
+          <Button
+            onClick={handleInstall}
+            variant="ghost"
+            size="icon"
+            className="text-orange-500 hover:bg-orange-500/10"
+          >
+            <Download className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
+
       {/* System Status */}
       {!collapsed && (
         <div className="p-3 m-2 bg-[#141414] border border-[#2A2A2A] rounded-lg">
@@ -285,11 +315,11 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
             </div>
             <div className="flex justify-between">
               <span>PROJETOS ATIVOS:</span>
-              <span className="text-orange-500">23</span>
+              <span className="text-orange-500">{metrics?.kpis?.totalProjects || 0}</span>
             </div>
             <div className="flex justify-between">
               <span>SPRINTS EM CURSO:</span>
-              <span className="text-orange-500">7</span>
+              <span className="text-orange-500">{metrics?.kpis?.activeSprints || 0}</span>
             </div>
           </div>
         </div>

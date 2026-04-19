@@ -5,7 +5,7 @@ import { ComercialModule } from "@/components/comercial/comercial-module"
 
 export default function ComercialPage() {
   return (
-    <PageWrapper title="COMERCIAL / CRM" breadcrumb="COMERCIAL / CRM">
+    <PageWrapper title="COMERCIAL" breadcrumb="COMERCIAL">
       <ComercialModule />
     </PageWrapper>
   )

@@ -53,3 +53,11 @@ export async function clickupFetch<T>(
 
   return response.json() as Promise<T>
 }
+
+export async function getTask(taskId: string): Promise<any> {
+  return clickupFetch(`/task/${taskId}`)
+}
+
+export async function getTasks(listId: string): Promise<{ tasks: any[] }> {
+  return clickupFetch(`/list/${listId}/task?include_closed=true`)
+}

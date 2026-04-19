@@ -229,3 +229,46 @@
 .animate-in.slide-in-from-left {
   animation: slide-in-from-left 0.3s ease-out;
 }
+
+/* PWA & Mobile Optimization */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Modal full-screen on mobile */
+@media (max-width: 640px) {
+  [role="dialog"] {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* Minimum touch target size */
+button, 
+a.button, 
+[role="button"],
+.tabs-trigger {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* iOS safe areas */
+header, footer, .sidebar {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}

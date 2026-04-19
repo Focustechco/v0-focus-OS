@@ -9,13 +9,14 @@ function isPublicRoute(pathname: string) {
 }
 
 function hasSupabaseSessionCookie(request: MiddlewareRequest) {
-  return request.cookies
-    .getAll()
-    .some(
-      (cookie) =>
-        cookie.name.startsWith("sb-") &&
-        cookie.name.includes("auth-token")
-    )
+  const cookies = request.cookies.getAll()
+  // Procura por qualquer cookie que comece com sb- e termine com auth-token
+  // O formato padrão é sb-[project-ref]-auth-token
+  return cookies.some(
+    (cookie) =>
+      cookie.name.startsWith("sb-") &&
+      cookie.name.endsWith("auth-token")
+  )
 }
 
 type MiddlewareRequest = {

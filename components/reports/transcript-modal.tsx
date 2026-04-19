@@ -33,7 +33,12 @@ import {
   Calendar,
   AlertTriangle,
   CheckCircle,
+  Loader2,
+  Sparkles
 } from "lucide-react"
+import { useProjetos } from "@/lib/hooks/use-projetos"
+import { supabase } from "@/lib/supabase"
+import { useToast } from "./toast-notification"
 
 interface TranscriptModalProps {
   open: boolean
@@ -139,8 +144,11 @@ const MOCK_REPORT = {
 }
 
 export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
+  const { projects } = useProjetos()
+  const { showToast } = useToast()
   const [step, setStep] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [generationComplete, setGenerationComplete] = useState(false)
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0)
 
@@ -151,6 +159,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
   // Step 2 state
   const [projectName, setProjectName] = useState("")
+  const [projectId, setProjectId] = useState("")
   const [clientName, setClientName] = useState("")
   const [projectCode, setProjectCode] = useState("")
   const [reportType, setReportType] = useState("")
@@ -258,6 +267,49 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
     setIsGenerating(false)
     setGenerationComplete(true)
+  }
+
+  const handleManualSave = async () => {
+    if (!projectId) {
+      showToast("error", "Selecione um projeto para salvar")
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      const { error } = await supabase
+        .from("relatorios")
+        .insert([{
+          titulo: `Relatório de ${REPORT_TYPES.find(t => t.id === reportType)?.label || 'Transcrição'} - ${projectName}`,
+          projeto_id: projectId,
+          tipo: "Interno — Equipe",
+          periodo_inicio: meetingDate,
+          periodo_fim: meetingDate,
+          status: "salvo",
+          conteudo_json: {
+            transcript_report: MOCK_REPORT,
+            metadata: {
+              responsible,
+              recipients: selectedRecipients,
+              detailLevel,
+              deliveryFormat
+            }
+          }
+        }])
+
+      if (error) throw error
+      showToast("success", "Relatório salvo no banco de dados com sucesso!")
+      handleClose()
+    } catch (err) {
+      console.error("Erro ao salvar relatório:", err)
+      showToast("error", "Erro ao salvar relatório no banco")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleExportPDF = () => {
+    window.print()
   }
 
   const handleClose = () => {
@@ -370,13 +422,26 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-xs text-neutral-400">Nome do Projeto *</Label>
-          <Input
-            value={projectName}
-            onChange={e => setProjectName(e.target.value)}
-            placeholder="Sistema de Gestao"
-            className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]"
-          />
+          <Label className="text-xs text-neutral-400">Projeto Vinculado *</Label>
+          <Select value={projectId} onValueChange={(val) => {
+            setProjectId(val)
+            const p = projects?.find(proj => proj.id === val)
+            if (p) {
+              setProjectName(p.name)
+              setProjectCode(p.codigo || "")
+            }
+          }}>
+            <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]">
+              <SelectValue placeholder="Selecione um projeto..." />
+            </SelectTrigger>
+            <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+              {projects?.map((p: any) => (
+                <SelectItem key={p.id} value={p.id} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-2">
           <Label className="text-xs text-neutral-400">Cliente *</Label>
@@ -723,6 +788,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
           {/* Action buttons */}
           <div className="flex items-center gap-3">
             <Button
+              onClick={handleExportPDF}
               variant="outline"
               className="flex-1 border-[#ff6b00] text-[#ff6b00] hover:bg-[#ff6b00]/10"
             >
@@ -730,11 +796,13 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
               Exportar PDF
             </Button>
             <Button
+              onClick={handleManualSave}
+              disabled={isSaving}
               variant="outline"
               className="flex-1 border-[#2A2A2A] text-neutral-400 hover:text-white hover:border-neutral-500"
             >
-              <Save className="w-4 h-4 mr-2" />
-              Salvar como Rascunho
+              {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              Salvar Report
             </Button>
             <Button
               className="flex-1 bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white"
@@ -925,6 +993,84 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             </div>
           </div>
         )}
+
+        {/* Hidden Print Preview */}
+        <div id="printable-transcript-report" className="hidden print:block fixed inset-0 bg-white text-slate-900 p-16 z-[9999]">
+          <div className="flex justify-between items-start border-b-2 border-[#ff6b00] pb-8 mb-10">
+            <div>
+              <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900">Ata de Reunião</h1>
+              <p className="text-[#ff6b00] font-bold tracking-widest text-sm uppercase mt-1">Relatório gerado por Inteligência Artificial</p>
+              <div className="mt-6 space-y-1">
+                <p className="text-sm font-bold">{projectName}</p>
+                <p className="text-xs text-slate-500">Data: {meetingDate || new Date().toLocaleDateString()}</p>
+                <p className="text-xs text-slate-500">Responsável: {responsible}</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-3">
+              <img src="/logo.svg" alt="Focus OS" className="w-16 h-16" />
+              <p className="text-[10px] text-slate-400 font-mono">FOCUS OS | GESTÃO DE PROJETOS</p>
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            <section>
+              <h2 className="text-xs font-black uppercase tracking-widest text-[#ff6b00] flex items-center gap-2 mb-3">
+                <span className="w-4 h-[2px] bg-[#ff6b00]"/> Resumo Executivo
+              </h2>
+              <p className="text-sm text-slate-700 leading-relaxed pl-6">{MOCK_REPORT.resumo}</p>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-black uppercase tracking-widest text-[#ff6b00] flex items-center gap-2 mb-3">
+                <span className="w-4 h-[2px] bg-[#ff6b00]"/> Objetivos do Projeto
+              </h2>
+              <ul className="pl-6 space-y-2">
+                {MOCK_REPORT.objetivos.map((obj, i) => (
+                  <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#ff6b00] mt-1.5 shrink-0" />
+                    {obj}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-black uppercase tracking-widest text-[#ff6b00] flex items-center gap-2 mb-3">
+                <span className="w-4 h-[2px] bg-[#ff6b00]"/> Próximos Passos
+              </h2>
+              <ul className="pl-6 space-y-2">
+                {MOCK_REPORT.proximosPassos.map((passo, i) => (
+                  <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
+                    <span className="font-bold text-[#ff6b00]">{i+1}.</span>
+                    {passo}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+
+          <div className="mt-20 pt-10 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 uppercase tracking-widest">
+            <p>Relatório de Transcrição gerado via Focus AI</p>
+            <p>Confidencial - Projeto: {projectCode}</p>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @media print {
+            body * { visibility: hidden !important; }
+            #printable-transcript-report, #printable-transcript-report * { visibility: visible !important; }
+            #printable-transcript-report {
+              position: fixed !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              background: white !important;
+              margin: 0 !important;
+              padding: 40px !important;
+            }
+          }
+        `}} />
       </DialogContent>
     </Dialog>
   )

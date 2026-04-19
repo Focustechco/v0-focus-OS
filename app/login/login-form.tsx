@@ -125,7 +125,7 @@ export function LoginForm() {
       </form>
 
       <p className="mt-4 text-center font-mono text-[10px] text-neutral-600">
-        Acesso restrito · Focus Tecnologias
+        Acesso restrito · Focus Tecnologia
       </p>
     </div>
   )
