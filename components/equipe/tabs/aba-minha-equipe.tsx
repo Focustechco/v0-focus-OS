@@ -162,134 +162,136 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
           )}
         </div>
       ) : (
-      {/* Mobile Grid View */}
-      <div className="grid grid-cols-1 gap-4 lg:hidden">
-        {filtered.map((m) => {
-          const tipoInfo = TIPO_CONFIG[m.tipo] ?? TIPO_CONFIG.colaborador
-          return (
-            <Card 
-              key={m.id} 
-              onClick={() => openDetalhes(m.id)}
-              className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-all active:scale-[0.98]"
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12 border border-[#2A2A2A]">
-                    <AvatarImage src={m.foto_url} />
-                    <AvatarFallback
-                      className="text-sm font-bold"
-                      style={{ backgroundColor: m.cor_avatar ?? "#FF6B00" }}
-                    >
-                      {initials(m.nome)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <h3 className="text-sm font-bold text-white truncate">{m.nome}</h3>
-                      <Badge variant="outline" className={cn("text-[9px] uppercase font-mono", tipoInfo.color)}>
-                        {tipoInfo.label}
-                      </Badge>
+        <>
+          {/* Mobile Grid View */}
+          <div className="grid grid-cols-1 gap-4 lg:hidden">
+            {filtered.map((m) => {
+              const tipoInfo = TIPO_CONFIG[m.tipo] ?? TIPO_CONFIG.colaborador
+              return (
+                <Card 
+                  key={m.id} 
+                  onClick={() => openDetalhes(m.id)}
+                  className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-all active:scale-[0.98]"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-12 h-12 border border-[#2A2A2A]">
+                        <AvatarImage src={m.foto_url} />
+                        <AvatarFallback
+                          className="text-sm font-bold"
+                          style={{ backgroundColor: m.cor_avatar ?? "#FF6B00" }}
+                        >
+                          {initials(m.nome)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <h3 className="text-sm font-bold text-white truncate">{m.nome}</h3>
+                          <Badge variant="outline" className={cn("text-[9px] uppercase font-mono", tipoInfo.color)}>
+                            {tipoInfo.label}
+                          </Badge>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 font-mono uppercase tracking-tight truncate">
+                          {m.cargo || "Sem cargo"} • {m.setor || "Geral"}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-[11px] text-neutral-500 font-mono uppercase tracking-tight truncate">
-                      {m.cargo || "Sem cargo"} • {m.setor || "Geral"}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-[#2A2A2A]/50">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] text-neutral-600 uppercase font-mono tracking-widest">Status</span>
-                    <div className="flex items-center gap-2">
-                      <div className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        m.status === "ativo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-neutral-600"
-                      )} />
-                      <span className="text-[11px] text-neutral-400 capitalize">{m.status}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1 items-end">
-                    <span className="text-[9px] text-neutral-600 uppercase font-mono tracking-widest">Admissão</span>
-                    <span className="text-[11px] text-neutral-400 font-mono">
-                      {m.data_admissao ? new Date(m.data_admissao).toLocaleDateString() : "—"}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      {/* Desktop Table View */}
-      <Card className="bg-[#141414] border-[#2A2A2A] hidden lg:block overflow-hidden">
-        <CardContent className="p-0">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#2A2A2A]">
-                {["Membro", "Cargo", "Setor", "Tipo", "Status", "Ações"].map((h) => (
-                  <th key={h} className="text-left p-4 text-[10px] font-mono uppercase text-neutral-500 tracking-wider">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((m) => {
-                const tipoInfo = TIPO_CONFIG[m.tipo] ?? TIPO_CONFIG.colaborador
-                return (
-                  <tr
-                    key={m.id}
-                    onClick={() => openDetalhes(m.id)}
-                    className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors cursor-pointer group"
-                  >
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-9 h-9 flex-shrink-0">
-                          <AvatarImage src={m.foto_url} />
-                          <AvatarFallback
-                            className="text-xs font-bold"
-                            style={{ backgroundColor: m.cor_avatar ?? "#FF6B00" }}
-                          >
-                            {initials(m.nome)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium text-white group-hover:text-orange-400 transition-colors whitespace-nowrap">
-                          {m.nome}
+                    
+                    <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-[#2A2A2A]/50">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[9px] text-neutral-600 uppercase font-mono tracking-widest">Status</span>
+                        <div className="flex items-center gap-2">
+                          <div className={cn(
+                            "w-1.5 h-1.5 rounded-full",
+                            m.status === "ativo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-neutral-600"
+                          )} />
+                          <span className="text-[11px] text-neutral-400 capitalize">{m.status}</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 items-end">
+                        <span className="text-[9px] text-neutral-600 uppercase font-mono tracking-widest">Admissão</span>
+                        <span className="text-[11px] text-neutral-400 font-mono">
+                          {m.data_admissao ? new Date(m.data_admissao).toLocaleDateString() : "—"}
                         </span>
                       </div>
-                    </td>
-                    <td className="p-4 text-xs text-neutral-400 whitespace-nowrap">{m.cargo ?? "—"}</td>
-                    <td className="p-4 text-xs text-neutral-400 capitalize whitespace-nowrap">{m.setor ?? "—"}</td>
-                    <td className="p-4">
-                      <Badge variant="outline" className={`text-[10px] ${tipoInfo.color} whitespace-nowrap`}>
-                        {tipoInfo.label}
-                      </Badge>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <div className={cn(
-                          "w-2 h-2 rounded-full",
-                          m.status === "ativo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-neutral-600"
-                        )} />
-                        <span className="text-xs text-neutral-400 capitalize">{m.status}</span>
-                      </div>
-                    </td>
-                    <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-neutral-500 hover:text-orange-500"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                      </Button>
-                    </td>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <Card className="bg-[#141414] border-[#2A2A2A] hidden lg:block overflow-hidden">
+            <CardContent className="p-0">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#2A2A2A]">
+                    {["Membro", "Cargo", "Setor", "Tipo", "Status", "Ações"].map((h) => (
+                      <th key={h} className="text-left p-4 text-[10px] font-mono uppercase text-neutral-500 tracking-wider">
+                        {h}
+                      </th>
+                    ))}
                   </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+                </thead>
+                <tbody>
+                  {filtered.map((m) => {
+                    const tipoInfo = TIPO_CONFIG[m.tipo] ?? TIPO_CONFIG.colaborador
+                    return (
+                      <tr
+                        key={m.id}
+                        onClick={() => openDetalhes(m.id)}
+                        className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors cursor-pointer group"
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-9 h-9 flex-shrink-0">
+                              <AvatarImage src={m.foto_url} />
+                              <AvatarFallback
+                                className="text-xs font-bold"
+                                style={{ backgroundColor: m.cor_avatar ?? "#FF6B00" }}
+                              >
+                                {initials(m.nome)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm font-medium text-white group-hover:text-orange-400 transition-colors whitespace-nowrap">
+                              {m.nome}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-xs text-neutral-400 whitespace-nowrap">{m.cargo ?? "—"}</td>
+                        <td className="p-4 text-xs text-neutral-400 capitalize whitespace-nowrap">{m.setor ?? "—"}</td>
+                        <td className="p-4">
+                          <Badge variant="outline" className={`text-[10px] ${tipoInfo.color} whitespace-nowrap`}>
+                            {tipoInfo.label}
+                          </Badge>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <div className={cn(
+                              "w-2 h-2 rounded-full",
+                              m.status === "ativo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-neutral-600"
+                            )} />
+                            <span className="text-xs text-neutral-400 capitalize">{m.status}</span>
+                          </div>
+                        </td>
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-neutral-500 hover:text-orange-500"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </Button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </>
       )}
 
       <NovoMembroModal
