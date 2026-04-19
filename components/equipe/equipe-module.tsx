@@ -30,7 +30,7 @@ export function EquipeModule() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="minha-equipe" className="w-full">
-        <TabsList className="bg-[#141414] border border-[#2A2A2A] p-1 h-auto flex-wrap justify-start gap-1">
+        <TabsList className="bg-[#141414] border border-[#2A2A2A] p-1 h-auto tabs-scrollable flex-nowrap gap-1">
           <TabsTrigger value="minha-equipe" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[10px] tracking-widest uppercase py-2 px-4">
             <Users className="w-3.5 h-3.5 mr-2" />
             Minha Equipe

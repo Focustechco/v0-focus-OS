@@ -53,29 +53,28 @@ export function AbaTarefas({ userType }: { userType: string }) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
+      // 1. Carregar todo o time primeiro (essencial para o modal de atribuição)
+      const { data: members } = await supabase
+        .from("equipe")
+        .select("id, nome, tipo")
+      setTeam(members || [])
+
+      // 2. Identificar o ID do membro atual
       const { data: equipeMember } = await supabase
         .from("equipe")
         .select("id")
         .eq("usuario_id", user.id)
         .maybeSingle()
       
-      if (!equipeMember) return
-      setCurrentEquipeId(equipeMember.id)
+      const memberId = equipeMember?.id
+      if (memberId) setCurrentEquipeId(memberId)
 
-      // Se admin, carregar todo o time para atribuição
-      if (userType === 'admin') {
-          const { data: members } = await supabase
-            .from("equipe")
-            .select("id, nome, tipo")
-          setTeam(members || [])
-      }
-
-      // Carregar tarefas
+      // 3. Carregar tarefas de hoje
       const today = new Date().toISOString().split('T')[0]
       let query = supabase.from("tarefas_dia").select("*, atribuido_para(nome)")
       
-      if (userType !== 'admin') {
-          query = query.eq("atribuido_para", equipeMember.id)
+      if (userType !== 'admin' && memberId) {
+          query = query.eq("atribuido_para", memberId)
       }
       
       const { data: taskData } = await query.eq("data", today).order("created_at", { ascending: true })
@@ -223,16 +222,16 @@ export function AbaTarefas({ userType }: { userType: string }) {
         </div>
 
         {/* View Admin: Todos os Membros */}
-        {userType === 'admin' && (
             <div className="lg:col-span-8 space-y-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-[11px] font-mono font-bold text-neutral-500 uppercase tracking-[0.2em]">Visão Geral da Equipe</h3>
+                    <h3 className="text-[11px] font-mono font-bold text-neutral-500 uppercase tracking-[0.2em]">Dinâmica da Equipe</h3>
                     <Button 
                         onClick={() => setIsAddModalOpen(true)}
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] tracking-widest h-8"
+                        variant="outline"
+                        className="h-8 px-4 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all font-mono text-[10px] tracking-widest rounded-sm"
                     >
-                        <UserPlus className="w-3.5 h-3.5 mr-2" />
-                        ATRIBUIR TAREFA
+                        <Plus className="w-3.5 h-3.5 mr-2" />
+                        NOVA TAREFA / ATRIBUIR
                     </Button>
                 </div>
 
@@ -339,12 +338,18 @@ export function AbaTarefas({ userType }: { userType: string }) {
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsAddModalOpen(false)}>Cancelar</Button>
+          <DialogFooter className="gap-2">
+            <Button 
+                variant="ghost" 
+                onClick={() => setIsAddModalOpen(false)}
+                className="font-mono text-[10px] tracking-widest uppercase hover:bg-white/5"
+            >
+                Cancelar
+            </Button>
             <Button 
                 onClick={handleAddTasks} 
                 disabled={saving}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] tracking-widest uppercase px-6 rounded-sm"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Atribuir Tarefa(s)"}
             </Button>

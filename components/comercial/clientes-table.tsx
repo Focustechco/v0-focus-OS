@@ -253,11 +253,11 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
       </div>
 
       {/* Table */}
-      <div className="bg-[#141414] border border-[#2A2A2A] rounded-lg overflow-hidden">
+      <div className="table-responsive bg-[#141414] border border-[#2A2A2A] rounded-lg">
         <Table>
           <TableHeader>
             <TableRow className="border-[#2A2A2A] hover:bg-transparent">
-              <TableHead className="text-neutral-500 font-mono text-xs">ID</TableHead>
+              <TableHead className="text-neutral-500 font-mono text-xs hidden md:table-cell">ID</TableHead>
               <TableHead 
                 className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
                 onClick={() => handleSort('empresa')}
@@ -267,7 +267,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                   <ArrowUpDown className="w-3 h-3" />
                 </div>
               </TableHead>
-              <TableHead className="text-neutral-500 font-mono text-xs">CONTATO</TableHead>
+              <TableHead className="text-neutral-500 font-mono text-xs hidden lg:table-cell">CONTATO</TableHead>
               <TableHead 
                 className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
                 onClick={() => handleSort('status')}
@@ -296,7 +296,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 </div>
               </TableHead>
               <TableHead 
-                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
+                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white hidden sm:table-cell"
                 onClick={() => handleSort('dueDate')}
               >
                 <div className="flex items-center gap-1">
@@ -326,7 +326,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                     key={deal.id} 
                     className="border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors"
                   >
-                    <TableCell className="font-mono text-xs text-neutral-400">
+                    <TableCell className="font-mono text-xs text-neutral-400 hidden md:table-cell">
                       {deal.customId || `CL-${deal.id.slice(-4).toUpperCase()}`}
                     </TableCell>
                     <TableCell>
@@ -341,7 +341,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm text-neutral-400">
+                    <TableCell className="text-sm text-neutral-400 hidden lg:table-cell">
                       {deal.contato || '—'}
                     </TableCell>
                     <TableCell>
@@ -380,7 +380,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                         <span className="text-neutral-500">—</span>
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <span className={`text-sm ${
                         alertLevel === 'deadline' ? 'text-blue-500' : 'text-neutral-400'
                       }`}>

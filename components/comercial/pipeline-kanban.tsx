@@ -230,7 +230,7 @@ export function PipelineKanban({ deals, statuses, loading }: PipelineKanbanProps
       </div>
 
       {/* Kanban Board */}
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="kanban-container pb-4">
         {sortedStatuses.map(status => {
           const statusDeals = dealsByStatus.get(status.status) || []
           const totalValue = statusDeals.reduce((sum, d) => sum + (d.valor || 0), 0)
@@ -238,7 +238,7 @@ export function PipelineKanban({ deals, statuses, loading }: PipelineKanbanProps
           return (
             <div
               key={status.id}
-              className="flex-shrink-0 w-72"
+              className="kanban-column"
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => handleDrop(e, status.status)}
             >
@@ -496,7 +496,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
 
   return (
     <Sheet open={Boolean(deal)} onOpenChange={() => onClose()}>
-      <SheetContent className="w-[400px] sm:w-[540px] bg-[#0F0F0F] border-[#2A2A2A] overflow-y-auto">
+      <SheetContent className="w-full sm:w-[540px] bg-[#0F0F0F] border-[#2A2A2A] overflow-y-auto">
         <SheetHeader className="border-b border-[#2A2A2A] pb-4">
           <SheetTitle className="text-white font-display text-xl">
             {deal.empresa || deal.name}

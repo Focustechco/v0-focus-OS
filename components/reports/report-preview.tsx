@@ -2,8 +2,9 @@
 
 import { useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { X, Download, Printer } from "lucide-react"
+import { X, Download, Printer, FileDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 interface PreviewProps {
   report: any
@@ -47,8 +48,50 @@ export function ReportPreview({ report, editorData, onClose }: PreviewProps) {
 
   const saude = SAUDE_MAP[editorData.statusSaude] ?? SAUDE_MAP.amarelo
 
+  const [isExporting, setIsExporting] = useState(false)
+
   async function handlePrint() {
     window.print()
+  }
+
+  async function handleDownloadPDF() {
+    if (!docRef.current) return
+    setIsExporting(true)
+
+    try {
+      // Carregamento via CDN para evitar problemas de instalação local
+      if (!(window as any).html2pdf) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+      
+      const html2pdf = (window as any).html2pdf;
+      const element = docRef.current;
+      const opt = {
+        margin: [0, 0, 0, 0],
+        filename: `relatorio-${proj?.nome || 'focustec'}-${dateAll.replace(/\//g, '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2, 
+          useCORS: true, 
+          letterRendering: true,
+          scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      window.print();
+    } finally {
+      setIsExporting(false)
+    }
   }
 
   return (
@@ -57,8 +100,28 @@ export function ReportPreview({ report, editorData, onClose }: PreviewProps) {
       <div className="flex items-center justify-between px-6 py-3 bg-[#1A1A1A] border-b border-[#2A2A2A] flex-shrink-0">
         <h3 className="text-sm font-mono font-bold text-white tracking-wider">PREVIEW DO RELATÓRIO</h3>
         <div className="flex items-center gap-2">
-          <Button onClick={handlePrint} className="bg-orange-500 hover:bg-orange-600 text-white gap-2 text-xs h-8">
-            <Printer className="w-3.5 h-3.5" /> Imprimir / PDF
+          {/* Download button for mobile/ios */}
+          <Button 
+            onClick={handleDownloadPDF} 
+            disabled={isExporting}
+            className="bg-orange-500 hover:bg-orange-600 text-white gap-2 text-xs h-8 sm:flex"
+          >
+            {isExporting ? (
+              <span className="animate-pulse">GERANDO...</span>
+            ) : (
+              <>
+                <FileDown className="w-3.5 h-3.5" /> 
+                <span className="hidden sm:inline">BAIXAR PDF</span>
+                <span className="sm:hidden">PDF</span>
+              </>
+            )}
+          </Button>
+          <Button 
+            onClick={handlePrint} 
+            variant="outline"
+            className="border-[#2A2A2A] hover:bg-[#2A2A2A] text-white gap-2 text-xs h-8 hidden sm:flex"
+          >
+            <Printer className="w-3.5 h-3.5" /> Imprimir
           </Button>
           <Button variant="ghost" size="icon" onClick={onClose} className="text-neutral-400 hover:text-white h-8 w-8">
             <X className="w-4 h-4" />

@@ -200,10 +200,8 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
   }
 
   async function handleExport() {
-    // html2pdf fallback for now
     await doSave("exportado")
-    const win = window.open(`/relatorios/${reportId}/preview`, "_blank")
-    if (!win) window.print()
+    setShowPreview(true)
   }
 
   function toggleSection(id: string) {

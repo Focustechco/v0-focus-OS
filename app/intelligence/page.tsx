@@ -164,7 +164,7 @@ export default function IntelligencePage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
+    <div className="flex h-screen h-[100dvh] bg-[#0A0A0A] overflow-hidden">
       <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -187,7 +187,7 @@ export default function IntelligencePage() {
                     Relatorios Anteriores
                   </Button>
                 </SheetTrigger>
-                <SheetContent className="bg-[#0f0f0f] border-[#2A2A2A] text-white w-[400px] sm:w-[540px]">
+                <SheetContent className="bg-[#0f0f0f] border-[#2A2A2A] text-white w-full sm:w-[540px]">
                   <SheetHeader className="mb-6">
                     <SheetTitle className="text-white font-display">Acervo de Relatorios</SheetTitle>
                   </SheetHeader>

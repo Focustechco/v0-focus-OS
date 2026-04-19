@@ -117,19 +117,17 @@ export function AbaAcessos({ userType }: { userType: string }) {
                 {items.length} links
             </Badge>
         </div>
-        {userType === 'admin' && (
-            <Button 
-                onClick={() => {
-                    setFormData({...formData, categoria: category});
-                    setIsAddModalOpen(true);
-                }}
-                variant="ghost" 
-                className="h-7 text-orange-500 hover:text-white hover:bg-orange-500/10 text-[9px] font-mono uppercase tracking-widest"
-            >
-                <Plus className="w-3 h-3 mr-1.5" />
-                ADICIONAR
-            </Button>
-        )}
+        <Button 
+            onClick={() => {
+                setFormData({...formData, categoria: category});
+                setIsAddModalOpen(true);
+            }}
+            variant="outline" 
+            className="h-7 px-3 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all text-[9px] font-mono uppercase tracking-widest rounded-sm"
+        >
+            <Plus className="w-3 h-3 mr-1.5" />
+            ADICIONAR
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
