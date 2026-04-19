@@ -232,12 +232,12 @@
 
 /* PWA & Mobile Optimization */
 @layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
   .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 }
 
@@ -275,21 +275,75 @@ header, footer, .sidebar {
 
 /* Scrollable tabs for mobile */
 .tabs-scrollable {
-  @apply overflow-x-auto scrollbar-hide flex-nowrap whitespace-nowrap justify-start lg:justify-center px-1;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  justify-content: flex-start;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.tabs-scrollable::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .tabs-scrollable {
+    justify-content: center;
+  }
 }
 
 /* Utility to force horizontal scroll on tables */
 .table-responsive {
-  @apply overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.table-responsive::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 640px) {
+  .table-responsive {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 /* Kanban horizontal scroll */
 .kanban-container {
-  @apply flex overflow-x-auto gap-4 pb-4 scrollbar-hide px-4 -mx-4;
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.kanban-container::-webkit-scrollbar {
+  display: none;
 }
 
 .kanban-column {
-  @apply min-w-[280px] w-[85vw] sm:w-[350px] scroll-snap-align-start;
+  scroll-snap-align: start;
+  min-width: 280px;
+  width: 85vw;
+}
+@media (min-width: 640px) {
+  .kanban-column {
+    width: 350px;
+  }
 }
