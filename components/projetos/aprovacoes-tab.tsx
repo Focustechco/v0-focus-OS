@@ -75,7 +75,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao, onAction: (
         <div className="flex items-center gap-4 text-[10px] text-neutral-400 mb-4">
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
-            {approval.solicitante_id}
+            {approval.assigned_to}
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />

@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useEquipe, type TeamMember } from "@/lib/hooks/use-equipe"
 import { useProjects } from "@/lib/hooks/use-projetos"
-import { useToast } from "@/components/reports/toast-notification"
+import { toast } from "sonner"
 import {
   Sheet,
   SheetContent,
@@ -26,7 +26,10 @@ import {
   FolderKanban,
   Download,
   ArrowRight,
+  Upload,
+  Loader2,
 } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 import { NovoMembroModal } from "./novo-membro-modal"
 
 const TIPO_LABELS: Record<string, { label: string; color: string }> = {
@@ -46,9 +49,11 @@ interface MembroDetalhesDrawerProps {
 }
 
 export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDetalhesDrawerProps) {
-  const { equipe, updateMembro } = useEquipe()
+  const { equipe, updateMembro, mutate } = useEquipe()
   const { projects } = useProjects()
   const [editModalOpen, setEditModalOpen] = useState(false)
+  const [uploadingContract, setUploadingContract] = useState(false)
+  const contractInputRef = useRef<HTMLInputElement>(null)
 
   const membro = equipe.find((m) => m.id === memberId)
   const linkedProjects = projects.filter(
@@ -62,6 +67,47 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
   const handleToggleStatus = async () => {
     const newStatus = membro.status === "ativo" ? "inativo" : "ativo"
     await updateMembro(membro.id, { status: newStatus })
+  }
+
+  const handleContractUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !membro) return
+
+    const allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    if (!allowed.includes(file.type)) {
+      toast.error('Formato inválido. Envie arquivos PDF ou DOC/DOCX.')
+      return
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error('Arquivo muito grande. O limite é 20 MB.')
+      return
+    }
+
+    try {
+      setUploadingContract(true)
+      const ext = file.name.split('.').pop()
+      const path = `contratos/${membro.id}/contrato.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('contratos')
+        .upload(path, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('contratos')
+        .getPublicUrl(path)
+
+      await updateMembro(membro.id, { contrato_url: publicUrl })
+      toast.success(`${file.name} enviado com sucesso!`)
+      mutate()
+    } catch (err: any) {
+      console.error('[ContractUpload]', err)
+      toast.error(err.message || 'Erro ao enviar o contrato. Tente novamente.')
+    } finally {
+      setUploadingContract(false)
+      if (contractInputRef.current) contractInputRef.current.value = ''
+    }
   }
 
   return (
@@ -156,9 +202,31 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
             )}
 
             {/* Contrato */}
-            {membro.contrato_url && (
-              <div className="space-y-2">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
                 <h3 className="text-[10px] font-mono uppercase text-neutral-500 tracking-[0.2em]">Contrato</h3>
+                <button
+                  onClick={() => contractInputRef.current?.click()}
+                  disabled={uploadingContract}
+                  className="flex items-center gap-1.5 text-[10px] font-mono uppercase text-orange-500 hover:text-orange-400 disabled:opacity-50 transition-colors"
+                >
+                  {uploadingContract ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Upload className="w-3 h-3" />
+                  )}
+                  {uploadingContract ? 'Enviando...' : 'Fazer upload'}
+                </button>
+                <input
+                  ref={contractInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  className="hidden"
+                  onChange={handleContractUpload}
+                />
+              </div>
+
+              {membro.contrato_url ? (
                 <a
                   href={membro.contrato_url}
                   target="_blank"
@@ -166,11 +234,23 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
                   className="flex items-center gap-3 p-3 bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg hover:border-orange-500/30 transition-all group"
                 >
                   <FileText className="w-5 h-5 text-orange-500" />
-                  <span className="text-sm text-neutral-300 flex-1">Ver / Baixar Contrato</span>
+                  <span className="text-sm text-neutral-300 flex-1 truncate">
+                    {decodeURIComponent(membro.contrato_url.split('/').pop() || 'contrato')}
+                  </span>
                   <Download className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 transition-colors" />
                 </a>
-              </div>
-            )}
+              ) : (
+                <button
+                  onClick={() => contractInputRef.current?.click()}
+                  disabled={uploadingContract}
+                  className="w-full flex flex-col items-center justify-center gap-2 p-6 border border-dashed border-[#2A2A2A] rounded-lg hover:border-orange-500/40 hover:bg-orange-500/5 transition-all group disabled:opacity-50"
+                >
+                  <FileText className="w-6 h-6 text-neutral-600 group-hover:text-orange-500 transition-colors" />
+                  <span className="text-xs text-neutral-500 group-hover:text-neutral-300 transition-colors">Nenhum contrato. Clique para enviar.</span>
+                  <span className="text-[9px] font-mono text-neutral-600 uppercase">PDF, DOC ou DOCX · Máx 20 MB</span>
+                </button>
+              )}
+            </div>
 
             {/* Projetos Vinculados */}
             <div className="space-y-3">

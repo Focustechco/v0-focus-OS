@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Bell, RefreshCw, Search, Menu } from "lucide-react"
+import { Bell, RefreshCw, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { UserMenu } from "@/components/user-menu"
@@ -10,10 +10,9 @@ import { NotificationsPanel } from "./notifications-panel"
 interface FocusHeaderProps {
   title: string
   breadcrumb?: string
-  onMenuClick?: () => void
 }
 
-export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps) {
+export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
   const [currentTime, setCurrentTime] = useState("")
 
   useEffect(() => {
@@ -58,18 +57,10 @@ export function FocusHeader({ title, breadcrumb, onMenuClick }: FocusHeaderProps
   return (
     <header className="h-14 bg-[#111111] border-b border-[#2A2A2A] flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onMenuClick}
-          className="lg:hidden text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
-        >
-          <Menu className="w-5 h-5" />
-        </Button>
-
-        {/* Logo for mobile */}
-        <img src="/logo.svg" alt="Focus OS" className="w-7 h-7 lg:hidden" />
+        {/* Logo for mobile — links back to dashboard */}
+        <a href="/" className="lg:hidden">
+          <img src="/logo.svg" alt="Focus OS" className="w-7 h-7" />
+        </a>
 
         <div className="text-xs sm:text-sm text-neutral-400 font-mono tracking-wide truncate max-w-[140px] sm:max-w-none">
           <span className="hidden sm:inline">FOCUS OS / </span>

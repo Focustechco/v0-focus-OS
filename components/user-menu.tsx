@@ -27,7 +27,7 @@ export function UserMenu() {
       // Tenta buscar da nova tabela de perfil
       const { data } = await supabase
         .from("perfil")
-        .select("nome_completo, email_profissional, cargo, foto_url, status_cor")
+        .select("nome_completo, cargo, avatar_url")
         .eq("usuario_id", user.id)
         .maybeSingle()
 
@@ -35,7 +35,7 @@ export function UserMenu() {
         nome_completo: user.user_metadata?.full_name || user.email?.split("@")[0] || "Usuário",
         email_profissional: user.email,
         cargo: "Membro",
-        foto_url: null,
+        avatar_url: null,
         status_cor: "verde"
       })
     }
@@ -71,9 +71,9 @@ export function UserMenu() {
           size="icon"
           className="relative h-9 w-9 rounded-full border border-[#2A2A2A] bg-[#141414] overflow-visible group"
         >
-          {profile?.foto_url ? (
+          {profile?.avatar_url ? (
             <img 
-              src={profile.foto_url} 
+              src={profile.avatar_url} 
               alt={profile.nome_completo} 
               className="w-full h-full rounded-full object-cover" 
             />
@@ -93,8 +93,8 @@ export function UserMenu() {
         <DropdownMenuLabel className="font-normal p-3">
           <div className="flex items-center gap-3">
             <div className="relative h-10 w-10 flex-shrink-0">
-               {profile?.foto_url ? (
-                <img src={profile.foto_url} alt={profile.nome_completo} className="h-full w-full rounded-full object-cover" />
+               {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt={profile.nome_completo} className="h-full w-full rounded-full object-cover" />
                ) : (
                 <div className="h-full w-full rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-xs uppercase font-mono">
                   {initials}

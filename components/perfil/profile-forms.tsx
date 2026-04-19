@@ -70,13 +70,32 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
   const handleSaveInfo = async (data: any) => {
     try {
       setSaving(true)
-      const { error } = await supabase
-        .from("perfil")
-        .update({
-          ...data,
-          tecnologias: techs
-        })
-        .eq("usuario_id", profile.usuario_id)
+      const updatePayload: any = {
+        ...data,
+        tecnologias: techs
+      };
+
+      const attemptUpdate = async (payload: any): Promise<void> => {
+        if (Object.keys(payload).length === 0) return;
+        const { error } = await supabase
+          .from("perfil")
+          .update(payload)
+          .eq("usuario_id", profile.usuario_id);
+
+        if (error && error.message && error.message.includes("Could not find")) {
+           const match = error.message.match(/'([^']+)' column/);
+           if (match && match[1]) {
+             const keyToRemove = match[1];
+             const newPayload = { ...payload };
+             delete newPayload[keyToRemove];
+             console.warn(`[Perfil] Coluna ausente '${keyToRemove}', ignorando...`);
+             return attemptUpdate(newPayload);
+           }
+        }
+        if (error) throw error;
+      };
+
+      await attemptUpdate(updatePayload);
 
       if (error) throw error
       toast.success("Perfil atualizado com sucesso!")
@@ -90,10 +109,27 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
 
   const handleStatusChange = async (texto: string, cor: string) => {
     try {
-      const { error } = await supabase
-        .from("perfil")
-        .update({ status_texto: texto, status_cor: cor })
-        .eq("usuario_id", profile.usuario_id)
+      const payload = { status_texto: texto, status_cor: cor };
+
+      const attemptUpdate = async (pl: any): Promise<void> => {
+        if (Object.keys(pl).length === 0) return;
+        const { error } = await supabase
+          .from("perfil")
+          .update(pl)
+          .eq("usuario_id", profile.usuario_id);
+
+        if (error && error.message && error.message.includes("Could not find")) {
+           const match = error.message.match(/'([^']+)' column/);
+           if (match && match[1]) {
+             const newPayload = { ...pl };
+             delete newPayload[match[1]];
+             return attemptUpdate(newPayload);
+           }
+        }
+        if (error) throw error;
+      };
+
+      await attemptUpdate(payload);
 
       if (error) throw error
       toast.success(`Status alterado para: ${texto}`)

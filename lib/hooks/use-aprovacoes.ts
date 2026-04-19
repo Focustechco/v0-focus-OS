@@ -9,7 +9,7 @@ export interface Aprovacao {
   titulo: string
   descricao?: string
   status: "pendente" | "aprovado" | "reprovado"
-  solicitante_id: string
+  assigned_to: string
   priority?: string
   approval_type?: string
   created_at: string

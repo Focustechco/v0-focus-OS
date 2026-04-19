@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { createAdminClient } from "@/lib/supabase/server"
 
 // GET /api/checklist-items?task_id=X
 export async function GET(request: Request) {
@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "task_id is required" }, { status: 400 })
   }
 
+  const supabase = createAdminClient()
   const { data, error } = await supabase
     .from("checklist_items")
     .select("*")
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 })
     }
 
+    const supabase = createAdminClient()
     // 1. Insert checklist items
     const { data: insertedItems, error: insertError } = await supabase
       .from("checklist_items")
@@ -60,7 +62,7 @@ export async function POST(request: Request) {
             checklist_item_id: item.id,
             task_id,
             project_id: project_id || null,
-            solicitante_id: item.assigned_to,
+            assigned_to: item.assigned_to,
             status: 'pendente',
             priority: 'media',
             titulo: `Aprovação: ${item.title}`,

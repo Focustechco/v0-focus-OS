@@ -77,15 +77,39 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
         .getPublicUrl(filePath)
 
       const updateData = type === 'avatar' 
-        ? { foto_url: publicUrl } 
+        ? { avatar_url: publicUrl } 
         : { banner_url: publicUrl }
 
-      const { error: updateError } = await supabase
-        .from('perfil')
-        .update(updateData)
-        .eq('usuario_id', user.id)
+      const attemptUpdate = async (payload: any): Promise<void> => {
+        if (Object.keys(payload).length === 0) return;
+        const { error } = await supabase
+          .from('perfil')
+          .update(payload)
+          .eq('usuario_id', user.id);
 
-      if (updateError) throw updateError
+        if (error && error.message && error.message.includes("Could not find")) {
+           const match = error.message.match(/'([^']+)' column/);
+           if (match && match[1]) {
+             const keyToRemove = match[1];
+             const newPayload = { ...payload };
+             delete newPayload[keyToRemove];
+             console.warn(`[Perfil] Coluna ausente '${keyToRemove}', ignorando...`);
+             return attemptUpdate(newPayload);
+           }
+        }
+        if (error) throw error;
+      };
+
+      await attemptUpdate(updateData);
+
+      // Sincroniza a foto (avatar_url) para o banco de dados 'equipe', usando a chave foto_url dessa vez,
+      // para que a foto do usuario conectada via email reflita no Modulo de Equipe e no Dashboard.
+      if (type === 'avatar' && user.email) {
+        await supabase
+          .from('equipe')
+          .update({ foto_url: publicUrl })
+          .eq('email', user.email)
+      }
 
       toast.success(`${type === 'avatar' ? 'Foto' : 'Banner'} atualizado com sucesso!`)
       
@@ -130,8 +154,8 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
           className="absolute -top-[50px] left-1/2 -translate-x-1/2 w-[100px] h-[100px] rounded-full border-4 border-[#111111] bg-[#1A1A1A] overflow-hidden cursor-pointer group shadow-xl"
           onClick={() => setIsPhotoModalOpen(true)}
         >
-          {profile?.foto_url ? (
-            <img src={profile.foto_url} alt="Avatar" className="w-full h-full object-cover" />
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-orange-500/10 text-orange-500 font-bold text-2xl">
               {profile?.nome_completo?.[0] || "?"}

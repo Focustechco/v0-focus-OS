@@ -35,7 +35,6 @@ export async function GET(request: Request) {
     const newProfilePayload = {
       usuario_id: usuarioId,
       nome_completo: nomeCompleto || (email ? email.split("@")[0] : "Usuário"),
-      email_profissional: email || null
     }
 
     const { data: newProfile, error: initError } = await supabase

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { createAdminClient } from "@/lib/supabase/server"
 
 // PATCH /api/checklist-items/[id]
 export async function PATCH(
@@ -14,6 +14,8 @@ export async function PATCH(
     if (id === undefined || is_done === undefined) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 })
     }
+
+    const supabase = createAdminClient()
 
     // 1. Update the checklist item
     const { data: updatedItem, error: updateError } = await supabase

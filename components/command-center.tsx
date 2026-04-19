@@ -1,383 +1,377 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { supabase } from "@/lib/supabase"
+import { useDashboard } from "@/lib/hooks/use-dashboard"
 import {
   FolderKanban,
-  Clock,
-  AlertTriangle,
   CheckCircle2,
+  AlertTriangle,
   ArrowRight,
-  Briefcase,
-  ListTodo,
+  User,
+  Activity,
   Zap,
-  Activity as ActivityIcon,
-  Loader2,
-  Users,
-  Layers,
+  ListTodo,
   TrendingUp,
-  FileText,
+  BrainCircuit,
+  MessageSquare,
+  Clock,
+  Briefcase
 } from "lucide-react"
-
-import { useDashboard } from "@/lib/hooks/use-dashboard"
-import { cn } from "@/lib/utils"
-import { PerformanceSection } from "./dashboard/performance-section"
 
 export function CommandCenter() {
   const { data, isLoading, isError } = useDashboard()
+  const [sessionUser, setSessionUser] = useState<any>(null)
+  const [greeting, setGreeting] = useState("Bom dia")
+  const [currentDate, setCurrentDate] = useState("")
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: perfil } = await supabase
+          .from("perfil")
+          .select("nome_completo, avatar_url")
+          .eq("usuario_id", user.id)
+          .maybeSingle()
+        
+        const name = perfil?.nome_completo || user.user_metadata?.full_name || user.email?.split('@')[0] || "Usuário"
+        const initials = name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
+        
+        setSessionUser({ 
+          name, 
+          initials: initials || "??",
+          avatar_url: perfil?.avatar_url || null
+        })
+      }
+    }
+    loadUser()
+
+    const hour = new Date().getHours()
+    if (hour < 12) setGreeting("Bom dia")
+    else if (hour < 18) setGreeting("Boa tarde")
+    else setGreeting("Boa noite")
+
+    const opts: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+    setCurrentDate(new Intl.DateTimeFormat('pt-BR', opts).format(new Date()))
+  }, [])
 
   if (isError) {
     return (
-      <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-6">
+      <div className="rounded-[10px] border border-red-500/30 bg-red-500/10 p-[18px]">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-5 w-5 text-red-500" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-red-400">
-              Erro de Autenticacao / Conexao
-            </p>
-            <p className="mt-1 text-xs text-neutral-400">
-              Verifique se as variaveis <code className="rounded bg-[#0A0A0A] px-1 font-mono text-orange-500">NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
-              <code className="rounded bg-[#0A0A0A] px-1 font-mono text-orange-500">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> estao definidas no seu arquivo .env.local.
-            </p>
-            <Button 
-               variant="outline" 
-               size="sm" 
-               className="mt-4 border-red-500/30 text-red-500 hover:bg-red-500/10"
-               onClick={() => window.location.reload()}
-            >
-              Tentar Novamente
-            </Button>
+          <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-red-500">Erro de conexão</p>
+            <p className="text-xs text-neutral-400 mt-1">Não foi possível carregar o dashboard.</p>
           </div>
         </div>
       </div>
     )
   }
 
+  const kpis = data?.kpis || {}
+  const projetos = data?.projetos || []
+  const tarefasUrg = data?.tarefas_urgentes || []
+  const tarefasStats = data?.tarefas_stats || {}
+  const equipe = data?.equipe || []
+  const equipeStats = data?.equipe_stats || {}
+  const leads = data?.leads || []
+  const leadsStats = data?.leads_stats || {}
+  const aprovacoes = data?.aprovacoes || []
+  const intelligence = data?.intelligence || ""
+
   return (
-    <div className="space-y-6">
-      {/* 1. Alertas Globais */}
-      <section>
-        <div className="flex items-center gap-2 mb-4">
-          <AlertTriangle className="w-4 h-4 text-orange-500" />
-          <h2 className="text-xs font-mono font-bold tracking-[0.2em] text-neutral-400 uppercase">Alertas de Sistema</h2>
+    <div className="space-y-6 pb-12 font-sans text-neutral-300">
+      
+      {/* 1. Header (Fixo no topo visual do dashboard) */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#111] border border-[#222] p-[18px] rounded-[10px] sticky top-0 z-10 shadow-md">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-[#161616] border border-[#222] flex items-center justify-center text-[#e05c00] font-mono font-bold text-lg select-none overflow-hidden">
+            {sessionUser?.avatar_url ? (
+               <img src={sessionUser.avatar_url} alt={sessionUser.name} className="w-full h-full object-cover" />
+            ) : (
+               sessionUser ? sessionUser.initials : "..."
+            )}
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-white">
+              {greeting}, {sessionUser ? sessionUser.name : "Carregando..."}
+            </h1>
+            <p className="text-xs text-neutral-500 capitalize">{currentDate} · Focus Tecnologia</p>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {isLoading ? (
-             Array(3).fill(0).map((_, i) => <SkeletonCard key={i} className="h-16" />)
-          ) : !data?.alerts || data.alerts.length === 0 ? (
-            <div className="col-span-full p-4 border border-dashed border-[#2A2A2A] rounded-lg text-center text-[10px] text-neutral-600 uppercase font-mono tracking-widest">
-              Nenhum alerta critico detectado no momento
-            </div>
-          ) : (
-            data.alerts.map((alert: any) => (
-              <Link key={alert.id} href={alert.href}>
-                <div className={cn(
-                  "p-3 rounded-lg border flex items-center gap-3 transition-colors hover:bg-opacity-80 active:scale-[0.98]",
-                  alert.severity === 'danger' ? "bg-red-500/10 border-red-500/30 text-red-500" :
-                  alert.severity === 'warning' ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" :
-                  "bg-blue-500/10 border-blue-500/30 text-blue-500"
-                )}>
-                  <div className={cn(
-                    "w-2 h-2 rounded-full animate-pulse",
-                    alert.severity === 'danger' ? "bg-red-500" : alert.severity === 'warning' ? "bg-yellow-500" : "bg-blue-500"
-                  )} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold uppercase font-mono opacity-70 mb-0.5">{alert.type}</p>
-                    <p className="text-[11px] font-medium truncate">{alert.message}</p>
-                  </div>
-                  <ArrowRight className="w-3 h-3 opacity-50" />
-                </div>
-              </Link>
-            ))
-          )}
-        </div>
-      </section>
-
-      {/* 2. Grid de Cards de Modulos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        {/* Card Projetos */}
-        <DashboardCard 
-          title="PROJETOS" 
-          icon={FolderKanban}
-          href="/projetos"
-          isLoading={isLoading}
-          footer="Ver projetos em Visao Geral"
-        >
-          <div className="space-y-4">
-            <div className="flex items-end justify-between">
-              <span className="text-3xl font-display font-bold text-white">{data?.projects?.active || 0}</span>
-              <div className="flex items-center gap-1 text-[10px] text-green-500 font-mono">
-                <TrendingUp className="w-3 h-3" />
-                +{data?.projects?.recentCount || 0} novos
-              </div>
-            </div>
-            <div className="space-y-2">
-              {['Diagnóstico', 'MVP', 'Proposta', 'Sprints'].map((stage) => (
-                <div key={stage} className="space-y-1">
-                  <div className="flex justify-between text-[9px] text-neutral-500 font-mono uppercase">
-                    <span>{stage}</span>
-                    <span>{data?.projects?.byStage?.[stage] || 0}</span>
-                  </div>
-                  <Progress 
-                    value={data?.projects?.total ? ((data?.projects?.byStage?.[stage] || 0) / data?.projects?.total) * 100 : 0} 
-                    className="h-1 bg-[#1a1a1a]" 
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </DashboardCard>
-
-        {/* Card Tarefas */}
-        <DashboardCard 
-          title="TAREFAS" 
-          icon={ListTodo}
-          href="/projetos?tab=tasks"
-          isLoading={isLoading}
-          footer="Ver lista completa de tasks"
-        >
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-3xl font-display font-bold text-white text-blue-400">{data?.tasks?.total || 0}</span>
-                <p className="text-[10px] text-neutral-500 font-mono">EM ABERTO</p>
-              </div>
-              {data?.tasks?.overdue && data?.tasks?.overdue > 0 ? (
-                <Badge variant="destructive" className="bg-red-500 animate-bounce">
-                  {data?.tasks?.overdue} VENCIDAS
-                </Badge>
-              ): null}
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-               <div className="p-2 bg-[#0A0A0A] rounded border border-[#2A2A2A]">
-                  <p className="text-[9px] text-neutral-500 font-mono">EM ANDAMENTO</p>
-                  <p className="text-lg font-bold text-white">{data?.tasks?.inProgress || 0}</p>
-               </div>
-               <div className="p-2 bg-[#0A0A0A] rounded border border-[#2A2A2A]">
-                  <p className="text-[9px] text-neutral-500 font-mono">CONCLUIDAS (MES)</p>
-                  <p className="text-lg font-bold text-green-500">{data?.tasks?.completionRate || 0}%</p>
-               </div>
-            </div>
-          </div>
-        </DashboardCard>
-
-        {/* Card Sprints */}
-        <DashboardCard 
-          title="SPRINTS" 
-          icon={Zap}
-          href="/projetos?tab=sprints"
-          isLoading={isLoading}
-          footer="Acompanhar ciclos ativos"
-        >
-          <div className="space-y-4">
-            <div className="flex items-end gap-2">
-              <span className="text-3xl font-display font-bold text-yellow-500">{data?.sprints?.active || 0}</span>
-              <span className="text-[10px] text-neutral-500 font-mono mb-1.5 uppercase">ATIVAS HOJE</span>
-            </div>
-            <div className="space-y-2">
-              {data?.sprints?.upcoming?.map((s: any, i: number) => {
-                const isUrgent = Math.ceil((new Date(s.data_fim).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) < 7
-                return (
-                  <div key={i} className={cn(
-                    "p-2 rounded border text-[10px] flex items-center justify-between",
-                    isUrgent ? "bg-orange-500/5 border-orange-500/20 text-orange-500" : "bg-[#0A0A0A] border-[#2A2A2A] text-neutral-400"
-                  )}>
-                    <span className="font-medium truncate mr-2">{s.nome}</span>
-                    <span className="font-mono flex-shrink-0">{new Date(s.data_fim).toLocaleDateString()}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </DashboardCard>
-
-        {/* Card Aprovações */}
-        <DashboardCard 
-          title="APROVACOES" 
-          icon={CheckCircle2}
-          href="/projetos?tab=aprovacoes"
-          isLoading={isLoading}
-          footer="Liberar pendencias de clientes"
-        >
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-3xl font-display font-bold text-purple-400">{data?.approvals?.pending || 0}</span>
-              {data?.approvals?.pending && data?.approvals?.pending > 0 ? (
-                <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-              ) : null}
-            </div>
-            <div className="space-y-2">
-              {data?.approvals?.oldest?.map((a: any, i: number) => (
-                <div key={i} className="p-2 bg-[#0A0A0A] border border-[#2A2A2A] rounded">
-                   <p className="text-[10px] text-white font-medium truncate">{a.titulo}</p>
-                   <p className="text-[9px] text-neutral-600 font-mono uppercase truncate">{a.projeto_nome}</p>
-                </div>
-              ))}
-              {(!data?.approvals?.oldest || data?.approvals?.oldest?.length === 0) && (
-                <p className="text-center py-4 text-[10px] text-neutral-600 font-mono uppercase italic">Nenhuma pendencia</p>
-              )}
-            </div>
-          </div>
-        </DashboardCard>
-
-
-        {/* Card Intelligence */}
-        <DashboardCard 
-          title="INTELLIGENCE" 
-          icon={ActivityIcon}
-          href="/intelligence"
-          isLoading={isLoading}
-          footer="Ver metricas estrategicas"
-        >
-          <div className="space-y-4">
-             <div className="grid grid-cols-3 gap-2">
-                <div>
-                   <p className="text-[8px] text-neutral-500 font-mono">ATIVOS</p>
-                   <p className="text-lg font-bold text-white">{data?.intelligence?.activeProjects || 0}</p>
-                </div>
-                <div>
-                   <p className="text-[8px] text-neutral-500 font-mono">TASKS/M</p>
-                   <p className="text-lg font-bold text-blue-400">{data?.intelligence?.completedTasksMonth || 0}</p>
-                </div>
-                <div>
-                   <p className="text-[8px] text-neutral-500 font-mono">ON-TIME</p>
-                   <p className="text-lg font-bold text-green-500">{data?.intelligence?.deliveryRate || 0}%</p>
-                </div>
-             </div>
-             <div className="h-10 flex items-center justify-center p-2 bg-[#0A0A0A] rounded border border-orange-500/10">
-                <p className="text-[10px] text-neutral-500 text-center italic">Sugerindo otimizacao de prazos...</p>
-             </div>
-          </div>
-        </DashboardCard>
-
-        {/* Card Comercial */}
-        <DashboardCard 
-          title="COMERCIAL" 
-          icon={Briefcase}
-          href="/comercial"
-          isLoading={isLoading}
-          footer="Gestao de leads e deals"
-        >
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-               <div>
-                  <span className="text-3xl font-display font-bold text-green-500">{data?.crm?.totalLeads || 0}</span>
-                  <p className="text-[10px] text-neutral-500 font-mono uppercase">LEADS ATIVOS</p>
-               </div>
-               <Badge className="bg-green-500/10 text-green-500 border-green-500/20">+{data?.crm?.newMonth || 0} MES</Badge>
-            </div>
-            <div className="p-3 bg-green-500/5 border border-green-500/10 rounded-lg flex items-center justify-between">
-               <span className="text-[10px] text-neutral-400 font-mono">EM NEGOCIACAO:</span>
-               <span className="text-sm font-bold text-white">{data?.crm?.negotiating || 0}</span>
-            </div>
-          </div>
-        </DashboardCard>
-
-        {/* Card Equipe */}
-        <DashboardCard 
-          title="EQUIPE" 
-          icon={Users}
-          href="/equipe"
-          isLoading={isLoading}
-          footer="Performance e disponibilidade"
-        >
-          <div className="space-y-4">
-             <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 text-center p-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg">
-                   <p className="text-[10px] text-neutral-500 mb-1">MEMBROS</p>
-                   <p className="text-2xl font-bold text-white">{data?.equipe?.activeMembers || 0}</p>
-                </div>
-                <div className="flex-1 text-center p-3 bg-[#1A1A1A] border border-orange-500/20 rounded-lg">
-                   <p className="text-[10px] text-orange-500 mb-1">OCUPADOS</p>
-                   <p className="text-2xl font-bold text-white">{data?.equipe?.busyMembers || 0}</p>
-                </div>
-             </div>
-             <p className="text-[10px] text-neutral-600 text-center font-mono uppercase tracking-widest">Capacidade Atual: 89%</p>
-          </div>
-        </DashboardCard>
-      </div>
-
-      {/* 3. Performance & Desempenho */}
-      <PerformanceSection />
-
-      {/* Footer info */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#1a1a1a]">
         <div className="flex items-center gap-3">
-           <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/5 text-[9px]">
-             SUPABASE REALTIME ACTIVE
-           </Badge>
-           <span className="text-[10px] text-neutral-600 font-mono">
-             REFRESH: AUTO (120S)
-           </span>
+          <Badge className="bg-[#161616] border-[#222] text-neutral-400 font-mono text-[10px] py-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] mr-2 inline-block"></span>
+            Sistema online
+          </Badge>
+          
+          <Link href="/projetos?tab=aprovacoes">
+            <Badge className={`border font-mono text-[10px] py-1 cursor-pointer transition-colors ${kpis.aprovacoes_pendentes > 0 ? "bg-[#e05c00]/10 border-[#e05c00]/30 text-[#e05c00] hover:bg-[#e05c00]/20" : "bg-[#161616] border-[#222] text-neutral-500"}`}>
+              {kpis.aprovacoes_pendentes || 0} Aprovações Pendentes
+            </Badge>
+          </Link>
         </div>
-        <p className="text-right font-mono text-[10px] text-neutral-600 uppercase">
-          Ultima atualizacao: {data?.updatedAt ? new Date(data.updatedAt).toLocaleTimeString("pt-BR") : "--:--:--"}
-        </p>
       </div>
+
+      {isLoading ? (
+        <div className="space-y-6 animate-pulse">
+           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {[1,2,3,4].map(i => <div key={i} className="h-24 bg-[#161616] border border-[#222] rounded-[10px]" />)}
+           </div>
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="h-64 bg-[#161616] border border-[#222] rounded-[10px]" />
+              <div className="h-64 bg-[#161616] border border-[#222] rounded-[10px]" />
+           </div>
+        </div>
+      ) : (
+        <>
+          {/* 2. Bloco KPIs — linha superior (4 cards) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <KpiCard 
+              title="Projetos Ativos" 
+              value={kpis.projetos} 
+              icon={FolderKanban} 
+              subtext="Em andamento no portfólio" 
+            />
+            <KpiCard 
+              title="Tarefas em Aberto" 
+              value={kpis.tarefas_abertas} 
+              icon={ListTodo} 
+              subtext={<span className={kpis.tarefas_atrasadas > 0 ? "text-[#ef4444]" : ""}>{kpis.tarefas_atrasadas} em atraso</span>} 
+            />
+            <KpiCard 
+              title="Sprints Ativas" 
+              value={kpis.sprints_ativas} 
+              icon={Zap} 
+              subtext={`Próx. conclusão: ${kpis.proxima_sprint_fim}`} 
+            />
+            <KpiCard 
+              title="Aprovações" 
+              value={kpis.aprovacoes_pendentes} 
+              icon={CheckCircle2} 
+              valueColor={kpis.aprovacoes_pendentes > 0 ? "text-[#e05c00]" : "text-white"}
+              subtext="Aguardando liberação" 
+            />
+          </div>
+
+          {/* 3. Grid Principal — linha do meio (2 colunas) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Projetos em andamento */}
+            <Card className="bg-[#161616] border-[#222] rounded-[10px]">
+              <div className="p-[18px] border-b border-[#222] flex items-center justify-between">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <FolderKanban className="w-4 h-4 text-[#e05c00]" /> Projetos em andamento
+                </h2>
+                <Link href="/projetos" className="text-[11px] font-mono text-neutral-500 hover:text-[#e05c00] transition-colors">
+                  Ver todos →
+                </Link>
+              </div>
+              <div className="p-[18px] space-y-4">
+                {projetos.length === 0 && <p className="text-xs text-neutral-600 text-center py-4">Nenhum projeto em andamento.</p>}
+                {projetos.map((p: any) => (
+                  <div key={p.id} className="group">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-neutral-200 group-hover:text-[#e05c00] transition-colors">{p.name}</span>
+                      <Badge variant="outline" className={`text-[9px] uppercase font-mono tracking-wider ${getStageBadgeColor(p.stage)}`}>
+                        {p.stage || "GERAL"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Progress value={p.progress} className="h-[5px] bg-[#222] flex-1 rounded-full [&>div]:rounded-full [&>div]:bg-[#e05c00]" />
+                      <span className="text-[9px] font-mono text-neutral-500 w-6 text-right">{p.progress}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Tarefas urgentes / atrasadas */}
+            <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col">
+              <div className="p-[18px] border-b border-[#222]">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-[#ef4444]" /> Tarefas críticas
+                </h2>
+              </div>
+              <div className="p-[18px] flex-1 space-y-3 overflow-y-auto min-h-[150px]">
+                {tarefasUrg.length === 0 && <p className="text-xs text-neutral-600 text-center py-4">Sua pauta está limpa!</p>}
+                {tarefasUrg.map((t: any) => (
+                  <div key={t.id} className="p-3 bg-[#0d0d0d] border border-[#222] rounded-[8px] flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-white mb-1 line-clamp-1">{t.titulo}</p>
+                      <p className="text-[9px] text-neutral-500 font-mono uppercase truncate w-48">
+                        {t.projeto} {t.sprint && `• ${t.sprint}`}
+                      </p>
+                    </div>
+                    {t.isDelayed ? (
+                      <Badge className="bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/20 text-[9px] uppercase font-mono">Atrasada</Badge>
+                    ) : (
+                      <Badge className="bg-[#e05c00]/10 text-[#e05c00] border border-[#e05c00]/20 text-[9px] uppercase font-mono">Alta</Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="p-[18px] border-t border-[#222] bg-[#111]/50 rounded-b-[10px]">
+                <div className="flex items-center justify-between">
+                  <div className="text-center flex-1 border-r border-[#222]">
+                    <p className="text-[9px] text-neutral-500 font-mono mb-1">EM PROGRESSO</p>
+                    <p className="text-base font-bold text-white">{tarefasStats.in_progress}</p>
+                  </div>
+                  <div className="text-center flex-1 border-r border-[#222]">
+                    <p className="text-[9px] text-neutral-500 font-mono mb-1">REVISÃO</p>
+                    <p className="text-base font-bold text-[#e05c00]">{tarefasStats.review}</p>
+                  </div>
+                  <div className="text-center flex-1">
+                    <p className="text-[9px] text-neutral-500 font-mono mb-1">% MÊS</p>
+                    <p className="text-base font-bold text-[#22c55e]">{tarefasStats.completed_month_percent}%</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* 4. Grid Secundário — linha inferior (3 colunas) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            {/* Equipe */}
+            <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col">
+              <div className="p-[18px] border-b border-[#222] flex items-center justify-between">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#e05c00]" /> Equipe · Ocupação
+                </h2>
+              </div>
+              <div className="p-[18px] flex-1 space-y-3">
+                 {equipe.map((m: any) => (
+                    <div key={m.id} className="flex items-center gap-3">
+                       <div className="w-7 h-7 rounded bg-[#222] text-[#e05c00] flex items-center justify-center text-[10px] font-bold shrink-0">
+                         {m.iniciais}
+                       </div>
+                       <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1.5">
+                             <span className="text-[11px] text-neutral-300 truncate pr-2">{m.nome}</span>
+                             <span className="text-[9px] font-mono text-neutral-500">{m.ocupacao_percent}%</span>
+                          </div>
+                          <Progress 
+                            value={m.ocupacao_percent} 
+                            className={`h-[5px] bg-[#222] rounded-full [&>div]:rounded-full ${m.ocupacao_percent > 80 ? '[&>div]:bg-[#ef4444]' : m.ocupacao_percent >= 60 ? '[&>div]:bg-[#e05c00]' : '[&>div]:bg-[#22c55e]'}`} 
+                          />
+                       </div>
+                    </div>
+                 ))}
+              </div>
+              <div className="p-3 border-t border-[#222] flex justify-between bg-[#0d0d0d] rounded-b-[10px] text-[10px] font-mono">
+                 <span className="text-neutral-500">Membros ativos: <strong className="text-white font-sans">{equipeStats.total}</strong></span>
+                 <span className="text-neutral-500">Capacidade média: <strong className="text-white font-sans">{equipeStats.avg_capacity}%</strong></span>
+              </div>
+            </Card>
+
+            {/* Comercial */}
+            <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col">
+              <div className="p-[18px] border-b border-[#222]">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-[#e05c00]" /> Comercial · Pipeline
+                </h2>
+              </div>
+              <div className="p-[18px] flex-1 space-y-3">
+                 {leads.length === 0 && <p className="text-xs text-neutral-600 text-center">Nenhum lead em negociação.</p>}
+                 {leads.map((l: any) => (
+                   <div key={l.id} className="p-3 rounded-[8px] bg-[#0d0d0d] border border-[#222] flex items-center justify-between">
+                      <span className="text-xs text-neutral-200 font-medium truncate pr-2">{l.nome}</span>
+                      <Badge className="bg-[#161616] text-[#22c55e] border border-[#22c55e]/20 text-[9px] uppercase font-mono shrink-0">
+                        {l.status}
+                      </Badge>
+                   </div>
+                 ))}
+              </div>
+              <div className="p-3 border-t border-[#222] bg-[#0d0d0d] rounded-b-[10px] flex justify-around text-[9px] font-mono text-center">
+                 <div>
+                    <p className="text-neutral-500 mb-0.5">ATIVOS</p>
+                    <p className="text-white font-sans font-bold text-sm">{leadsStats.ativos}</p>
+                 </div>
+                 <div>
+                    <p className="text-neutral-500 mb-0.5">NEGOCIAÇÃO</p>
+                    <p className="text-[#e05c00] font-sans font-bold text-sm">{leadsStats.negociacao}</p>
+                 </div>
+                 <div>
+                    <p className="text-neutral-500 mb-0.5">NOVOS MÊS</p>
+                    <p className="text-[#22c55e] font-sans font-bold text-sm">{leadsStats.novos_mes}</p>
+                 </div>
+              </div>
+            </Card>
+
+            {/* Aprovações + Intelligence */}
+            <div className="flex flex-col gap-4">
+               {/* Aprovações */}
+               <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col flex-1">
+                 <div className="p-[18px] border-b border-[#222]">
+                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#e05c00]" /> Fila de Aprovações
+                    </h2>
+                 </div>
+                 <div className="p-[18px] space-y-3">
+                    {aprovacoes.length === 0 && <p className="text-xs text-neutral-600 text-center">Tudo liberado!</p>}
+                    {aprovacoes.map((a: any) => (
+                      <div key={a.id} className="flex gap-3 items-start relative px-3 py-2 -mx-3 hover:bg-[#0d0d0d] transition-colors rounded">
+                         <div className="w-1.5 h-1.5 rounded-full mt-1.5 bg-[#e05c00]" />
+                         <div>
+                            <p className="text-xs text-neutral-300 font-medium mb-0.5">{a.titulo}</p>
+                            <p className="text-[9px] font-mono text-neutral-500 uppercase">{a.projeto || "Geral"}</p>
+                         </div>
+                      </div>
+                    ))}
+                 </div>
+                 {kpis.aprovacoes_pendentes > 3 && (
+                   <div className="mt-auto px-[18px] pb-[18px]">
+                     <Link href="/projetos?tab=aprovacoes" className="block w-full py-2 text-center text-[10px] font-mono text-neutral-500 border border-[#222] rounded hover:border-[#e05c00]/30 hover:text-[#e05c00] transition-colors">
+                        +{kpis.aprovacoes_pendentes - 3} Ocultas
+                     </Link>
+                   </div>
+                 )}
+               </Card>
+
+               {/* Intelligence Box */}
+               <Card className="bg-gradient-to-br from-[#161616] to-[#0a0a0a] border-[#222] rounded-[10px] relative overflow-hidden">
+                 <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#e05c00] to-transparent opacity-50" />
+                 <div className="p-[18px]">
+                    <div className="flex items-center gap-2 mb-2">
+                       <BrainCircuit className="w-4 h-4 text-[#e05c00]" />
+                       <h3 className="text-[10px] font-mono tracking-widest text-white uppercase">Intelligence</h3>
+                    </div>
+                    <p className="text-xs text-neutral-400 leading-relaxed italic">"{intelligence}"</p>
+                 </div>
+               </Card>
+            </div>
+
+          </div>
+        </>
+      )}
+
     </div>
   )
 }
 
-function DashboardCard({ 
-  title, 
-  icon: Icon, 
-  children, 
-  href, 
-  isLoading,
-  footer 
-}: { 
-  title: string
-  icon: any
-  children: React.ReactNode
-  href: string
-  isLoading?: boolean
-  footer?: string
-}) {
+function KpiCard({ title, value, icon: Icon, subtext, valueColor = "text-white" }: any) {
   return (
-    <Card className="border-[#2A2A2A] bg-[#141414] overflow-hidden group hover:border-orange-500/30 transition-all flex flex-col">
-      <CardHeader className="border-b border-[#2A2A2A] py-3 px-4 bg-[#0F0F0F]">
-        <CardTitle className="text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-400 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Icon className="w-3.5 h-3.5 text-orange-500" />
-            {title}
-          </div>
-          <Link href={href}>
-             <Button variant="ghost" size="icon" className="h-5 w-5 hover:text-orange-500">
-                <ArrowRight className="w-3 h-3" />
-             </Button>
-          </Link>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 flex-1">
-        {isLoading ? <SkeletonContent /> : children}
-      </CardContent>
-      {footer && (
-        <Link href={href} className="px-4 py-2 bg-[#0F0F0F] border-t border-[#2A2A2A] text-[9px] font-mono text-neutral-600 hover:text-orange-500 transition-colors uppercase">
-          {footer} →
-        </Link>
-      )}
+    <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col p-[18px]">
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-xs font-mono text-neutral-500 uppercase">{title}</h3>
+        <Icon className="w-4 h-4 text-[#e05c00]" />
+      </div>
+      <p className={`text-4xl font-bold font-display ${valueColor}`}>{value}</p>
+      {subtext && <p className="text-[10px] text-neutral-500 mt-2 font-mono">{subtext}</p>}
     </Card>
   )
 }
 
-function SkeletonCard({ className }: { className?: string }) {
-  return (
-    <div className={cn("bg-[#141414] border border-[#2A2A2A] rounded-lg animate-pulse", className)} />
-  )
-}
-
-function SkeletonContent() {
-  return (
-    <div className="space-y-4">
-      <div className="h-8 w-16 bg-[#1A1A1A] rounded" />
-      <div className="space-y-2">
-        <div className="h-4 w-full bg-[#1A1A1A] rounded" />
-        <div className="h-4 w-3/4 bg-[#1A1A1A] rounded" />
-      </div>
-    </div>
-  )
+function getStageBadgeColor(stage: string) {
+  const s = (stage || "").toLowerCase()
+  if (s.includes('mvp')) return 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
+  if (s.includes('diagn')) return 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+  if (s.includes('prop')) return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+  return 'bg-[#222] text-neutral-400 border border-[#333]'
 }
