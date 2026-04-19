@@ -11,6 +11,7 @@ import {
   FolderKanban,
   User,
   MoreVertical,
+  ListTodo,
 } from "lucide-react"
 
 export const statusConfig: Record<string, { label: string; color: string; icon: typeof Circle }> = {
@@ -26,13 +27,16 @@ export const priorityConfig: Record<string, { label: string; color: string }> = 
   alta: { label: "ALTA", color: "border-red-500 text-red-500" },
 }
 
-export function TaskCard({ task }: { task: any }) {
+export function TaskCard({ task, onClick }: { task: any, onClick?: () => void }) {
   const status = statusConfig[task.status] || statusConfig["a_fazer"]
   const priority = priorityConfig[task.prioridade] || priorityConfig["media"]
   const StatusIcon = status.icon
   
   return (
-    <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
+    <Card 
+      className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors cursor-pointer"
+      onClick={onClick}
+    >
       <CardContent className="p-3 sm:p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2 flex-wrap">
@@ -59,6 +63,12 @@ export function TaskCard({ task }: { task: any }) {
             <User className="w-3 h-3" />
             {task.responsavel_id ? "Atribuída" : "Não atribuída"}
           </div>
+          {task.checklist_total > 0 && (
+            <div className="flex items-center gap-1 text-orange-500 font-mono">
+              <ListTodo className="w-3 h-3" />
+              {task.checklist_done}/{task.checklist_total}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between pt-3 border-t border-[#2A2A2A] flex-wrap gap-2">

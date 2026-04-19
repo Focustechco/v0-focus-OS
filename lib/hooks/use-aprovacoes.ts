@@ -26,23 +26,11 @@ export function useAprovacoes() {
   }
 
   const fetcher = async () => {
-    await checkAuth()
-    const { data, error } = await supabase
-      .from("aprovacoes")
-      .select(`
-        *,
-        projetos (
-          nome
-        )
-      `)
-      .order("created_at", { ascending: false })
-
-    if (error) {
-      console.error("Erro ao buscar aprovacoes (JSON):", JSON.stringify(error, null, 2))
-      throw error
+    const res = await fetch('/api/approvals')
+    if (!res.ok) {
+      throw new Error("Erro ao buscar aprovações")
     }
-
-    return data as Aprovacao[]
+    return res.json()
   }
 
   const { data, error, isLoading, mutate } = useSWR<Aprovacao[]>("aprovacoes", fetcher)

@@ -36,6 +36,7 @@ import {
   MessageSquare,
   MoreVertical,
   Loader2,
+  Trash2,
 } from "lucide-react"
 
 import { useTarefas } from "@/lib/hooks/use-tarefas"
@@ -45,13 +46,16 @@ import { useEquipe } from "@/lib/hooks/use-equipe"
 import { useToast } from "../reports/toast-notification"
 
 import { TaskCard } from "./task-card"
+import { TaskDetailsModal } from "./task-details-modal"
 
 export function TasksTab() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<any>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   
-  const { tasks, addTask, isLoading } = useTarefas()
+  const { tasks, addTask, isLoading, mutate } = useTarefas()
   const { projects } = useProjetos()
   const { sprints } = useSprints()
   const { equipe } = useEquipe()
@@ -67,6 +71,10 @@ export function TasksTab() {
     status: "a_fazer",
     prazo: ""
   })
+  
+  const [checklistItems, setChecklistItems] = useState<{ title: string; assigned_to: string }[]>([])
+  const [newItemTitle, setNewItemTitle] = useState("")
+  const [newItemAssignedTo, setNewItemAssignedTo] = useState("")
 
   const handleCreateTask = async () => {
     if (!formData.titulo || !formData.projeto_id) {
@@ -78,12 +86,28 @@ export function TasksTab() {
     try {
       const result = await addTask(formData)
       if (result?.data) {
+        const taskId = result.data.id
+
+        // Salvar itens de checklist se houver
+        if (checklistItems.length > 0) {
+          await fetch('/api/checklist-items', {
+            method: 'POST',
+            body: JSON.stringify({
+              task_id: taskId,
+              project_id: formData.projeto_id,
+              items: checklistItems
+            })
+          })
+        }
+
         showToast("success", "Tarefa criada com sucesso!")
         setDialogOpen(false)
         setFormData({
           titulo: "", descricao: "", projeto_id: "", sprint_id: "", 
           responsavel_id: "", prioridade: "media", status: "a_fazer", prazo: ""
         })
+        setChecklistItems([])
+        mutate()
       }
     } catch (err) {
       showToast("error", "Erro ao criar tarefa.")
@@ -227,6 +251,76 @@ export function TasksTab() {
                     </div>
                   </div>
 
+                  {/* Seção de Checklist */}
+                  <div className="space-y-4 pt-4 border-t border-[#2A2A2A]">
+                    <Label className="text-orange-500 text-xs font-mono uppercase tracking-widest">Itens de Checklist</Label>
+                    
+                    <div className="flex flex-col gap-3 p-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Input 
+                          placeholder="Título do item..."
+                          className="bg-[#141414] border-[#2A2A2A] text-xs h-8 flex-1"
+                          value={newItemTitle}
+                          onChange={(e) => setNewItemTitle(e.target.value)}
+                        />
+                        <Select value={newItemAssignedTo} onValueChange={setNewItemAssignedTo}>
+                          <SelectTrigger className="bg-[#141414] border-[#2A2A2A] text-xs h-8 sm:w-40">
+                            <SelectValue placeholder="Atribuir..." />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                            <SelectItem value="none">Sem responsável</SelectItem>
+                            {equipe.map(m => (
+                              <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button 
+                          size="sm" 
+                          variant="secondary" 
+                          className="h-8 text-xs bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white border border-orange-500/20"
+                          type="button"
+                          onClick={() => {
+                            if (!newItemTitle) return
+                            setChecklistItems([...checklistItems, { 
+                              title: newItemTitle, 
+                              assigned_to: newItemAssignedTo === "none" ? "" : newItemAssignedTo 
+                            }])
+                            setNewItemTitle("")
+                            setNewItemAssignedTo("")
+                          }}
+                        >
+                          <Plus className="w-3 h-3 mr-1" /> Add
+                        </Button>
+                      </div>
+
+                      {checklistItems.length > 0 && (
+                        <div className="space-y-2 mt-2">
+                          {checklistItems.map((item, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-2 bg-[#141414] rounded-md border border-[#2A2A2A] group">
+                              <div className="flex flex-col overflow-hidden">
+                                <span className="text-xs text-white truncate">{item.title}</span>
+                                {item.assigned_to && (
+                                  <span className="text-[9px] text-orange-500 font-mono">
+                                    Resp: {equipe.find(m => m.id === item.assigned_to)?.nome}
+                                  </span>
+                                )}
+                              </div>
+                              <Button 
+                                size="icon" 
+                                variant="ghost" 
+                                className="h-6 w-6 text-neutral-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                type="button"
+                                onClick={() => setChecklistItems(checklistItems.filter((_, i) => i !== idx))}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   <div className="flex justify-end gap-3 pt-4">
                     <Button variant="outline" className="border-[#2A2A2A]" onClick={() => setDialogOpen(false)}>
                       Cancelar
@@ -276,9 +370,23 @@ export function TasksTab() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {filteredTasks.map((task: any) => (
-              <TaskCard key={task.id} task={task} />
+              <TaskCard 
+                key={task.id} 
+                task={task} 
+                onClick={() => {
+                  setSelectedTask(task)
+                  setIsDetailsOpen(true)
+                }}
+              />
             ))}
           </div>
+
+          <TaskDetailsModal 
+            task={selectedTask}
+            open={isDetailsOpen}
+            onOpenChange={setIsDetailsOpen}
+            onUpdate={mutate}
+          />
         </>
       )}
     </div>

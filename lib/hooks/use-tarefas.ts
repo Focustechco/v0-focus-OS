@@ -24,7 +24,13 @@ export function useTarefas(sprintId?: string, projetoId?: string) {
 
   const fetcher = async () => {
     await checkAuth()
-    let query = supabase.from("tarefas").select("*")
+    let query = supabase.from("tarefas").select(`
+      *,
+      checklist_items (
+        id,
+        is_done
+      )
+    `)
     
     if (sprintId) {
       query = query.eq("sprint_id", sprintId)
@@ -40,7 +46,14 @@ export function useTarefas(sprintId?: string, projetoId?: string) {
       throw error
     }
 
-    return data as Task[]
+    // Add summary fields for UI
+    const tasksWithChecklist = data?.map((t: any) => ({
+      ...t,
+      checklist_total: t.checklist_items?.length || 0,
+      checklist_done: t.checklist_items?.filter((i: any) => i.is_done).length || 0
+    }))
+
+    return tasksWithChecklist as Task[]
   }
 
   const { data, error, isLoading, mutate } = useSWR(

@@ -9,7 +9,6 @@ import { Loader2 } from "lucide-react"
 import { VisaoGeralTab } from "@/components/projetos/visao-geral-tab"
 import { SprintsTab } from "@/components/projetos/sprints-tab"
 import { TasksTab } from "@/components/projetos/tasks-tab"
-import { ChecklistsTab } from "@/components/projetos/checklists-tab"
 import { AprovacoesTab } from "@/components/projetos/aprovacoes-tab"
 import { PrazosTab } from "@/components/projetos/prazos-tab"
 import { useIntelligence } from "@/lib/hooks/use-intelligence"
@@ -22,7 +21,6 @@ export default function ProjetosPage() {
     { value: "visao-geral", label: "VISAO GERAL" },
     { value: "sprints", label: "SPRINTS", badge: metrics?.kpis?.activeSprints || 0 },
     { value: "tasks", label: "TAREFAS", badge: metrics?.activeTasksCount || 0 },
-    { value: "checklists", label: "CHECKLISTS" },
     { value: "aprovacoes", label: "APROVACOES", badge: Number(metrics?.alerts?.approvalsCount || 0) },
     { value: "prazos", label: "PRAZOS & ENTREGAS" },
   ]
@@ -69,9 +67,6 @@ export default function ProjetosPage() {
             </TabsContent>
             <TabsContent value="tasks" className="mt-0 outline-none">
               <TasksTab />
-            </TabsContent>
-            <TabsContent value="checklists" className="mt-0 outline-none">
-              <ChecklistsTab />
             </TabsContent>
             <TabsContent value="aprovacoes" className="mt-0 outline-none">
               <AprovacoesTab />

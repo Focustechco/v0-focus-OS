@@ -287,3 +287,53 @@ model Notification {
   @@index([userId, createdAt])
   @@map("notifications")
 }
+
+model Task {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  titulo          String
+  descricao       String?
+  projeto_id      String          @db.Uuid
+  sprint_id       String?         @db.Uuid
+  responsavel_id  String?         @db.Uuid
+  prazo           DateTime?
+  prioridade      String          @default("media")
+  status          String          @default("a_fazer")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  
+  // Relations
+  checklistItems  ChecklistItem[]
+  approvals       Approval[]
+
+  @@map("tarefas")
+}
+
+model ChecklistItem {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  taskId      String    @map("task_id") @db.Uuid
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title       String
+  isDone      Boolean   @default(false) @map("is_done")
+  assignedTo  String?   @map("assigned_to") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  approvals   Approval[]
+
+  @@map("checklist_items")
+}
+
+model Approval {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  checklistId     String?        @map("checklist_item_id") @db.Uuid
+  checklistItem   ChecklistItem? @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  taskId          String?        @map("task_id") @db.Uuid
+  task            Task?          @relation(fields: [taskId], references: [id])
+  projetoId       String         @map("project_id") @db.Uuid
+  assignedTo      String?        @map("assigned_to") @db.Uuid
+  status          String         @default("pendente")
+  priority        String         @default("media")
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  @@map("aprovacoes")
+}
+
