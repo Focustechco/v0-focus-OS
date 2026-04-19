@@ -1,27 +1,26 @@
 import useSWR from "swr"
-import { supabase } from "@/lib/supabase"
+
+const fetcher = async () => {
+  const res = await fetch('/api/dashboard')
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}))
+    throw new Error(json?.error || `Erro ${res.status} ao carregar dashboard`)
+  }
+  return res.json()
+}
 
 export function useDashboard() {
-  const fetcher = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return null
-
-    const res = await fetch('/api/dashboard')
-    if (!res.ok) throw new Error("Erro ao carregar os dados do dashboard")
-
-    const jsonData = await res.json()
-    if (jsonData.error) throw new Error(jsonData.error)
-    return jsonData
-  }
-
   const { data, error, isLoading, mutate } = useSWR("dashboard-consolidated", fetcher, {
-    refreshInterval: 60000 
+    refreshInterval: 60000,
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
   })
 
   return {
     data,
     isLoading,
-    isError: error,
-    mutate
+    isError: !!error,
+    errorMessage: error?.message,
+    mutate,
   }
 }

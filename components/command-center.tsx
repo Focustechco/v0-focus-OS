@@ -24,7 +24,7 @@ import {
 } from "lucide-react"
 
 export function CommandCenter() {
-  const { data, isLoading, isError } = useDashboard()
+  const { data, isLoading, isError, errorMessage } = useDashboard()
   const [sessionUser, setSessionUser] = useState<any>(null)
   const [greeting, setGreeting] = useState("Bom dia")
   const [currentDate, setCurrentDate] = useState("")
@@ -64,10 +64,16 @@ export function CommandCenter() {
     return (
       <div className="rounded-[10px] border border-red-500/30 bg-red-500/10 p-[18px]">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
+          <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-medium text-red-500">Erro de conexão</p>
-            <p className="text-xs text-neutral-400 mt-1">Não foi possível carregar o dashboard.</p>
+            <p className="text-sm font-medium text-red-500">Erro ao carregar o dashboard</p>
+            <p className="text-xs text-neutral-400 mt-1">{errorMessage || "Verifique a conexão com o servidor."}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-3 text-[10px] font-mono uppercase text-neutral-500 hover:text-white border border-[#333] rounded px-3 py-1 transition-colors"
+            >
+              Tentar novamente
+            </button>
           </div>
         </div>
       </div>
