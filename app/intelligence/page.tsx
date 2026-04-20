@@ -162,11 +162,11 @@ export default function IntelligencePage() {
   }
 
   return (
-    <PageWrapper title="INTELLIGENCE" breadcrumb="INTELLIGENCE CENTER">
+    <PageWrapper title="INTELIGENCE" breadcrumb="INTELIGENCE CENTER">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-xl font-display font-bold text-white">Intelligence Center</h1>
+              <h1 className="text-xl font-display font-bold text-white">Inteligence Center</h1>
               <p className="text-sm text-neutral-500">Metricas conectadas em tempo real com o Supabase</p>
             </div>
 

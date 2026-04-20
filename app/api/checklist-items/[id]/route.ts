@@ -4,10 +4,10 @@ import { createAdminClient } from "@/lib/supabase/server"
 // PATCH /api/checklist-items/[id]
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
     const { is_done } = body
 
@@ -27,7 +27,29 @@ export async function PATCH(
 
     if (updateError) throw updateError
 
-    // 2. If item is marked as done, update corresponding approval
+    // 2. Fetch all checklist items for the same task to recalculate progress
+    const { data: allItems, error: itemsError } = await supabase
+      .from("checklist_items")
+      .select("is_done")
+      .eq("task_id", updatedItem.task_id)
+
+    if (!itemsError && allItems && allItems.length > 0) {
+      const total = allItems.length
+      const doneItems = allItems.filter(item => item.is_done).length
+      const progress = Math.round((doneItems / total) * 100)
+
+      let status = 'a_fazer'
+      if (progress > 0 && progress < 50) status = 'em_progresso'
+      if (progress >= 50 && progress < 100) status = 'revisao'
+      if (progress === 100) status = 'concluida'
+
+      await supabase
+        .from("tarefas")
+        .update({ progress, status })
+        .eq("id", updatedItem.task_id)
+    }
+
+    // 3. If item is marked as done, update corresponding approval
     if (is_done === true) {
       const { error: approvalError } = await supabase
         .from("aprovacoes")
@@ -37,10 +59,6 @@ export async function PATCH(
       if (approvalError) {
         console.error("Error updating corresponding approval:", approvalError)
       }
-    } else {
-        // Option: if it was undone, mark approval as pending again? 
-        // The prompt only mentions when is_done=true -> status='aprovado'.
-        // Let's keep it simple as requested.
     }
 
     return NextResponse.json(updatedItem)

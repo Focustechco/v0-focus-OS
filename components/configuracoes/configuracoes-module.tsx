@@ -17,6 +17,7 @@ import {
   Monitor,
   Save,
   X,
+  ChevronLeft,
 } from "lucide-react"
 
 import { PerfilIdentidadeSection } from "./sections/perfil-identidade-section"
@@ -54,6 +55,7 @@ const groupedSections = sections.reduce((acc, section) => {
 export function ConfiguracoesModule() {
   const [activeSection, setActiveSection] = useState("modulos")
   const [hasChanges, setHasChanges] = useState(false)
+  const [mobileView, setMobileView] = useState<"menu" | "content">("menu")
 
   const renderSection = () => {
     switch (activeSection) {
@@ -89,7 +91,7 @@ export function ConfiguracoesModule() {
   return (
     <div className="flex h-full bg-[#0d0d0d]">
       {/* Sidebar */}
-      <div className="w-60 bg-[#0d0d0d] border-r border-[#2a2a2a] flex flex-col">
+      <div className={`w-full md:w-60 bg-[#0d0d0d] border-r border-[#2a2a2a] flex-col ${mobileView === 'content' ? 'hidden md:flex' : 'flex'}`}>
         <ScrollArea className="flex-1 p-3">
           <div className="space-y-6">
             {Object.entries(groupedSections).map(([group, items]) => (
@@ -101,7 +103,10 @@ export function ConfiguracoesModule() {
                   {items.map((section) => (
                     <button
                       key={section.id}
-                      onClick={() => setActiveSection(section.id)}
+                      onClick={() => {
+                        setActiveSection(section.id)
+                        setMobileView("content")
+                      }}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded text-left transition-all ${
                         activeSection === section.id
                           ? "bg-[#1a1a1a] text-orange-500 border-l-[3px] border-l-orange-500"
@@ -129,12 +134,23 @@ export function ConfiguracoesModule() {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex-col ${mobileView === 'menu' ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#2a2a2a] flex items-center justify-between">
-          <div>
-            <p className="text-neutral-500 text-xs font-mono tracking-widest">
+        <div className="px-6 py-4 border-b border-[#2a2a2a] flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden -ml-2 text-neutral-400 hover:text-white"
+              onClick={() => setMobileView("menu")}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <p className="text-neutral-500 text-xs font-mono tracking-widest hidden sm:block">
               CONFIGURACOES / <span className="text-orange-500">{currentSection?.label.toUpperCase()}</span>
+            </p>
+            <p className="text-neutral-500 text-xs font-mono tracking-widest sm:hidden">
+              <span className="text-orange-500">{currentSection?.label.toUpperCase()}</span>
             </p>
           </div>
           {hasChanges && (
@@ -156,12 +172,12 @@ export function ConfiguracoesModule() {
 
         {/* Unsaved Changes Bar */}
         {hasChanges && (
-          <div className="px-6 py-3 bg-[#141414] border-t border-[#2a2a2a] flex items-center justify-between animate-in slide-in-from-bottom-2">
-            <p className="text-neutral-400 text-sm font-mono flex items-center gap-2">
-              <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+          <div className="px-4 md:px-6 py-3 bg-[#141414] border-t border-[#2a2a2a] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in slide-in-from-bottom-2">
+            <p className="text-neutral-400 text-xs md:text-sm font-mono flex items-center gap-2">
+              <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse flex-shrink-0" />
               Voce tem alteracoes nao salvas
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
                 variant="ghost"
                 onClick={() => setHasChanges(false)}

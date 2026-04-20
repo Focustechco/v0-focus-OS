@@ -31,7 +31,7 @@ const ALL_MODULES = [
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
   { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "Comercial" },
   { id: "equipe",         href: "/equipe",    icon: Users,           label: "Equipe" },
-  { id: "intelligence",   href: "/intelligence", icon: Grid, label: "Intelligence" },
+  { id: "intelligence",   href: "/intelligence", icon: Grid, label: "Inteligence" },
   { id: "clientes",       href: "/clientes",  icon: Users,           label: "Clientes" },
   { id: "relatorios",     href: "/relatorios", icon: Briefcase,       label: "Relatórios" },
   { id: "sistemas",       href: "/sistemas",  icon: Briefcase,       label: "Sistemas" },

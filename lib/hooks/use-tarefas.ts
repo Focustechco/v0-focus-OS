@@ -28,7 +28,9 @@ export function useTarefas(sprintId?: string, projetoId?: string) {
       *,
       checklist_items (
         id,
-        is_done
+        title,
+        is_done,
+        assigned_to
       )
     `)
     

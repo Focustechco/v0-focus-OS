@@ -92,12 +92,18 @@ export function TasksTab() {
         if (checklistItems.length > 0) {
           await fetch('/api/checklist-items', {
             method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
               task_id: taskId,
               project_id: formData.projeto_id,
               items: checklistItems
             })
           })
+          
+          // Força atualização agressiva após inserir itens
+          mutate() 
         }
 
         showToast("success", "Tarefa criada com sucesso!")
@@ -226,7 +232,7 @@ export function TasksTab() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label className="text-neutral-400 text-xs">Prioridade</Label>
                       <Select value={formData.prioridade} onValueChange={(v) => setFormData({...formData, prioridade: v})}>
@@ -237,6 +243,20 @@ export function TasksTab() {
                           <SelectItem value="baixa">Baixa</SelectItem>
                           <SelectItem value="media">Média</SelectItem>
                           <SelectItem value="alta">Alta</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-neutral-400 text-xs">Status</Label>
+                      <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v})}>
+                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectItem value="a_fazer">A Fazer</SelectItem>
+                          <SelectItem value="em_progresso">Em Progresso</SelectItem>
+                          <SelectItem value="revisao">Revisão</SelectItem>
+                          <SelectItem value="concluida">Concluída</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

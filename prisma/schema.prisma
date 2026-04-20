@@ -298,6 +298,7 @@ model Task {
   prazo           DateTime?
   prioridade      String          @default("media")
   status          String          @default("a_fazer")
+  progress        Int             @default(0)
   createdAt       DateTime        @default(now()) @map("created_at")
   
   // Relations

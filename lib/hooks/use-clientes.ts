@@ -24,14 +24,11 @@ const fetcher = async (url: string) => {
 export function useClientes() {
   const { data: clientes, error, isLoading, mutate } = useSWR<Cliente[]>('/api/clientes', fetcher)
 
-  const addCliente = async (cliente: Omit<Cliente, 'id' | 'created_at'>) => {
+  const addCliente = async (cliente: FormData) => {
     try {
       const res = await fetch('/api/clientes', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(cliente)
+        body: cliente
       })
 
       const json = await res.json()

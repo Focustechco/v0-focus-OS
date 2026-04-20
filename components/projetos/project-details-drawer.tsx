@@ -22,7 +22,8 @@ import {
   Plus,
   MoreVertical,
   Clock,
-  ArrowUpRight
+  ArrowUpRight,
+  Paperclip
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { supabase } from "@/lib/supabase"
@@ -33,6 +34,7 @@ import { useAllReports } from "@/lib/hooks/use-relatorios"
 import { TaskCard } from "./task-card"
 import { SprintCard } from "./sprint-card"
 import { NovoRelatorioWizard } from "@/components/reports/novo-relatorio-wizard"
+import { ContratoTab } from "./contrato-tab"
 import { useRouter } from "next/navigation"
 
 interface ProjectDetailsDrawerProps {
@@ -170,6 +172,10 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                   <History className="w-3.5 h-3.5 mr-2" />
                   Histórico
                 </TabsTrigger>
+                <TabsTrigger value="contrato" className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-orange-500 data-[state=active]:border-b-2 data-[state=active]:border-orange-500 rounded-none h-full px-0 font-mono text-[9px] uppercase tracking-widest">
+                  <Paperclip className="w-3.5 h-3.5 mr-2" />
+                  Contrato
+                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -284,6 +290,13 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                     <p className="text-[10px] text-neutral-500 font-mono uppercase">{new Date(project.created_at).toLocaleString()}</p>
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="contrato" className="m-0">
+                <div className="mb-4">
+                  <h4 className="text-[10px] font-mono uppercase text-neutral-500 tracking-widest">Documentos do contrato</h4>
+                </div>
+                <ContratoTab projectId={project.id} />
               </TabsContent>
             </div>
           </Tabs>

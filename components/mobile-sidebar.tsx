@@ -62,7 +62,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
     { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: stats.comercial > 0 ? stats.comercial : null },
     { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
     { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
-    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELLIGENCE", hasSubmenu: "intelligence" },
+    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELIGENCE", hasSubmenu: "intelligence" },
     { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
     { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
   ]

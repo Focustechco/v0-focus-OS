@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Clock,
   CheckCircle2,
@@ -11,72 +12,214 @@ import {
   FolderKanban,
   User,
   MoreVertical,
-  ListTodo,
 } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useSWRConfig } from "swr"
 
 export const statusConfig: Record<string, { label: string; color: string; icon: typeof Circle }> = {
   a_fazer: { label: "A FAZER", color: "bg-neutral-500", icon: Circle },
   em_progresso: { label: "EM PROGRESSO", color: "bg-blue-500", icon: Clock },
-  em_revisao: { label: "EM REVISAO", color: "bg-yellow-500", icon: AlertTriangle },
-  concluida: { label: "CONCLUIDO", color: "bg-green-500", icon: CheckCircle2 },
+  em_revisao: { label: "EM REVISÃO", color: "bg-yellow-500", icon: AlertTriangle },
+  concluida: { label: "CONCLUÍDO", color: "bg-green-500", icon: CheckCircle2 },
 }
 
-export const priorityConfig: Record<string, { label: string; color: string }> = {
-  baixa: { label: "BAIXA", color: "border-neutral-500 text-neutral-400" },
-  media: { label: "MEDIA", color: "border-yellow-500 text-yellow-500" },
-  alta: { label: "ALTA", color: "border-red-500 text-red-500" },
+export const priorityConfig: Record<string, { label: string; color: string; bar: string }> = {
+  baixa: { label: "BAIXA", color: "border-neutral-500 text-neutral-400", bar: "bg-neutral-700" },
+  media: { label: "MÉDIA", color: "border-yellow-500/50 text-yellow-500", bar: "bg-[#e05c00]" }, // amber escuro
+  alta: { label: "ALTA", color: "border-red-500/50 text-red-500", bar: "bg-red-800" },
 }
 
 export function TaskCard({ task, onClick }: { task: any, onClick?: () => void }) {
-  const status = statusConfig[task.status] || statusConfig["a_fazer"]
-  const priority = priorityConfig[task.prioridade] || priorityConfig["media"]
-  const StatusIcon = status.icon
+  const { mutate } = useSWRConfig()
+  const [optimisticTask, setOptimisticTask] = useState(task)
+
+  useEffect(() => {
+    setOptimisticTask(task)
+  }, [task])
+
+  const checklistItems = optimisticTask.checklist_items || []
+  const hasChecklist = checklistItems.length > 0
+  const doneItems = checklistItems.filter((i: any) => i.is_done).length
+  const totalItems = checklistItems.length
   
+  const currentProgress = optimisticTask.progress ?? 0
+  const status = statusConfig[optimisticTask.status] || statusConfig["a_fazer"]
+  const priority = priorityConfig[optimisticTask.prioridade] || priorityConfig["media"]
+
+  const isCompleted = optimisticTask.status === "concluida"
+
+  // Zona 1 - Accent Bar color
+  const accentBarColor = isCompleted ? "bg-green-800" : priority.bar
+
+  // Progresso color
+  let progressColor = "bg-orange-500"
+  if (currentProgress >= 50 && currentProgress < 100) progressColor = "bg-yellow-500"
+  if (currentProgress === 100) progressColor = "bg-green-500"
+
+  const handleToggleCircle = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const newStatus = isCompleted ? "a_fazer" : "concluida"
+    const newProgress = isCompleted ? 0 : 100
+    
+    // Optimistic update
+    setOptimisticTask({
+      ...optimisticTask,
+      status: newStatus,
+      progress: newProgress,
+      checklist_items: checklistItems.map((item: any) => ({ ...item, is_done: !isCompleted }))
+    })
+
+    // Back-end call
+    await fetch(`/api/tarefas/${optimisticTask.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: newStatus, progress: newProgress, update_checklist: true }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    
+    mutate(key => typeof key === 'string' && key.startsWith('tarefas'))
+  }
+
+  const handleChecklistItem = async (e: React.MouseEvent, itemId: string, currentIsDone: boolean) => {
+    e.stopPropagation()
+    const newIsDone = !currentIsDone
+    
+    // Recalculate optimistically
+    const newChecklist = checklistItems.map((item: any) => 
+      item.id === itemId ? { ...item, is_done: newIsDone } : item
+    )
+    const newDoneItems = newChecklist.filter((i: any) => i.is_done).length
+    const newProgress = totalItems > 0 ? Math.round((newDoneItems / totalItems) * 100) : 0
+    
+    let newStatus = 'a_fazer'
+    if (newProgress > 0 && newProgress < 50) newStatus = 'em_progresso'
+    if (newProgress >= 50 && newProgress < 100) newStatus = 'em_revisao'
+    if (newProgress === 100) newStatus = 'concluida'
+
+    setOptimisticTask({
+      ...optimisticTask,
+      status: newStatus,
+      progress: newProgress,
+      checklist_items: newChecklist
+    })
+
+    await fetch(`/api/checklist-items/${itemId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_done: newIsDone }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    mutate(key => typeof key === 'string' && key.startsWith('tarefas'))
+  }
+
   return (
     <Card 
-      className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors cursor-pointer"
       onClick={onClick}
+      className={`bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors cursor-pointer relative overflow-hidden flex flex-col`}
     >
-      <CardContent className="p-3 sm:p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <StatusIcon className={`w-4 h-4 ${task.status === "concluida" ? "text-green-500" : task.status === "em_revisao" ? "text-yellow-500" : task.status === "em_progresso" ? "text-blue-500" : "text-neutral-500"}`} />
-            <span className="text-xs text-orange-500 font-mono">{task.codigo_tarefa || task.id.substring(0,8)}</span>
-            <Badge variant="outline" className={`text-[9px] ${priority.color}`}>
+      {/* Zona 1: Barra de acento */}
+      <div className={`absolute top-0 left-0 right-0 h-[2px] ${accentBarColor}`} />
+
+      <CardContent className="p-4 flex flex-col gap-4">
+        
+        {/* Zona 2: Header */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-2 flex-1 min-w-0 pr-2">
+            <button 
+              onClick={handleToggleCircle}
+              className="text-neutral-500 hover:text-white transition-colors flex-shrink-0"
+            >
+              {isCompleted ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className="w-5 h-5" />}
+            </button>
+            <span className="text-xs text-neutral-500 font-mono flex-shrink-0">
+              {optimisticTask.codigo_tarefa || optimisticTask.id.substring(0,8)}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Badge variant="outline" className={`text-[9px] uppercase ${priority.color}`}>
               {priority.label}
             </Badge>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white" onClick={(e) => e.stopPropagation()}>
+              <MoreVertical className="w-4 h-4" />
+            </Button>
           </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white flex-shrink-0">
-            <MoreVertical className="w-4 h-4" />
-          </Button>
+        </div>
+        
+        <div>
+          <h3 className={`text-sm font-medium line-clamp-2 ${isCompleted ? 'text-neutral-500 line-through' : 'text-white'}`}>
+            {optimisticTask.titulo}
+          </h3>
+          <p className="text-[10px] text-neutral-500 line-clamp-1 mt-1">
+            {optimisticTask.descricao || "Sem projeto"}
+          </p>
         </div>
 
-        <h3 className="text-sm font-medium text-white mb-1 line-clamp-2">{task.titulo}</h3>
-        <p className="text-[10px] text-neutral-500 mb-3 line-clamp-2">{task.descricao || "Sem descrição"}</p>
-
-        <div className="flex items-center gap-2 sm:gap-4 text-[10px] text-neutral-400 mb-3 flex-wrap">
+        {/* Zona 3: Meta */}
+        <div className="flex items-center gap-3 text-[10px] text-neutral-500">
           <div className="flex items-center gap-1">
             <FolderKanban className="w-3 h-3" />
-            {task.sprint_id ? "Sprints" : "Geral"}
+            {optimisticTask.sprint_id ? "Sprint 4" : "Geral"}
           </div>
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
-            {task.responsavel_id ? "Atribuída" : "Não atribuída"}
+            {optimisticTask.responsavel_id ? "DV" : "TL"}
           </div>
-          {task.checklist_total > 0 && (
-            <div className="flex items-center gap-1 text-orange-500 font-mono">
-              <ListTodo className="w-3 h-3" />
-              {task.checklist_done}/{task.checklist_total}
-            </div>
-          )}
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-[#2A2A2A] flex-wrap gap-2">
-          <Badge className={`text-[9px] ${status.color} text-white`}>
+        {/* Zona 4: Barra de Progresso */}
+        <div className="space-y-1.5">
+          <div className="flex justify-between items-center text-[9px] font-mono font-bold text-neutral-500 uppercase tracking-wider">
+            <span>Progresso</span>
+            <span className={isCompleted ? "text-green-500" : (currentProgress > 0 ? "text-orange-500" : "")}>
+              {currentProgress}%
+            </span>
+          </div>
+          <div className="h-[3px] bg-neutral-800 rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${progressColor} transition-all duration-300`} 
+              style={{ width: `${currentProgress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Zona 5: Checklist */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center text-[9px] font-mono uppercase text-neutral-500">
+            <span>Checklist de entrega</span>
+            <span>{doneItems}/{totalItems} concluídos</span>
+          </div>
+          <div className="space-y-2 mt-2">
+            {!hasChecklist && (
+              <p className="text-[10px] text-neutral-600 italic">Nenhum item vinculado</p>
+            )}
+            {checklistItems.map((item: any) => (
+              <div key={item.id} className="flex items-start gap-2 group">
+                <Checkbox 
+                  checked={item.is_done}
+                  onCheckedChange={() => {}}
+                  onClick={(e) => handleChecklistItem(e as any, item.id, item.is_done)}
+                  className="mt-0.5"
+                />
+                <span className={`text-xs flex-1 ${item.is_done ? 'text-neutral-600 line-through' : 'text-neutral-300'}`}>
+                  {item.title}
+                </span>
+                <span className="text-[9px] font-mono text-neutral-600 ml-2 group-hover:text-neutral-400">
+                  {item.assigned_to ? "TL" : "DV"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Zona 6: Rodapé */}
+        <div className="flex justify-between items-center pt-3 border-t border-[#2A2A2A] mt-auto">
+          <Badge className={`text-[9px] uppercase ${isCompleted ? 'bg-transparent border border-neutral-700 text-neutral-500' : 'bg-transparent border border-neutral-700 text-neutral-400 hover:text-white'}`}>
             {status.label}
           </Badge>
-          <span className="text-[10px] text-neutral-500">{task.prazo || "-"}</span>
+          <span className="text-[9px] font-mono text-red-500">
+            {optimisticTask.prazo ? new Date(optimisticTask.prazo).toISOString().split('T')[0] : "Sem prazo"}
+          </span>
         </div>
+
       </CardContent>
     </Card>
   )

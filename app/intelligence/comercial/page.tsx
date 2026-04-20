@@ -47,7 +47,7 @@ export default function SetorComercialPage() {
   ]
 
   return (
-    <PageWrapper title="SETOR COMERCIAL" breadcrumb="INTELLIGENCE > COMERCIAL">
+    <PageWrapper title="SETOR COMERCIAL" breadcrumb="INTELIGENCE > COMERCIAL">
       <main className="flex-1 space-y-6">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
