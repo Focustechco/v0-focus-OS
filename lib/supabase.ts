@@ -17,8 +17,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
  * Instancia unica do cliente Supabase para o Frontend.
  */
 export const supabase = createBrowserClient(
-  supabaseUrl || "",
-  supabaseAnonKey || ""
+  supabaseUrl || "https://vxxxxxxxxx.supabase.co",
+  supabaseAnonKey || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy"
 )
 
 /**
