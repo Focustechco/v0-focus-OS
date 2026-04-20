@@ -344,11 +344,20 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const pastaFinal = criandoPasta ? novaPasta.trim() : form.pasta === "_sem_pasta" ? "" : form.pasta
+      // Busca o ID do membro na tabela equipe (a FK criado_por referencia equipe.id)
+      const { data: equipeMember } = await supabase
+        .from("equipe")
+        .select("id")
+        .eq("usuario_id", user.id)
+        .maybeSingle()
 
-      const row: any = {
+      const pastaFinal = criandoPasta ? novaPasta.trim() : form.pasta === "_sem_pasta" ? "" : form.pasta
+      const urlFinal = form.url.startsWith("http") ? form.url : `https://${form.url}`
+
+      // Tenta inserir com todos os campos (schema atualizado)
+      const fullRow: any = {
         nome: form.nome,
-        url: form.url.startsWith("http") ? form.url : `https://${form.url}`,
+        url: urlFinal,
         categoria: form.categoria,
         secao: form.secao,
         pasta: pastaFinal || null,
@@ -356,18 +365,41 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
         visivel_para: form.visivel_para,
         tem_credencial: form.temCredencial,
         login: form.temCredencial ? form.login : null,
-        senha_enc: form.temCredencial ? form.senha : null, // Em prod: criptografar aqui
+        senha_enc: form.temCredencial ? form.senha : null,
         observacao: form.temCredencial ? form.observacao : null,
-        criado_por: user.id,
+        criado_por: equipeMember?.id || null,
       }
 
-      const { error } = await supabase.from("acessos").insert(row)
-      if (error) throw error
+      const { error: fullError } = await supabase.from("acessos").insert(fullRow)
+
+      if (fullError) {
+        // Fallback: tenta com somente os campos base (schema antigo)
+        const baseRow: any = {
+          nome: form.nome,
+          url: urlFinal,
+          categoria: form.categoria,
+          descricao: form.descricao || null,
+          criado_por: equipeMember?.id || null,
+        }
+        const { error: baseError } = await supabase.from("acessos").insert(baseRow)
+
+        if (baseError) {
+          const msg = baseError.message || JSON.stringify(baseError)
+          console.error("[AbaAcessos] Insert error:", msg)
+          alert(`Erro ao salvar: ${msg}\n\nExecute o SQL de migração no Supabase para adicionar as novas colunas.`)
+          return
+        }
+
+        // Salvo com schema antigo — avisa que faltam colunas
+        console.warn("[AbaAcessos] Salvo com schema antigo. Execute o SQL de migração para habilitar todas as funcionalidades.")
+      }
 
       onSalvo()
       onOpenChange(false)
-    } catch (err) {
-      console.error("Erro ao salvar acesso:", err)
+    } catch (err: any) {
+      const msg = err?.message || JSON.stringify(err)
+      console.error("[AbaAcessos] handleSalvar error:", msg)
+      alert(`Erro inesperado: ${msg}`)
     } finally {
       setSaving(false)
     }
