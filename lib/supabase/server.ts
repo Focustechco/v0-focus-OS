@@ -47,14 +47,19 @@ export async function createClient() {
  */
 export function createAdminClient() {
   const { createClient: createSupabaseClient } = require("@supabase/supabase-js")
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    }
-  )
+  
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    console.error("[createAdminClient] Erro: Faltam chaves do Supabase (URL ou Key).")
+    throw new Error("supabaseKey is required. Verifique as variáveis de ambiente.")
+  }
+
+  return createSupabaseClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
 }
