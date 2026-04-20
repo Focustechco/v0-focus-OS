@@ -59,6 +59,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
   const navigation: any[] = [
     { id: "command-center", href: "/", icon: LayoutDashboard, label: "DASHBOARD" },
     { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: stats.projects > 0 ? stats.projects : null },
+    { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "TAREFAS" },
     { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: stats.comercial > 0 ? stats.comercial : null },
     { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
     { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Clock, BookOpen, Link, CheckCircle } from "lucide-react"
+import { Users, Clock, BookOpen, Link } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { AbaMinhaEquipe } from "./tabs/aba-minha-equipe"
 import { AbaRegistroPonto } from "./tabs/aba-ponto"
 import { AbaConteudos } from "./tabs/aba-conteudos"
 import { AbaAcessos } from "./tabs/aba-acessos"
-import { AbaTarefas } from "./tabs/aba-tarefas"
 
 export function EquipeModule() {
   const [userType, setUserType] = useState<string>("colaborador")
@@ -51,10 +50,7 @@ export function EquipeModule() {
             <Link className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
             Acessos
           </TabsTrigger>
-          <TabsTrigger value="tarefas" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
-            <CheckCircle className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
-            Tarefas
-          </TabsTrigger>
+
         </TabsList>
 
         <div className="mt-6">
@@ -70,9 +66,7 @@ export function EquipeModule() {
           <TabsContent value="acessos">
               <AbaAcessos userType={userType} />
           </TabsContent>
-          <TabsContent value="tarefas">
-              <AbaTarefas userType={userType} />
-          </TabsContent>
+
         </div>
       </Tabs>
     </div>

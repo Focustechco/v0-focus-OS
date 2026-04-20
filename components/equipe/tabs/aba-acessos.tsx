@@ -1,48 +1,554 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Plus, Loader2, Globe, Shield, Briefcase, Search } from "lucide-react"
-import { supabase } from "@/lib/supabase"
-import { toast } from "sonner"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog"
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
+import {
+  Plus, Search, ExternalLink, Globe, Lock, Eye, EyeOff, Copy,
+  FolderOpen, FolderClosed, ChevronRight, Loader2, Pencil, Trash2,
+  Cpu, Layers, Share2, Briefcase, LayoutGrid, Users,
+} from "lucide-react"
+import { supabase } from "@/lib/supabase"
+import { cn } from "@/lib/utils"
 
-export function AbaAcessos({ userType }: { userType: string }) {
-  const [acessos, setAcessos] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+// ─── Tipos ─────────────────────────────────────────────
+interface Acesso {
+  id: string
+  nome: string
+  url: string
+  categoria: string
+  secao: string
+  pasta?: string
+  descricao?: string
+  icone_url?: string
+  tem_credencial?: boolean
+  login?: string
+  senha_enc?: string
+  observacao?: string
+  visivel_para?: string
+  criado_por?: string
+  created_at?: string
+}
+
+interface Pasta {
+  nome: string
+  secao: string
+}
+
+// ─── Seções fixas ───────────────────────────────────────
+const SECOES = [
+  { id: "nossas_plataformas",   label: "Nossas Plataformas",      icon: LayoutGrid,  desc: "Ferramentas internas da empresa" },
+  { id: "projetos",             label: "Projetos",                 icon: Briefcase,   desc: "Ambientes de cada projeto" },
+  { id: "redes_sociais",        label: "Redes Sociais",            icon: Share2,      desc: "Perfis e painéis das redes da equipe" },
+  { id: "ferramentas_operacao", label: "Ferramentas de Operação",  icon: Cpu,         desc: "Ferramentas operacionais" },
+  { id: "ecosystem_focus",      label: "Ecosystem Focus",          icon: Layers,      desc: "Stack interno Focus" },
+  { id: "projetos_clientes",    label: "Projetos dos Clientes",   icon: Users,       desc: "Acessos dos projetos de clientes" },
+]
+
+const CATEGORIAS = [
+  { value: "plataforma_interna", label: "Plataforma Interna" },
+  { value: "projeto",            label: "Projeto" },
+  { value: "rede_social",        label: "Rede Social" },
+  { value: "ferramenta",         label: "Ferramenta" },
+  { value: "cliente",            label: "Cliente" },
+  { value: "outro",              label: "Outro" },
+]
+
+function getFavicon(url: string) {
+  try {
+    const domain = new URL(url.startsWith("http") ? url : `https://${url}`).hostname
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+  } catch {
+    return null
+  }
+}
+
+// ─── Card de Acesso ─────────────────────────────────────
+function AcessoCard({ acesso, onEdit, onDelete, userType }: {
+  acesso: Acesso
+  onEdit: (a: Acesso) => void
+  onDelete: (id: string) => void
+  userType: string
+}) {
+  const [showCreds, setShowCreds] = useState(false)
+  const favicon = getFavicon(acesso.url)
+
+  const cleanUrl = acesso.url
+    .replace(/^https?:\/\//, "")
+    .replace(/\/$/, "")
+
+  return (
+    <div className="group bg-[#141414] border border-[#2A2A2A] rounded-xl p-4 hover:border-orange-500/30 transition-all space-y-3">
+      {/* Header */}
+      <div className="flex items-start gap-3">
+        <div className="w-9 h-9 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A] flex items-center justify-center flex-shrink-0">
+          {favicon ? (
+            <img src={favicon} alt="" className="w-5 h-5" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+          ) : (
+            <Globe className="w-4 h-4 text-neutral-500" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <h4 className="text-sm font-bold text-white truncate">{acesso.nome}</h4>
+            {acesso.tem_credencial && (
+              <Lock className="w-3 h-3 text-orange-500 flex-shrink-0" />
+            )}
+          </div>
+          <a
+            href={acesso.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-neutral-500 hover:text-orange-400 truncate block transition-colors"
+          >
+            {cleanUrl}
+          </a>
+        </div>
+        <Badge variant="outline" className="text-[8px] border-[#2A2A2A] text-neutral-500 uppercase tracking-widest h-4 px-1.5 flex-shrink-0">
+          {CATEGORIAS.find(c => c.value === acesso.categoria)?.label || acesso.categoria}
+        </Badge>
+      </div>
+
+      {/* Descrição */}
+      {acesso.descricao && (
+        <p className="text-xs text-neutral-500 leading-snug">{acesso.descricao}</p>
+      )}
+
+      {/* Credenciais expandidas */}
+      {showCreds && acesso.tem_credencial && (
+        <div className="bg-[#0A0A0A] border border-orange-500/20 rounded-lg p-3 space-y-1.5 text-xs">
+          {acesso.login && (
+            <div className="flex items-center justify-between">
+              <span className="text-neutral-500 font-mono">Login:</span>
+              <span className="text-white font-mono">{acesso.login}</span>
+            </div>
+          )}
+          {acesso.senha_enc && (
+            <div className="flex items-center justify-between">
+              <span className="text-neutral-500 font-mono">Senha:</span>
+              <span className="text-orange-400 font-mono">••••••••</span>
+            </div>
+          )}
+          {acesso.observacao && (
+            <p className="text-neutral-400 text-[10px] pt-1 border-t border-[#1A1A1A]">{acesso.observacao}</p>
+          )}
+        </div>
+      )}
+
+      {/* Ações */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          className="h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-[#2A2A2A] text-neutral-400 hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all"
+        >
+          <a href={acesso.url} target="_blank" rel="noopener noreferrer">
+            <ExternalLink className="w-3 h-3 mr-1" />
+            Acessar
+          </a>
+        </Button>
+
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-[#2A2A2A] text-neutral-400 hover:bg-[#1A1A1A] hover:text-white transition-all"
+          onClick={() => navigator.clipboard.writeText(acesso.url)}
+        >
+          <Copy className="w-3 h-3 mr-1" />
+          Copiar
+        </Button>
+
+        {acesso.tem_credencial && (
+          <Button
+            size="sm"
+            variant="outline"
+            className={cn(
+              "h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-[#2A2A2A] transition-all",
+              showCreds ? "text-orange-500 border-orange-500/30 hover:bg-red-500/10 hover:text-red-400" : "text-neutral-400 hover:bg-orange-500/10 hover:text-orange-400 hover:border-orange-500/30"
+            )}
+            onClick={() => setShowCreds(!showCreds)}
+          >
+            {showCreds ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
+            {showCreds ? "Ocultar" : "Credenciais"}
+          </Button>
+        )}
+
+        {userType === "admin" && (
+          <>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 w-7 p-0 text-neutral-600 hover:text-white hover:bg-[#1A1A1A]"
+              onClick={() => onEdit(acesso)}
+            >
+              <Pencil className="w-3 h-3" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 w-7 p-0 text-neutral-600 hover:text-red-500 hover:bg-red-500/10"
+              onClick={() => onDelete(acesso.id)}
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Componente de Pasta ─────────────────────────────────
+function PastaGroup({ nome, acessos, onEdit, onDelete, userType }: {
+  nome: string
+  acessos: Acesso[]
+  onEdit: (a: Acesso) => void
+  onDelete: (id: string) => void
+  userType: string
+}) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="border border-[#2A2A2A] rounded-xl overflow-hidden">
+      <button
+        className="w-full flex items-center gap-3 px-4 py-3 bg-[#111] hover:bg-[#161616] transition-colors text-left"
+        onClick={() => setOpen(!open)}
+      >
+        {open
+          ? <FolderOpen className="w-4 h-4 text-orange-500 flex-shrink-0" />
+          : <FolderClosed className="w-4 h-4 text-neutral-500 flex-shrink-0" />
+        }
+        <span className="text-sm font-medium text-white flex-1">{nome}</span>
+        <span className="text-[10px] font-mono text-neutral-500">{acessos.length} acessos</span>
+        <ChevronRight className={cn("w-3.5 h-3.5 text-neutral-600 transition-transform", open && "rotate-90")} />
+      </button>
+      {open && (
+        <div className="p-3 bg-[#0D0D0D] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {acessos.map(a => (
+            <AcessoCard key={a.id} acesso={a} onEdit={onEdit} onDelete={onDelete} userType={userType} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Seção ───────────────────────────────────────────────
+function SecaoBlock({ secao, acessos, pastas, onAdd, onEdit, onDelete, userType }: {
+  secao: typeof SECOES[0]
+  acessos: Acesso[]
+  pastas: string[]
+  onAdd: (secaoId: string) => void
+  onEdit: (a: Acesso) => void
+  onDelete: (id: string) => void
+  userType: string
+}) {
+  const Icon = secao.icon
+  const semPasta = acessos.filter(a => !a.pasta)
+  const comPasta = pastas.map(p => ({
+    nome: p,
+    itens: acessos.filter(a => a.pasta === p),
+  })).filter(p => p.itens.length > 0)
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Icon className="w-4 h-4 text-neutral-500" />
+          <h3 className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">{secao.label}</h3>
+          <Badge variant="outline" className="text-[9px] font-mono text-neutral-600 bg-white/5 border-white/10 uppercase h-4 px-1.5">
+            {acessos.length} links
+          </Badge>
+        </div>
+        <Button
+          onClick={() => onAdd(secao.id)}
+          variant="outline"
+          className="h-7 px-3 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all text-[9px] font-mono uppercase tracking-widest rounded-sm"
+        >
+          <Plus className="w-3 h-3 mr-1.5" />
+          Adicionar
+        </Button>
+      </div>
+
+      {acessos.length === 0 ? (
+        <div className="py-8 text-center border border-dashed border-[#2A2A2A] rounded-xl text-neutral-600 text-xs">
+          Nenhum acesso cadastrado nesta seção.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {/* Pastas */}
+          {comPasta.map(p => (
+            <PastaGroup
+              key={p.nome}
+              nome={p.nome}
+              acessos={p.itens}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              userType={userType}
+            />
+          ))}
+          {/* Acessos soltos (sem pasta) */}
+          {semPasta.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {semPasta.map(a => (
+                <AcessoCard key={a.id} acesso={a} onEdit={onEdit} onDelete={onDelete} userType={userType} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Modal ───────────────────────────────────────────────
+const FORM_DEFAULT = {
+  nome: "", url: "", categoria: "plataforma_interna", secao: "nossas_plataformas",
+  pasta: "", descricao: "", visivel_para: "todos",
+  temCredencial: false, login: "", senha: "", observacao: "",
+}
+
+function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExistentes }: {
+  open: boolean
+  onOpenChange: (v: boolean) => void
+  onSalvo: () => void
+  secaoInicial: string
+  pastasExistentes: string[]
+}) {
+  const [form, setForm] = useState({ ...FORM_DEFAULT, secao: secaoInicial })
   const [saving, setSaving] = useState(false)
-
-  // Form State
-  const [formData, setFormData] = useState({
-    nome: "",
-    url: "",
-    categoria: "plataforma_interna",
-    descricao: "",
-    projeto_id: ""
-  })
+  const [showSenha, setShowSenha] = useState(false)
+  const [novaPasta, setNovaPasta] = useState("")
+  const [criandoPasta, setCriandoPasta] = useState(false)
 
   useEffect(() => {
-    loadAcessos()
-  }, [])
+    if (open) setForm({ ...FORM_DEFAULT, secao: secaoInicial })
+  }, [open, secaoInicial])
+
+  const handleSalvar = async () => {
+    if (!form.nome || !form.url || !form.secao) return
+
+    try {
+      setSaving(true)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const pastaFinal = criandoPasta ? novaPasta.trim() : form.pasta === "_sem_pasta" ? "" : form.pasta
+
+      const row: any = {
+        nome: form.nome,
+        url: form.url.startsWith("http") ? form.url : `https://${form.url}`,
+        categoria: form.categoria,
+        secao: form.secao,
+        pasta: pastaFinal || null,
+        descricao: form.descricao || null,
+        visivel_para: form.visivel_para,
+        tem_credencial: form.temCredencial,
+        login: form.temCredencial ? form.login : null,
+        senha_enc: form.temCredencial ? form.senha : null, // Em prod: criptografar aqui
+        observacao: form.temCredencial ? form.observacao : null,
+        criado_por: user.id,
+      }
+
+      const { error } = await supabase.from("acessos").insert(row)
+      if (error) throw error
+
+      onSalvo()
+      onOpenChange(false)
+    } catch (err) {
+      console.error("Erro ao salvar acesso:", err)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const labelInput = "text-[10px] uppercase font-mono text-neutral-500 tracking-wider"
+  const inputClass = "bg-[#0A0A0A] border-[#2A2A2A] text-white focus:border-orange-500/50 text-sm"
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-orange-500 font-mono text-xs tracking-widest uppercase">
+            Novo Acesso / Link
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+
+          {/* Linha 1: Nome + Categoria */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className={labelInput}>Nome da Plataforma <span className="text-orange-500">*</span></Label>
+              <Input value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })}
+                placeholder="Ex: Notion, GitHub..." className={inputClass} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className={labelInput}>Categoria <span className="text-orange-500">*</span></Label>
+              <Select value={form.categoria} onValueChange={v => setForm({ ...form, categoria: v })}>
+                <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+                <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  {CATEGORIAS.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* URL */}
+          <div className="space-y-1.5">
+            <Label className={labelInput}>URL de Acesso <span className="text-orange-500">*</span></Label>
+            <Input value={form.url} onChange={e => setForm({ ...form, url: e.target.value })}
+              placeholder="https://..." className={inputClass} />
+          </div>
+
+          {/* Seção + Pasta */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className={labelInput}>Seção <span className="text-orange-500">*</span></Label>
+              <Select value={form.secao} onValueChange={v => setForm({ ...form, secao: v })}>
+                <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+                <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  {SECOES.map(s => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className={labelInput}>Pasta (opcional)</Label>
+              {criandoPasta ? (
+                <div className="flex gap-2">
+                  <Input
+                    value={novaPasta}
+                    onChange={e => setNovaPasta(e.target.value)}
+                    placeholder="Nome da pasta"
+                    className={cn(inputClass, "flex-1")}
+                  />
+                  <Button size="sm" variant="ghost" className="text-xs text-neutral-400"
+                    onClick={() => setCriandoPasta(false)}>✕</Button>
+                </div>
+              ) : (
+                <Select value={form.pasta} onValueChange={v => {
+                  if (v === "_criar") { setCriandoPasta(true); return }
+                  setForm({ ...form, pasta: v })
+                }}>
+                  <SelectTrigger className={inputClass}><SelectValue placeholder="Sem pasta" /></SelectTrigger>
+                  <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                    <SelectItem value="_sem_pasta">Sem pasta</SelectItem>
+                    {pastasExistentes.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    <SelectItem value="_criar" className="text-orange-400">+ Criar nova pasta</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
+
+          {/* Descrição */}
+          <div className="space-y-1.5">
+            <Label className={labelInput}>Descrição (opcional)</Label>
+            <Textarea value={form.descricao} onChange={e => setForm({ ...form, descricao: e.target.value })}
+              placeholder="Ex: Painel de analytics do cliente X..."
+              className={cn(inputClass, "h-20 resize-none")} />
+          </div>
+
+          {/* Toggle Credenciais */}
+          <div className="border border-[#2A2A2A] rounded-xl p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-white">Credenciais de Acesso</p>
+                <p className="text-[10px] text-neutral-500">Login e senha para este acesso</p>
+              </div>
+              <Switch
+                checked={form.temCredencial}
+                onCheckedChange={v => setForm({ ...form, temCredencial: v })}
+                className="data-[state=checked]:bg-orange-500"
+              />
+            </div>
+
+            {form.temCredencial && (
+              <div className="space-y-3 pt-2 border-t border-[#1A1A1A]">
+                <div className="space-y-1.5">
+                  <Label className={labelInput}>Login / E-mail</Label>
+                  <Input value={form.login} onChange={e => setForm({ ...form, login: e.target.value })}
+                    placeholder="usuario@email.com" className={inputClass} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className={labelInput}>Senha</Label>
+                  <div className="relative">
+                    <Input
+                      type={showSenha ? "text" : "password"}
+                      value={form.senha}
+                      onChange={e => setForm({ ...form, senha: e.target.value })}
+                      className={cn(inputClass, "pr-10")}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white"
+                      onClick={() => setShowSenha(!showSenha)}
+                    >
+                      {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className={labelInput}>Observação</Label>
+                  <Input value={form.observacao} onChange={e => setForm({ ...form, observacao: e.target.value })}
+                    placeholder="Ex: 2FA ativo, conta compartilhada..." className={inputClass} />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Visível para */}
+          <div className="space-y-1.5">
+            <Label className={labelInput}>Visível para</Label>
+            <Select value={form.visivel_para} onValueChange={v => setForm({ ...form, visivel_para: v })}>
+              <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+              <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                <SelectItem value="todos">Toda a equipe</SelectItem>
+                <SelectItem value="admins">Apenas admins</SelectItem>
+                <SelectItem value="especifico">Membros específicos</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <DialogFooter className="gap-2">
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-neutral-400">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSalvar}
+            disabled={saving || !form.nome || !form.url}
+            className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase tracking-widest"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Acesso"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ─── Componente Principal ────────────────────────────────
+export function AbaAcessos({ userType }: { userType: string }) {
+  const [acessos, setAcessos] = useState<Acesso[]>([])
+  const [loading, setLoading] = useState(true)
+  const [pesquisa, setPesquisa] = useState("")
+  const [modalOpen, setModalOpen] = useState(false)
+  const [secaoModal, setSecaoModal] = useState("nossas_plataformas")
+  const [editando, setEditando] = useState<Acesso | null>(null)
+
+  useEffect(() => { loadAcessos() }, [])
 
   const loadAcessos = async () => {
     try {
@@ -51,199 +557,117 @@ export function AbaAcessos({ userType }: { userType: string }) {
         .from("acessos")
         .select("*")
         .order("created_at", { ascending: false })
-      
       if (error) throw error
       setAcessos(data || [])
-    } catch (error) {
-      toast.error("Erro ao carregar acessos")
+    } catch (err) {
+      console.error("Erro ao carregar acessos:", err)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleAddAcesso = async () => {
-    if (!formData.nome || !formData.url) {
-      toast.error("Nome e URL são obrigatórios")
-      return
-    }
-
-    try {
-      setSaving(true)
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: equipeMember } = await supabase
-        .from("equipe")
-        .select("id")
-        .eq("usuario_id", user.id)
-        .maybeSingle()
-
-      const { error } = await supabase
-        .from("acessos")
-        .insert({
-          ...formData,
-          criado_por: equipeMember?.id
-        })
-
-      if (error) throw error
-
-      toast.success("Acesso adicionado com sucesso!")
-      setIsAddModalOpen(false)
-      setFormData({
-        nome: "",
-        url: "",
-        categoria: "plataforma_interna",
-        descricao: "",
-        projeto_id: ""
-      })
-      loadAcessos()
-    } catch (error) {
-      toast.error("Erro ao salvar acesso")
-    } finally {
-      setSaving(false)
-    }
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este acesso?")) return
+    await supabase.from("acessos").delete().eq("id", id)
+    setAcessos(prev => prev.filter(a => a.id !== id))
   }
 
-  const platformsInternas = acessos.filter(a => a.categoria === 'plataforma_interna')
-  const platformsFocus = acessos.filter(a => a.categoria === 'plataforma_focus')
-  const projectAcessos = acessos.filter(a => a.categoria === 'projeto_cliente')
+  // Pastas únicas de todos os acessos (para o modal)
+  const todasPastas = useMemo(() => {
+    return [...new Set(acessos.map(a => a.pasta).filter(Boolean) as string[])]
+  }, [acessos])
 
-  const renderSection = (title: string, items: any[], category: string) => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-            <h3 className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-widest">{title}</h3>
-            <Badge variant="outline" className="text-[9px] font-mono text-neutral-600 bg-white/5 border-white/10 uppercase">
-                {items.length} links
-            </Badge>
-        </div>
-        <Button 
-            onClick={() => {
-                setFormData({...formData, categoria: category});
-                setIsAddModalOpen(true);
-            }}
-            variant="outline" 
-            className="h-7 px-3 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all text-[9px] font-mono uppercase tracking-widest rounded-sm"
-        >
-            <Plus className="w-3 h-3 mr-1.5" />
-            ADICIONAR
-        </Button>
-      </div>
+  // Filtro de busca global
+  const acessosFiltrados = useMemo(() => {
+    if (!pesquisa.trim()) return acessos
+    const q = pesquisa.toLowerCase()
+    return acessos.filter(a =>
+      a.nome?.toLowerCase().includes(q) ||
+      a.url?.toLowerCase().includes(q) ||
+      a.categoria?.toLowerCase().includes(q) ||
+      a.pasta?.toLowerCase().includes(q) ||
+      a.descricao?.toLowerCase().includes(q)
+    )
+  }, [acessos, pesquisa])
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.length === 0 ? (
-          <div className="col-span-full py-8 text-center border border-dashed border-[#2A2A2A] rounded-xl text-neutral-600 text-xs italic">
-            Nenhum acesso cadastrado nesta seção.
-          </div>
-        ) : (
-          items.map((a) => (
-            <Card key={a.id} className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-all group overflow-hidden">
-              <CardContent className="p-4 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A] flex items-center justify-center text-neutral-600 group-hover:text-orange-500 transition-colors flex-shrink-0">
-                  {a.icone_url ? (
-                    <img src={a.icone_url} alt={a.nome} className="w-6 h-6 rounded-sm opacity-60 group-hover:opacity-100 transition-opacity" />
-                  ) : (
-                    <Globe className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0 space-y-2">
-                  <div className="space-y-0.5">
-                    <h4 className="text-sm font-bold text-white truncate">{a.nome}</h4>
-                    <p className="text-[10px] text-neutral-500 truncate">{a.url.replace('https://', '').replace('http://', '')}</p>
-                  </div>
-                  <Button 
-                    asChild
-                    variant="ghost"
-                    className="h-7 px-2 text-[9px] font-mono uppercase tracking-widest text-orange-400 hover:text-white hover:bg-orange-500 p-0"
-                  >
-                    <a href={a.url} target="_blank" rel="noopener noreferrer">
-                        ACESSAR PLATAFORMA
-                        <ExternalLink className="w-3 h-3 ml-1.5" />
-                    </a>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+  const openModal = (secaoId: string) => {
+    setSecaoModal(secaoId)
+    setModalOpen(true)
+  }
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-orange-500" />
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
-    <div className="space-y-12">
-      {loading ? (
-        <div className="flex h-64 items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+    <div className="space-y-10">
+      {/* Busca global */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
+        <Input
+          value={pesquisa}
+          onChange={e => setPesquisa(e.target.value)}
+          placeholder="Buscar por nome, URL, categoria ou pasta..."
+          className="pl-9 bg-[#141414] border-[#2A2A2A] text-white placeholder:text-neutral-600 focus:border-orange-500/50"
+        />
+      </div>
+
+      {/* Resultados de busca */}
+      {pesquisa.trim() ? (
+        <div className="space-y-3">
+          <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">
+            {acessosFiltrados.length} resultado(s) para "{pesquisa}"
+          </p>
+          {acessosFiltrados.length === 0 ? (
+            <div className="py-12 text-center text-neutral-600 text-sm">Nenhum acesso encontrado.</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {acessosFiltrados.map(a => {
+                const secaoNome = SECOES.find(s => s.id === a.secao)?.label || a.secao
+                return (
+                  <div key={a.id}>
+                    <p className="text-[9px] font-mono text-neutral-600 uppercase tracking-widest mb-1">
+                      {secaoNome}{a.pasta ? ` › ${a.pasta}` : ""}
+                    </p>
+                    <AcessoCard acesso={a} onEdit={setEditando} onDelete={handleDelete} userType={userType} />
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       ) : (
-        <>
-          {renderSection("Ferramentas de Operação", platformsInternas, "plataforma_interna")}
-          {renderSection("Ecosystem Focus", platformsFocus, "plataforma_focus")}
-          {renderSection("Projetos dos Clientes", projectAcessos, "projeto_cliente")}
-        </>
+        /* Seções fixas */
+        SECOES.map(secao => {
+          const secaoAcessos = acessosFiltrados.filter(a => a.secao === secao.id)
+          const secaoPastas = [...new Set(secaoAcessos.map(a => a.pasta).filter(Boolean) as string[])]
+          return (
+            <SecaoBlock
+              key={secao.id}
+              secao={secao}
+              acessos={secaoAcessos}
+              pastas={secaoPastas}
+              onAdd={openModal}
+              onEdit={setEditando}
+              onDelete={handleDelete}
+              userType={userType}
+            />
+          )
+        })
       )}
 
-      {/* Modal Adicionar */}
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white">
-          <DialogHeader>
-            <DialogTitle className="text-orange-500 font-mono text-sm tracking-widest uppercase">
-              Novo Acesso / Link
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-            <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Nome da Plataforma</Label>
-                <Input 
-                    value={formData.nome}
-                    onChange={(e) => setFormData({...formData, nome: e.target.value})}
-                    className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
-                />
-            </div>
-            <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Categoria</Label>
-                <Select value={formData.categoria} onValueChange={(val) => setFormData({...formData, categoria: val})}>
-                    <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A]">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#111111] border-[#2A2A2A]">
-                        <SelectItem value="plataforma_interna">Plataforma Interna</SelectItem>
-                        <SelectItem value="plataforma_focus">Plat. Focus</SelectItem>
-                        <SelectItem value="projeto_cliente">Projeto Cliente</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="col-span-full space-y-2">
-                <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">URL de Acesso</Label>
-                <Input 
-                    value={formData.url}
-                    onChange={(e) => setFormData({...formData, url: e.target.value})}
-                    placeholder="https://..."
-                    className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
-                />
-            </div>
-            <div className="col-span-full space-y-2">
-              <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Descrição Opcional</Label>
-              <Textarea 
-                value={formData.descricao}
-                onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-                className="bg-[#0A0A0A] border-[#2A2A2A] text-white h-20" 
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsAddModalOpen(false)}>Cancelar</Button>
-            <Button 
-                onClick={handleAddAcesso} 
-                disabled={saving}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase"
-            >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Acesso"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modal Novo Acesso */}
+      <NovoAcessoModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onSalvo={loadAcessos}
+        secaoInicial={secaoModal}
+        pastasExistentes={todasPastas}
+      />
     </div>
   )
 }

@@ -11,6 +11,7 @@ const MODULE_MAPPING: Record<string, string[]> = {
   "fluxo": ["projetos"],
   "sprints": ["sprint-board"],
   "tasks": ["projetos"],
+  "tarefas": ["projetos"],
   "checklists": ["projetos"],
   "aprovacoes": ["projetos"],
   "prazos": ["projetos"],

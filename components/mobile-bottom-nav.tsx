@@ -8,6 +8,7 @@ import {
   Briefcase,
   Users,
   Grid,
+  CheckSquare,
 } from "lucide-react"
 import {
   Sheet,
@@ -22,13 +23,14 @@ import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
 const PRIMARY_NAV = [
   { id: "command-center", href: "/",         icon: LayoutDashboard, label: "Home" },
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
+  { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tarefas" },
   { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "Comercial" },
-  { id: "equipe",         href: "/equipe",    icon: Users,           label: "Equipe" },
 ]
 
 const ALL_MODULES = [
   { id: "command-center", href: "/",         icon: LayoutDashboard, label: "Dashboard" },
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
+  { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tarefas" },
   { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "Comercial" },
   { id: "equipe",         href: "/equipe",    icon: Users,           label: "Equipe" },
   { id: "intelligence",   href: "/intelligence", icon: Grid, label: "Inteligence" },
