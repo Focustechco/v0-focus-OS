@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import {
   ChevronLeft, ChevronUp, ChevronDown, Save, Eye, Download, X, Plus,
   CheckCircle2, Circle, GripVertical, AlertTriangle, BarChart2, Users,
-  Flag, MessageSquare, ListTodo, Zap, Clock, Building2, Check
+  Flag, MessageSquare, ListTodo, Zap, Clock, Building2, Check, RefreshCcw
 } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { supabase } from "@/lib/supabase"
@@ -75,6 +75,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
   const [proximosPassos, setProximosPassos] = useState<any[]>([])
   const [novoProximo, setNovoProximo] = useState("")
   const [observacoes, setObservacoes] = useState("")
+  const [isSyncing, setIsSyncing] = useState(false)
 
   const [incluirLogoFocus, setIncluirLogoFocus] = useState(false)
   const [incluirLogoCliente, setIncluirLogoCliente] = useState(false)
@@ -204,6 +205,60 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
     setShowPreview(true)
   }
 
+  async function handleSyncProjectData() {
+    if (!report?.projeto_id) return
+    setIsSyncing(true)
+    try {
+      // 1. Fetch Sprints
+      const { data: sprints, error: sErr } = await supabase
+        .from("sprints")
+        .select("*")
+        .eq("projeto_id", report.projeto_id)
+        .order("created_at", { ascending: true })
+
+      if (sErr) throw sErr
+
+      // 2. Fetch Tasks for these Sprints
+      const sprintIds = sprints.map(s => s.id)
+      const { data: tasks, error: tErr } = await supabase
+        .from("tarefas")
+        .select("*")
+        .in("sprint_id", sprintIds)
+        .eq("status", "concluida") // Only done tasks
+
+      if (tErr) throw tErr
+
+      // 3. Group them
+      const groups = sprints.map(s => ({
+        sprint: s.nome,
+        tarefas: (tasks || [])
+          .filter(t => t.sprint_id === s.id)
+          .map(t => ({
+            id: t.id,
+            titulo: t.titulo,
+            data: t.prazo || t.created_at,
+            status: t.status
+          }))
+      })).filter(g => g.tarefas.length > 0)
+
+      setSprintGrupos(groups)
+      
+      // Update summary based on progress
+      const totalTasks = tasks?.length || 0
+      if (totalTasks > 0) {
+        setResumoTexto(prev => 
+          prev + `\n\nNeste período, concluímos ${totalTasks} tarefas críticas através de ${groups.length} sprints.`
+        )
+      }
+
+    } catch (err) {
+      console.error("Erro ao sincronizar:", err)
+      alert("Erro ao puxar dados do projeto.")
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
   function toggleSection(id: string) {
     setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }))
   }
@@ -259,7 +314,45 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
       </header>
 
       {/* ── Content ──────────────────────────────────────── */}
-      <main className="flex-1 overflow-y-auto p-6 space-y-3 max-w-4xl mx-auto w-full">
+      <main className="flex-1 overflow-y-auto p-6 space-y-6 max-w-4xl mx-auto w-full pb-20">
+        
+        {/* DASHBOARD DE RESUMO DO PROJETO */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
+          <div className="bg-[#1A1A1A] border border-border p-3 rounded-xl">
+            <p className="text-[10px] text-neutral-500 font-mono tracking-wider uppercase mb-1">Status Projeto</p>
+            <div className="flex items-center gap-2">
+              <Badge className={cn(
+                "text-[10px] font-bold",
+                statusSaude === "verde" ? "bg-green-500/20 text-green-500" :
+                statusSaude === "amarelo" ? "bg-yellow-500/20 text-yellow-500" :
+                "bg-red-500/20 text-red-500"
+              )}>
+                {statusSaude === "verde" ? "SAUDÁVEL" : statusSaude === "amarelo" ? "EM RISCO" : "ATRASADO"}
+              </Badge>
+              <span className="text-xs font-bold text-foreground truncate">{statusEtapa.toUpperCase()}</span>
+            </div>
+          </div>
+          
+          <div className="bg-[#1A1A1A] border border-border p-3 rounded-xl">
+            <p className="text-[10px] text-neutral-500 font-mono tracking-wider uppercase mb-1">Sprints Ativas</p>
+            <div className="flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5 text-orange-500" />
+              <span className="text-xs font-bold text-foreground">
+                {sprintGrupos.length > 0 ? sprintGrupos[0].sprint : "Nenhuma detectada"}
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-[#1A1A1A] border border-border p-3 rounded-xl">
+            <p className="text-[10px] text-neutral-500 font-mono tracking-wider uppercase mb-1">Tarefas Realizadas</p>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+              <span className="text-xs font-bold text-foreground">
+                {sprintGrupos.reduce((acc, g) => acc + g.tarefas.length, 0)} entregas no período
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* RESUMO EXECUTIVO */}
         {enabledSections.includes("resumo") && (
@@ -383,7 +476,23 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
 
         {/* ATIVIDADES & SPRINTS DO PERÍODO */}
         {(enabledSections.includes("atividades") || enabledSections.includes("sprints")) && (
-          <Section id="atividades" open={openSections["atividades"] || openSections["sprints"]} toggle={toggleSection}>
+          <Section 
+            id="atividades" 
+            open={openSections["atividades"] || openSections["sprints"]} 
+            toggle={toggleSection}
+            extraHeader={
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={(e) => { e.stopPropagation(); handleSyncProjectData(); }}
+                disabled={isSyncing}
+                className="h-7 text-[10px] text-orange-500 hover:text-orange-400 hover:bg-orange-500/10 gap-1.5 ml-auto mr-4"
+              >
+                <RefreshCcw className={cn("w-3 h-3", isSyncing && "animate-spin")} />
+                {isSyncing ? "Sincronizando..." : "Sincronizar com Projetos"}
+              </Button>
+            }
+          >
              <div className="space-y-6">
                {sprintGrupos.map((g, gi) => (
                  <div key={gi}>
@@ -597,22 +706,27 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
 }
 
 /* ─── Collapsible Section Wrapper ───────────────────── */
-function Section({ id, open, toggle, children }: any) {
+function Section({ id, open, toggle, extraHeader, children }: any) {
   const meta = SECTION_META[id] ?? { icon: FileIcon, label: id.toUpperCase(), color: "text-orange-500" }
   const Icon = meta.icon
 
   return (
     <div className="rounded-xl border border-[#1A1A1A] bg-background overflow-hidden">
-      <button
-        onClick={() => toggle(id)}
-        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-accent/10 transition-colors"
-      >
-        <Icon className={cn("w-4 h-4 flex-shrink-0", meta.color)} />
-        <span className={cn("flex-1 text-xs font-mono font-bold tracking-[0.15em] text-left", meta.color)}>
-          {meta.label}
-        </span>
-        {open ? <ChevronUp className="w-4 h-4 text-neutral-600" /> : <ChevronDown className="w-4 h-4 text-neutral-600" />}
-      </button>
+      <div className="flex items-center w-full bg-background hover:bg-accent/5 transition-colors">
+        <button
+          onClick={() => toggle(id)}
+          className="flex-1 flex items-center gap-3 px-5 py-4 text-left"
+        >
+          <Icon className={cn("w-4 h-4 flex-shrink-0", meta.color)} />
+          <span className={cn("text-xs font-mono font-bold tracking-[0.15em]", meta.color)}>
+            {meta.label}
+          </span>
+        </button>
+        {extraHeader}
+        <button onClick={() => toggle(id)} className="px-5 py-4">
+          {open ? <ChevronUp className="w-4 h-4 text-neutral-600" /> : <ChevronDown className="w-4 h-4 text-neutral-600" />}
+        </button>
+      </div>
       {open && <div className="px-5 pb-5 pt-1">{children}</div>}
     </div>
   )
