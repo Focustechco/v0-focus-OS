@@ -1,524 +1,511 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react";
-import { useMinhasTarefas } from "@/lib/hooks/use-minhas-tarefas";
+import { useState, useMemo } from "react"
+import { useEventos, type Evento } from "@/lib/hooks/use-eventos"
+import { useEquipe } from "@/lib/hooks/use-equipe"
+import { supabase } from "@/lib/supabase"
+import {
+  ChevronLeft, ChevronRight, Plus, Calendar, Clock,
+  Users, Trash2, Edit2, Loader2, X, CheckCircle2,
+  RefreshCw, AlertTriangle
+} from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 
-// ─── SVG ICONS ────────────────────────────────────────────────────────────────
-const Icon = {
-  bolt: (s = 16, c = "#FF6B00") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-    </svg>
-  ),
-  calendar: (s = 13, c = "currentColor") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  ),
-  check: (s = 13, c = "currentColor") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 11 12 14 22 4" />
-      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-    </svg>
-  ),
-  alert: (s = 13, c = "currentColor") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
-    </svg>
-  ),
-  clock: (s = 12, c = "currentColor") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-    </svg>
-  ),
-  folder: (s = 11, c = "currentColor") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-    </svg>
-  ),
-  plus: (s = 14, c = "#000") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round">
-      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  ),
-  chevL: (s = 15, c = "#888") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6" />
-    </svg>
-  ),
-  chevR: (s = 15, c = "#888") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  ),
-  x: (s = 14, c = "#555") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round">
-      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  ),
-  trash: (s = 13, c = "#ef4444") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-      <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-    </svg>
-  ),
-  edit: (s = 13, c = "#888") => (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-    </svg>
-  ),
-};
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+const DIAS_SEMANA = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"]
+const TIPOS = [
+  { value: "reuniao",   label: "Reunião",   color: "#3b82f6" },
+  { value: "tarefa",    label: "Tarefa",    color: "#f59e0b" },
+  { value: "lembrete",  label: "Lembrete",  color: "#8b5cf6" },
+  { value: "outro",     label: "Outro",     color: "#6b7280" },
+]
+const DURACOES = [
+  { label: "30 min", value: 30 },
+  { label: "1 hora", value: 60 },
+  { label: "1h30",   value: 90 },
+  { label: "2 horas",value: 120 },
+  { label: "3 horas",value: 180 },
+  { label: "4 horas",value: 240 },
+]
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const HOURS     = Array.from({ length: 13 }, (_, i) => i + 7);
-const DAYS_WEEK = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
-const PROJECTS  = ["Geral"]; 
-const PRIORITIES = ["BAIXA", "MÉDIA", "ALTA"];
-const COLORS    = ["#FF6B00", "#22c55e", "#3b82f6", "#a855f7", "#f59e0b", "#ef4444", "#ec4899"];
-
-// ─── STYLES ───────────────────────────────────────────────────────────────────
-const S = {
-  root: {
-    background: "#0a0a0a", color: "#d8d8d8", minHeight: "100%", height: "100%",
-    fontFamily: "'JetBrains Mono','Fira Code','Cascadia Code',monospace",
-    display: "flex", flexDirection: "column", fontSize: 13,
-  },
-  topBar: {
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    padding: "13px 24px", borderBottom: "1px solid #181818",
-  },
-  pageTitle: { fontSize: 19, fontWeight: 800, color: "#fff", letterSpacing: -0.5 },
-  chip: {
-    fontSize: 11, padding: "3px 10px", borderRadius: 6,
-    border: "1px solid #1e1e1e", color: "#555", background: "#0f0f0f",
-  },
-  primaryBtn: {
-    background: "#FF6B00", color: "#000", border: "none",
-    padding: "8px 16px", borderRadius: 7, fontWeight: 800, fontSize: 12,
-    cursor: "pointer", fontFamily: "inherit", letterSpacing: 0.2,
-  },
-  controls: {
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    padding: "8px 24px", borderBottom: "1px solid #131313", gap: 10,
-  },
-  todayBtn: {
-    background: "#FF6B00", color: "#000", border: "none",
-    padding: "5px 13px", borderRadius: 6, fontWeight: 700, fontSize: 11,
-    cursor: "pointer", fontFamily: "inherit",
-  },
-  navBtn: {
-    background: "#111", border: "1px solid #1e1e1e", width: 28, height: 28,
-    borderRadius: 6, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0,
-  },
-  monthLbl: { fontSize: 12, fontWeight: 700, color: "#bbb", textTransform: "capitalize", letterSpacing: 0.3 },
-  tGroup: { display: "flex", background: "#0d0d0d", border: "1px solid #1a1a1a", borderRadius: 7, overflow: "hidden" },
-  tBtn: {
-    background: "none", color: "#505050", border: "none", padding: "5px 12px",
-    fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 700,
-    letterSpacing: 0.5, textTransform: "uppercase", transition: "all 0.1s",
-  },
-  tBtnOn: { background: "#FF6B00", color: "#000" },
-
-  calWrap: { flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" },
-  dayHdr: { display: "flex", borderBottom: "1px solid #161616", flexShrink: 0 },
-  dayCell: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", padding: "9px 0", borderRight: "1px solid #131313" },
-  dayCellToday: { background: "#FF6B0007" },
-  dayName: { fontSize: 9, color: "#3a3a3a", fontWeight: 700, letterSpacing: 1.3, textTransform: "uppercase" },
-  dayNum: { fontSize: 16, fontWeight: 800, color: "#4a4a4a", marginTop: 3 },
-  dayNumToday: { background: "#FF6B00", color: "#000", width: 30, height: 30, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 },
-  hourLbl: { height: 64, display: "flex", alignItems: "flex-start", justifyContent: "flex-end", paddingRight: 10, paddingTop: 6, fontSize: 9, color: "#2e2e2e", fontWeight: 600, letterSpacing: 0.4 },
-  dayCol: { flex: 1, position: "relative", borderRight: "1px solid #0f0f0f" },
-  dayColToday: { background: "#FF6B0003" },
-  hrLine: { height: 64, borderTop: "1px solid #141414", boxSizing: "border-box" },
-  nowLine: { position: "absolute", left: 0, right: 0, height: 1, background: "#FF6B00", zIndex: 3, pointerEvents: "none" },
-  nowDot: { width: 7, height: 7, borderRadius: "50%", background: "#FF6B00", position: "absolute", left: -3, top: -3 },
-  clickLayer: { position: "absolute", inset: 0, zIndex: 1, cursor: "crosshair" },
-
-  overlay: { position: "fixed", inset: 0, background: "#000000d8", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, backdropFilter: "blur(8px)" },
-  modal: { background: "#0e0e0e", border: "1px solid #1c1c1c", borderRadius: 12, padding: 22, width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", gap: 14, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 32px 100px #000000a0" },
-  mHead: { display: "flex", alignItems: "center", justifyContent: "space-between" },
-  mTitle: { fontSize: 14, fontWeight: 800, color: "#f0f0f0" },
-  iconBtn: { background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex", alignItems: "center" },
-  typeBtn: { flex: 1, padding: "8px 12px", borderRadius: 8, background: "#131313", border: "1px solid #1e1e1e", color: "#505050", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.1s" },
-  typeBtnOn: { background: "#FF6B0015", border: "1px solid #FF6B0055", color: "#FF6B00" },
-  g2: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 11 },
-  g3: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 11 },
-  field: { display: "flex", flexDirection: "column", gap: 5 },
-  lbl: { fontSize: 9, color: "#3e3e3e", fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase" },
-  inp: { background: "#090909", border: "1px solid #1e1e1e", borderRadius: 7, padding: "8px 11px", color: "#cccccc", fontSize: 12, fontFamily: "inherit", outline: "none", width: "100%", boxSizing: "border-box" },
-  sel: { background: "#090909", border: "1px solid #1e1e1e", borderRadius: 7, padding: "8px 11px", color: "#cccccc", fontSize: 12, fontFamily: "inherit", outline: "none", width: "100%", cursor: "pointer" },
-  prioBtn: { padding: "5px 13px", borderRadius: 6, background: "#131313", border: "1px solid #1c1c1c", color: "#4a4a4a", fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", letterSpacing: 0.6 },
-  prioBtnOn: { background: "#FF6B0015", border: "1px solid #FF6B00", color: "#FF6B00" },
-  ghostBtn: { background: "none", border: "1px solid #1e1e1e", color: "#606060", padding: "7px 14px", borderRadius: 7, fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: 700 },
-};
-
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
-const toTop = (min: number, sh = 7) => ((min - sh * 60) / 60) * 64;
-const evH   = (s: string, e: string) => Math.max(((toMin(e) - toMin(s)) / 60) * 64, 28);
-
-function weekDates(base: Date) {
-  const d = new Date(base); d.setDate(d.getDate() - d.getDay());
-  return Array.from({ length: 7 }, (_, i) => { const x = new Date(d); x.setDate(d.getDate() + i); return x; });
+function getDiasDoMes(ano: number, mes: number) {
+  const primeiroDia = new Date(ano, mes, 1)
+  const ultimoDia = new Date(ano, mes + 1, 0)
+  const dias: (Date | null)[] = []
+  for (let i = 0; i < primeiroDia.getDay(); i++) dias.push(null)
+  for (let d = 1; d <= ultimoDia.getDate(); d++) dias.push(new Date(ano, mes, d))
+  return dias
 }
-const fmtD  = (d: Date) => d.toLocaleDateString("pt-BR", { day: "numeric" });
-const fmtMY = (d: Date) => d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
-const isToday = (d: Date) => {
-  const t = new Date();
-  return d.getDate() === t.getDate() && d.getMonth() === t.getMonth() && d.getFullYear() === t.getFullYear();
-};
 
-function EventCard({ ev, onClick }: { ev: any, onClick: any }) {
-  const top = toTop(toMin(ev.start));
-  const h   = evH(ev.start, ev.end);
+function fmtData(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
+}
+
+function isHoje(d: Date) {
+  const t = new Date()
+  return d.getDate()===t.getDate() && d.getMonth()===t.getMonth() && d.getFullYear()===t.getFullYear()
+}
+
+function isMesmoDia(d: Date, dataStr: string) {
+  return fmtData(d) === dataStr
+}
+
+function getInitials(nome: string) {
+  return nome.split(" ").map(n=>n[0]).slice(0,2).join("").toUpperCase()
+}
+
+function getCorTipo(tipo: string) {
+  return TIPOS.find(t => t.value === tipo)?.color || "#FF6B00"
+}
+
+// ─── AVATAR STACK ─────────────────────────────────────────────────────────
+function AvatarStack({ membros }: { membros: any[] }) {
+  if (!membros || membros.length === 0) return null
+  const show = membros.slice(0, 3)
+  const extra = membros.length - 3
   return (
-    <div onClick={() => onClick(ev)} style={{
-      position: "absolute", top, left: 3, right: 3, height: h,
-      background: ev.color + "18", border: `1px solid ${ev.color}38`,
-      borderLeft: `3px solid ${ev.color}`, borderRadius: 5,
-      padding: "4px 8px", cursor: "pointer", overflow: "hidden",
-      transition: "background 0.12s", zIndex: 2, boxSizing: "border-box",
-    }}
-      onMouseEnter={e => e.currentTarget.style.background = ev.color + "32"}
-      onMouseLeave={e => e.currentTarget.style.background = ev.color + "18"}
-    >
-      <div style={{ fontSize: 11, fontWeight: 700, color: ev.color, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-        {ev.title}
-      </div>
-      {h > 34 && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2, color: "#555", fontSize: 10 }}>
-          {Icon.clock(9, "#444")} {ev.start} – {ev.end}
+    <div className="flex items-center -space-x-1.5">
+      {show.map((m, i) => (
+        <div
+          key={i}
+          className="w-5 h-5 rounded-full border border-border flex items-center justify-center text-[8px] font-bold text-primary bg-card"
+          style={{ zIndex: 10 - i }}
+          title={m.perfil?.nome_completo || ""}
+        >
+          {m.perfil?.avatar_url
+            ? <img src={m.perfil.avatar_url} className="w-full h-full rounded-full object-cover" />
+            : getInitials(m.perfil?.nome_completo || "?")}
         </div>
-      )}
-      {h > 50 && ev.priority && (
-        <div style={{ marginTop: 3, fontSize: 9, fontWeight: 700, letterSpacing: 0.7, background: ev.color + "22", borderRadius: 3, padding: "1px 6px", display: "inline-block", color: ev.color }}>
-          {ev.priority}
-        </div>
-      )}
-      {h > 50 && (
-        <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 3, color: "#444", fontSize: 9 }}>
-          {Icon.folder(9, "#3a3a3a")} {ev.project}
+      ))}
+      {extra > 0 && (
+        <div className="w-5 h-5 rounded-full border border-border bg-secondary flex items-center justify-center text-[8px] font-bold text-muted-foreground">
+          +{extra}
         </div>
       )}
     </div>
-  );
+  )
 }
 
-function EventModal({ onClose, onSave, initial }: { onClose: any, onSave: any, initial?: any }) {
-  const [form, setForm] = useState(initial || {
-    title: "", type: "compromisso", project: PROJECTS[0],
-    start: "09:00", end: "10:00", day: new Date().getDay(),
-    color: "#FF6B00", priority: "MÉDIA", description: "",
-  });
-  const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
+// ─── MODAL NOVO EVENTO ─────────────────────────────────────────────────────
+function NovoEventoModal({
+  onClose, onSave, dataSelecionada
+}: {
+  onClose: () => void
+  onSave: (data: any) => Promise<void>
+  dataSelecionada: string
+}) {
+  const { equipe } = useEquipe()
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [form, setForm] = useState({
+    titulo: "",
+    data: dataSelecionada,
+    hora_inicio: "10:00",
+    duracao_minutos: 60,
+    tipo: "reuniao",
+    descricao: "",
+    membros_ids: [] as string[],
+    criar_no_google: true,
+  })
+
+  const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }))
+
+  const toggleMembro = (id: string) => {
+    setForm(f => ({
+      ...f,
+      membros_ids: f.membros_ids.includes(id)
+        ? f.membros_ids.filter(m => m !== id)
+        : [...f.membros_ids, id]
+    }))
+  }
+
+  const handleSave = async () => {
+    if (!form.titulo.trim()) return
+    setLoading(true)
+    try {
+      const membrosComEmail = equipe
+        .filter(m => form.membros_ids.includes(m.id))
+        .map(m => m.email)
+        .filter(Boolean)
+
+      await onSave({
+        ...form,
+        attendees_emails: membrosComEmail,
+      })
+      setSuccess(true)
+      setTimeout(onClose, 1200)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const corTipo = getCorTipo(form.tipo)
 
   return (
-    <div style={S.overlay as any} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={S.modal as any}>
-
-        <div style={S.mHead as any}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            {Icon.bolt(15, "#FF6B00")}
-            <span style={S.mTitle as any}>{initial ? "Editar evento" : "Novo evento"}</span>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-foreground text-sm">Novo Evento</span>
+            <Badge variant="outline" className="text-[9px] font-mono px-2 border-blue-500/30 text-blue-400 gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
+              Google Calendar
+            </Badge>
           </div>
-          <button onClick={onClose} style={S.iconBtn as any}>{Icon.x(14, "#444")}</button>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <div style={{ display: "flex", gap: 8 }}>
-          {[
-            { v: "compromisso", label: "Compromisso", ic: Icon.calendar(12, "currentColor") },
-            { v: "tarefa",      label: "Tarefa",      ic: Icon.check(12, "currentColor") },
-          ].map(({ v, label, ic }) => (
-            <button key={v} onClick={() => set("type", v)}
-              style={{ ...S.typeBtn, ...(form.type === v ? S.typeBtnOn : {}) } as any}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>{ic} {label}</span>
-            </button>
+        <div className="p-5 space-y-4 overflow-y-auto flex-1">
+          {/* Título */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Título do evento</label>
+            <input
+              value={form.titulo}
+              onChange={e => set("titulo", e.target.value)}
+              placeholder="Ex: Reunião de alinhamento"
+              className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 transition-colors"
+              autoFocus
+            />
+          </div>
+
+          {/* Data + Hora */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Data</label>
+              <input
+                type="date"
+                value={form.data}
+                onChange={e => set("data", e.target.value)}
+                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Horário início</label>
+              <input
+                type="time"
+                value={form.hora_inicio}
+                onChange={e => set("hora_inicio", e.target.value)}
+                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50"
+              />
+            </div>
+          </div>
+
+          {/* Duração + Tipo */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Duração</label>
+              <select
+                value={form.duracao_minutos}
+                onChange={e => set("duracao_minutos", Number(e.target.value))}
+                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none"
+              >
+                {DURACOES.map(d => (
+                  <option key={d.value} value={d.value}>{d.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Tipo</label>
+              <select
+                value={form.tipo}
+                onChange={e => set("tipo", e.target.value)}
+                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none"
+              >
+                {TIPOS.map(t => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Descrição */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Descrição</label>
+            <textarea
+              value={form.descricao}
+              onChange={e => set("descricao", e.target.value)}
+              placeholder="Pauta, links, observações..."
+              rows={3}
+              className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 resize-none"
+            />
+          </div>
+
+          {/* Membros */}
+          {equipe.length > 0 && (
+            <div className="space-y-2">
+              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                Membros convidados <span className="normal-case text-muted-foreground/60">(serão notificados pelo Google Calendar)</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {equipe.map(m => {
+                  const selected = form.membros_ids.includes(m.id)
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => toggleMembro(m.id)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                        selected
+                          ? "border-primary/50 bg-primary/10 text-primary"
+                          : "border-border bg-secondary text-muted-foreground hover:border-border/80"
+                      }`}
+                    >
+                      <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold text-primary">
+                        {m.avatar_url
+                          ? <img src={m.avatar_url} className="w-full h-full rounded-full object-cover" />
+                          : getInitials(m.nome || "")
+                        }
+                      </div>
+                      {m.nome?.split(" ")[0]}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Toggle Google Calendar */}
+          <div className="flex items-center justify-between py-2 border-t border-border">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-400" />
+              <span className="text-xs text-foreground">Criar automaticamente no Google Calendar e convidar membros</span>
+            </div>
+            <Switch
+              checked={form.criar_no_google}
+              onCheckedChange={v => set("criar_no_google", v)}
+            />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 py-4 border-t border-border">
+          {success ? (
+            <div className="flex items-center justify-center gap-2 py-2 text-green-500 text-sm font-medium">
+              <CheckCircle2 className="w-4 h-4" /> Evento criado com sucesso!
+            </div>
+          ) : (
+            <Button
+              onClick={handleSave}
+              disabled={loading || !form.titulo.trim()}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            >
+              {loading ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Criando...</>
+              ) : (
+                <><Plus className="w-4 h-4 mr-2" /> Criar evento</>
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── CARD DE EVENTO SIMPLES ────────────────────────────────────────────────
+function EventoItem({
+  evento, onDelete
+}: {
+  evento: Evento
+  onDelete: (id: string) => void
+}) {
+  const cor = getCorTipo(evento.tipo)
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    await onDelete(evento.id)
+    setDeleting(false)
+  }
+
+  return (
+    <div
+      className="flex items-center gap-3 py-2 group"
+    >
+      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: cor }} />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium text-foreground truncate">{evento.titulo}</p>
+        <p className="text-[10px] text-muted-foreground font-mono">
+          {evento.hora_inicio} · {evento.sincronizado_google ? "Google Calendar" : "Agenda local"}
+        </p>
+      </div>
+      <AvatarStack membros={evento.evento_membros || []} />
+      {evento.sincronizado_google && (
+        <div title="Sincronizado com Google Calendar">
+          <Calendar className="w-3 h-3 text-blue-400 flex-shrink-0" />
+        </div>
+      )}
+      <button
+        onClick={handleDelete}
+        disabled={deleting}
+        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+      >
+        {deleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+      </button>
+    </div>
+  )
+}
+
+// ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
+export function AgendaModule() {
+  const hoje = new Date()
+  const [mesAtual, setMesAtual] = useState({ ano: hoje.getFullYear(), mes: hoje.getMonth() })
+  const [diaSelecionado, setDiaSelecionado] = useState<Date>(hoje)
+  const [showModal, setShowModal] = useState(false)
+
+  // Calcula range do mês para buscar eventos
+  const dataInicio = `${mesAtual.ano}-${String(mesAtual.mes + 1).padStart(2, "0")}-01`
+  const dataFim = `${mesAtual.ano}-${String(mesAtual.mes + 1).padStart(2, "0")}-${new Date(mesAtual.ano, mesAtual.mes + 1, 0).getDate()}`
+
+  const { eventos, isLoading, criarEvento, deletarEvento } = useEventos(dataInicio, dataFim)
+
+  const dias = getDiasDoMes(mesAtual.ano, mesAtual.mes)
+
+  const irParaMes = (delta: number) => {
+    setMesAtual(prev => {
+      const d = new Date(prev.ano, prev.mes + delta, 1)
+      return { ano: d.getFullYear(), mes: d.getMonth() }
+    })
+  }
+
+  // Eventos do dia selecionado
+  const eventosDoDia = useMemo(() =>
+    eventos.filter(e => e.data === fmtData(diaSelecionado))
+      .sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio)),
+    [eventos, diaSelecionado]
+  )
+
+  // Dias que têm eventos (para pontinho no calendário)
+  const diasComEventos = useMemo(() =>
+    new Set(eventos.map(e => e.data)),
+    [eventos]
+  )
+
+  return (
+    <div className="flex flex-col h-full bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-primary" />
+          <span className="text-sm font-bold text-foreground">Agenda</span>
+          {isLoading && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
+        </div>
+        <Button
+          size="sm"
+          onClick={() => setShowModal(true)}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground h-8 text-xs font-semibold"
+        >
+          <Plus className="w-3.5 h-3.5 mr-1" /> Novo evento
+        </Button>
+      </div>
+
+      {/* Calendário */}
+      <div className="px-4 py-3 flex-shrink-0">
+        {/* Navegação do mês */}
+        <div className="flex items-center justify-between mb-3">
+          <button
+            onClick={() => irParaMes(-1)}
+            className="text-xs font-mono text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border hover:border-border/80 transition-colors"
+          >
+            ‹ Anterior
+          </button>
+          <span className="text-sm font-bold text-foreground capitalize">
+            {MESES[mesAtual.mes]} {mesAtual.ano}
+          </span>
+          <button
+            onClick={() => irParaMes(1)}
+            className="text-xs font-mono text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border hover:border-border/80 transition-colors"
+          >
+            Próximo ›
+          </button>
+        </div>
+
+        {/* Cabeçalho dias da semana */}
+        <div className="grid grid-cols-7 mb-1">
+          {DIAS_SEMANA.map(d => (
+            <div key={d} className="text-center text-[10px] font-mono text-muted-foreground py-1">
+              {d}
+            </div>
           ))}
         </div>
 
-        <div style={S.g2 as any}>
-          <div style={S.field as any}><label style={S.lbl as any}>Título *</label>
-            <input value={form.title} onChange={e => set("title", e.target.value)} placeholder="Ex: Daily standup..." style={S.inp as any} />
-          </div>
-          <div style={S.field as any}><label style={S.lbl as any}>Projeto</label>
-            <select value={form.project} onChange={e => set("project", e.target.value)} style={S.sel as any}>
-              {PROJECTS.map(p => <option key={p}>{p}</option>)}
-            </select>
-          </div>
-        </div>
+        {/* Grid de dias */}
+        <div className="grid grid-cols-7 gap-y-0.5">
+          {dias.map((dia, i) => {
+            if (!dia) return <div key={i} />
+            const dStr = fmtData(dia)
+            const selecionado = fmtData(diaSelecionado) === dStr
+            const temEvento = diasComEventos.has(dStr)
+            const ehHoje = isHoje(dia)
 
-        <div style={S.g3 as any}>
-          <div style={S.field as any}><label style={S.lbl as any}>Dia</label>
-            <select value={form.day} onChange={e => set("day", Number(e.target.value))} style={S.sel as any}>
-              {DAYS_WEEK.map((d, i) => <option key={i} value={i}>{d}</option>)}
-            </select>
-          </div>
-          <div style={S.field as any}><label style={S.lbl as any}>Início</label>
-            <input type="time" value={form.start} onChange={e => set("start", e.target.value)} style={S.inp as any} />
-          </div>
-          <div style={S.field as any}><label style={S.lbl as any}>Fim</label>
-            <input type="time" value={form.end} onChange={e => set("end", e.target.value)} style={S.inp as any} />
-          </div>
-        </div>
-
-        {form.type === "tarefa" && (
-          <div style={S.field as any}><label style={S.lbl as any}>Prioridade</label>
-            <div style={{ display: "flex", gap: 7 }}>
-              {PRIORITIES.map(p => (
-                <button key={p} onClick={() => set("priority", p)}
-                  style={{ ...S.prioBtn, ...(form.priority === p ? S.prioBtnOn : {}) } as any}>{p}</button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div style={S.field as any}><label style={S.lbl as any}>Cor</label>
-          <div style={{ display: "flex", gap: 7 }}>
-            {COLORS.map(c => (
-              <button key={c} onClick={() => set("color", c)} style={{
-                width: 22, height: 22, borderRadius: 4, background: c, cursor: "pointer", border: "none",
-                outline: form.color === c ? `2px solid ${c}` : "2px solid transparent", outlineOffset: 2,
-              }} />
-            ))}
-          </div>
-        </div>
-
-        <div style={S.field as any}><label style={S.lbl as any}>Descrição</label>
-          <textarea value={form.description} onChange={e => set("description", e.target.value)}
-            placeholder="Detalhes..." rows={2} style={{ ...S.inp, resize: "vertical", lineHeight: 1.6 } as any} />
-        </div>
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <button onClick={onClose} style={S.ghostBtn as any}>Cancelar</button>
-          <button onClick={() => { if (form.title.trim()) { onSave(form); onClose(); } }} style={S.primaryBtn as any}>
-            {initial ? "Salvar" : "Criar evento"}
-          </button>
+            return (
+              <button
+                key={i}
+                onClick={() => setDiaSelecionado(dia)}
+                className={`relative flex flex-col items-center justify-center py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  selecionado
+                    ? "bg-primary text-primary-foreground"
+                    : ehHoje
+                    ? "bg-primary/20 text-primary font-bold"
+                    : "text-foreground hover:bg-secondary"
+                }`}
+              >
+                {dia.getDate()}
+                {temEvento && !selecionado && (
+                  <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-primary" />
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
-    </div>
-  );
-}
 
-function DetailModal({ ev, onClose, onDelete, onEdit }: { ev: any, onClose: any, onDelete: any, onEdit: any }) {
-  return (
-    <div style={S.overlay as any} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ ...S.modal, maxWidth: 380 } as any}>
-        <div style={S.mHead as any}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <div style={{ width: 9, height: 9, borderRadius: 2, background: ev.color, flexShrink: 0 }} />
-            <span style={S.mTitle as any}>{ev.title}</span>
-          </div>
-          <button onClick={onClose} style={S.iconBtn as any}>{Icon.x(14, "#444")}</button>
-        </div>
+      {/* Eventos do dia */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <div className="border-t border-border pt-3">
+          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
+            Eventos — {diaSelecionado.getDate()} {MESES[diaSelecionado.getMonth()].slice(0, 3)}
+          </p>
 
-        <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
-          <span style={{ ...S.chip, borderColor: ev.color + "50", color: ev.color } as any}>
-            <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-              {ev.type === "tarefa" ? Icon.check(11, ev.color) : Icon.calendar(11, ev.color)}
-              {ev.type === "tarefa" ? "Tarefa" : "Compromisso"}
-            </span>
-          </span>
-          {ev.priority && <span style={{ ...S.chip, borderColor: "#FF6B0050", color: "#FF6B00" } as any}>{ev.priority}</span>}
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, color: "#777", fontSize: 12 }}>
-            {Icon.clock(12, "#555")} {DAYS_WEEK[ev.day]} · {ev.start} – {ev.end}
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, color: "#555", fontSize: 12 }}>
-            {Icon.folder(11, "#444")} {ev.project}
-          </div>
-          {ev.description && (
-            <div style={{ color: "#555", fontSize: 12, lineHeight: 1.7, borderTop: "1px solid #181818", paddingTop: 10, marginTop: 2 }}>
-              {ev.description}
+          {eventosDoDia.length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-6">
+              Nenhum evento neste dia.
+            </p>
+          ) : (
+            <div className="divide-y divide-border/50">
+              {eventosDoDia.map(ev => (
+                <EventoItem key={ev.id} evento={ev} onDelete={deletarEvento} />
+              ))}
             </div>
           )}
         </div>
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
-          <button onClick={() => onDelete(ev.id)}
-            style={{ ...S.ghostBtn, color: "#ef4444", borderColor: "#ef444435", display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, padding: 0 } as any}>
-            {Icon.trash(13, "#ef4444")}
-          </button>
-          <button onClick={onEdit}
-            style={{ ...S.ghostBtn, display: "flex", alignItems: "center", gap: 5 } as any}>
-            {Icon.edit(13, "#777")} Editar
-          </button>
-          <button onClick={onClose} style={S.primaryBtn as any}>Fechar</button>
-        </div>
       </div>
-    </div>
-  );
-}
 
-// ─── MAIN ─────────────────────────────────────────────────────────────────────
-export function AgendaModule() {
-  const [base, setBase]       = useState(new Date());
-  
-  // Integração real com o DB do Focus OS
-  const { tarefas } = useMinhasTarefas();
-  
-  const [localEvents, setLocalEvents] = useState<any[]>([]);
-  const [modal, setModal]     = useState<any>(null);   // null | "new" | "detail" | "edit"
-  const [sel, setSel]         = useState<any>(null);
-  const [filter, setFilter]   = useState("todos");
-  const scrollRef             = useRef<HTMLDivElement>(null);
-
-  useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = 64; }, []);
-
-  // Transforma as tarefas do BD em Eventos e preserva tb eventos manuais já no estado (se houver)
-  useEffect(() => {
-    // Retira eventos do tipo tarefa antigos para sobescrever com db atualizado
-    setLocalEvents(prev => {
-      const nonTasks = prev.filter(e => e.type !== "tarefa");
-      const mappedTasks = tarefas.map(t => {
-        let dayIdx = 1; 
-        if (t.prazo) dayIdx = new Date(t.prazo).getDay();
-        
-        let pColor = "#22c55e"; // baixa
-        if (t.prioridade === "media") pColor = "#f59e0b";
-        if (t.prioridade === "alta" || t.prioridade === "ALTA") pColor = "#ef4444";
-        
-        return {
-          id: t.id,
-          title: t.titulo,
-          type: "tarefa",
-          project: t.projeto_nome || "Geral",
-          start: "10:00", // fixo mock caso n tenha hora
-          end: "11:00",
-          day: dayIdx,
-          color: pColor,
-          priority: String(t.prioridade).toUpperCase(),
-          description: t.descricao || "",
-          realDate: t.prazo
-        }
-      });
-      return [...nonTasks, ...mappedTasks];
-    });
-  }, [tarefas]);
-
-  const wk       = weekDates(base);
-  const prevWk   = () => { const d = new Date(base); d.setDate(d.getDate() - 7); setBase(d); };
-  const nextWk   = () => { const d = new Date(base); d.setDate(d.getDate() + 7); setBase(d); };
-  const filtered = localEvents.filter(e => filter === "todos" || e.type === filter);
-
-  const save = (form: any) => {
-    if (form.id) setLocalEvents(p => p.map(e => e.id === form.id ? { ...e, ...form } : e));
-    else         setLocalEvents(p => [...p, { ...form, id: Date.now() }]);
-  };
-  const del  = (id: any) => { setLocalEvents(p => p.filter(e => e.id !== id)); setModal(null); };
-
-  const nMeet = localEvents.filter(e => e.type === "compromisso").length;
-  const nTask = localEvents.filter(e => e.type === "tarefa").length;
-  const nHigh = localEvents.filter(e => e.priority === "ALTA").length;
-
-  return (
-    <div style={S.root as any}>
-
-      {/* TOP BAR */}
-      <div style={S.topBar as any}>
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {Icon.bolt(17, "#FF6B00")}
-            <span style={S.pageTitle as any}>Agenda</span>
-          </div>
-          <div style={{ display: "flex", gap: 6 }}>
-            <span style={S.chip as any}>
-              <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                {Icon.calendar(11, "#555")} {nMeet} compromissos
-              </span>
-            </span>
-            <span style={S.chip as any}>
-              <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                {Icon.check(11, "#555")} {nTask} tarefas
-              </span>
-            </span>
-            {nHigh > 0 && (
-              <span style={{ ...S.chip, borderColor: "#ef444435", color: "#ef4444" } as any}>
-                <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                  {Icon.alert(11, "#ef4444")} {nHigh} alta prioridade
-                </span>
-              </span>
-            )}
-          </div>
-        </div>
-        <button onClick={() => setModal("new")} style={S.primaryBtn as any}>
-          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            {Icon.plus(13, "#000")} Novo evento
-          </span>
+      {/* Quick add button */}
+      <div className="px-4 pb-4 flex-shrink-0">
+        <button
+          onClick={() => setShowModal(true)}
+          className="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-border rounded-xl text-xs text-muted-foreground hover:border-primary/40 hover:text-primary/80 transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5" /> Adicionar evento
         </button>
       </div>
 
-      {/* CONTROLS */}
-      <div style={S.controls as any}>
-        <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-          <button onClick={() => setBase(new Date())} style={S.todayBtn as any}>Hoje</button>
-          <button onClick={prevWk} style={S.navBtn as any}>{Icon.chevL(15, "#777")}</button>
-          <button onClick={nextWk} style={S.navBtn as any}>{Icon.chevR(15, "#777")}</button>
-          <span style={S.monthLbl as any}>{fmtMY(wk[3])}</span>
-        </div>
-        <div style={S.tGroup as any}>
-          {[["todos","Todos"],["compromisso","Compromissos"],["tarefa","Tarefas"]].map(([v, l]) => (
-            <button key={v} onClick={() => setFilter(v)}
-              style={{ ...S.tBtn, ...(filter === v ? S.tBtnOn : {}) } as any}>{l}</button>
-          ))}
-        </div>
-      </div>
-
-      {/* GRID */}
-      <div style={S.calWrap as any}>
-        <div style={S.dayHdr as any}>
-          <div style={{ width: 52, flexShrink: 0 }} />
-          {wk.map((d, i) => (
-            <div key={i} style={{ ...S.dayCell, ...(isToday(d) ? S.dayCellToday : {}) } as any}>
-              <span style={S.dayName as any}>{DAYS_WEEK[i]}</span>
-              <span style={isToday(d) ? { ...S.dayNum, ...S.dayNumToday } : S.dayNum as any}>{fmtD(d)}</span>
-            </div>
-          ))}
-        </div>
-
-        <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
-          <div style={{ display: "flex", minHeight: HOURS.length * 64 }}>
-            <div style={{ width: 52, flexShrink: 0 }}>
-              {HOURS.map(h => (
-                <div key={h} style={S.hourLbl as any}>{String(h).padStart(2,"0")}:00</div>
-              ))}
-            </div>
-
-            {wk.map((d, di) => (
-              <div key={di} style={{ ...S.dayCol, ...(isToday(d) ? S.dayColToday : {}) } as any}>
-                {HOURS.map(h => <div key={h} style={S.hrLine as any} />)}
-
-                {isToday(d) && (
-                  <div style={{ ...S.nowLine, top: toTop(new Date().getHours() * 60 + new Date().getMinutes()) } as any}>
-                    <div style={S.nowDot as any} />
-                  </div>
-                )}
-
-                {filtered.filter(e => e.day === di).map(ev => (
-                  <EventCard key={ev.id} ev={ev} onClick={(ev: any) => { setSel(ev); setModal("detail"); }} />
-                ))}
-
-                <div style={S.clickLayer as any} onClick={() => setModal("new")} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {modal === "new"    && <EventModal onClose={() => setModal(null)} onSave={save} />}
-      {modal === "edit"   && sel && <EventModal initial={sel} onClose={() => { setModal(null); setSel(null); }} onSave={save} />}
-      {modal === "detail" && sel && (
-        <DetailModal ev={sel}
-          onClose={() => { setModal(null); setSel(null); }}
-          onDelete={del}
-          onEdit={() => setModal("edit")}
+      {/* Modal */}
+      {showModal && (
+        <NovoEventoModal
+          onClose={() => setShowModal(false)}
+          onSave={criarEvento}
+          dataSelecionada={fmtData(diaSelecionado)}
         />
       )}
     </div>
-  );
+  )
 }
