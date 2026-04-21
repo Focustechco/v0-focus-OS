@@ -1,12 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { FocusSidebar } from "@/components/focus-sidebar"
-import { FocusHeader } from "@/components/focus-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { Progress } from "@/components/ui/progress"
 import {
   Dialog,
   DialogContent,
@@ -18,13 +17,14 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  MessageSquare,
   AlertTriangle,
-  ArrowRight,
   Eye,
   User,
   Calendar,
   FileText,
+  ListChecks,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 
 import { useAprovacoes, Aprovacao } from "@/lib/hooks/use-aprovacoes"
@@ -44,11 +44,19 @@ const typeConfig: Record<string, { label: string; color: string }> = {
   budget: { label: "ORÇAMENTO", color: "bg-yellow-500" },
 }
 
-function ApprovalCard({ approval, onAction }: { approval: Aprovacao, onAction: (status: "aprovado" | "reprovado") => void }) {
+function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?: any }, onAction: (status: "aprovado" | "reprovado", comentario?: string) => void }) {
   const priority = priorityConfig[approval.priority || "normal"] || priorityConfig.normal
   const type = typeConfig[approval.approval_type || "task_review"] || typeConfig.task_review
   const [dialogOpen, setDialogOpen] = useState(false)
-  
+  const [rejectComment, setRejectComment] = useState("")
+  const [showSubtasks, setShowSubtasks] = useState(true)
+
+  const tarefa = (approval as any).tarefa
+  const checklist = tarefa?.checklist_items || []
+  const checklistDone = checklist.filter((i: any) => i.is_done).length
+  const checklistTotal = checklist.length
+  const progressPct = checklistTotal > 0 ? Math.round((checklistDone / checklistTotal) * 100) : 0
+
   return (
     <Card className={`bg-[#141414] border-[#2A2A2A] ${approval.priority === "urgent" ? "border-l-4 border-l-red-500" : ""} hover:border-orange-500/30 transition-colors`}>
       <CardContent className="p-4">
@@ -72,6 +80,19 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao, onAction: (
         <h3 className="text-sm font-medium text-white mb-1">{approval.titulo}</h3>
         <p className="text-[10px] text-neutral-500 mb-3">{approval.descricao}</p>
 
+        {/* Progresso agregado das subtarefas */}
+        {checklistTotal > 0 && (
+          <div className="mb-3 space-y-1.5">
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-neutral-500 font-mono">
+                <span className={checklistDone === checklistTotal ? "text-green-400" : "text-white"}>{checklistDone}</span>/{checklistTotal} subtarefas concluídas
+              </span>
+              <span className="text-neutral-500 font-mono">{progressPct}%</span>
+            </div>
+            <Progress value={progressPct} className="h-1.5 bg-[#1A1A1A]" />
+          </div>
+        )}
+
         <div className="flex items-center gap-4 text-[10px] text-neutral-400 mb-4">
           <div className="flex items-center gap-1">
             <User className="w-3 h-3" />
@@ -79,7 +100,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao, onAction: (
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
-            {new Date(approval.created_at).toLocaleDateString()}
+            {new Date(approval.created_at).toLocaleDateString("pt-BR")}
           </div>
         </div>
 
@@ -88,47 +109,99 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao, onAction: (
             <DialogTrigger asChild>
               <Button size="sm" variant="outline" className="flex-1 h-8 text-xs border-[#2A2A2A] text-neutral-400 hover:text-white">
                 <Eye className="w-3 h-3 mr-1" />
-                Ver Detalhes
+                Ver Subtarefas
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-lg">
+            <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-xl">
               <DialogHeader>
                 <DialogTitle className="text-lg font-display text-white flex items-center gap-2">
                   <FileText className="w-5 h-5 text-orange-500" />
                   {approval.titulo}
                 </DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div className="flex items-center gap-2">
+              <div className="space-y-4 pt-2">
+                {/* Info da tarefa */}
+                <div className="flex items-center gap-2 flex-wrap">
                   <Badge className={`${type.color} text-white`}>{type.label}</Badge>
-                  <span className="text-sm text-neutral-400">{approval.projetos?.nome}</span>
+                  <Badge variant="outline" className={`${priority.bg} ${priority.color} text-[9px]`}>{priority.label}</Badge>
+                  <span className="text-xs text-neutral-400">{approval.projetos?.nome}</span>
                 </div>
-                
-                <p className="text-sm text-neutral-300">{approval.descricao}</p>
 
+                {/* Progresso */}
+                {checklistTotal > 0 && (
+                  <div className="p-3 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A] space-y-2">
+                    <div className="flex items-center justify-between text-[10px] text-neutral-400">
+                      <span className="flex items-center gap-1 font-mono uppercase tracking-wider">
+                        <ListChecks className="w-3 h-3" /> Subtarefas de Entrega
+                      </span>
+                      <span className="font-mono">{checklistDone}/{checklistTotal} — {progressPct}%</span>
+                    </div>
+                    <Progress value={progressPct} className="h-2 bg-[#1A1A1A]" />
+                    <div className="space-y-1.5 pt-1">
+                      {checklist.map((ci: any) => (
+                        <div key={ci.id} className="flex items-center gap-2.5 py-1.5 px-2 rounded-md bg-[#141414]">
+                          {ci.is_done
+                            ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                            : <XCircle className="w-3.5 h-3.5 text-red-500/50 flex-shrink-0" />
+                          }
+                          <span className={`text-xs flex-1 ${ci.is_done ? "text-neutral-400 line-through" : "text-white"}`}>
+                            {ci.title}
+                          </span>
+                          {ci.prazo && (
+                            <span className="text-[9px] text-neutral-600 font-mono">
+                              {new Date(ci.prazo).toLocaleDateString("pt-BR")}
+                            </span>
+                          )}
+                          <Badge
+                            variant="outline"
+                            className={`text-[8px] h-4 px-1 font-bold uppercase ${
+                              ci.is_done
+                                ? "border-green-500/30 text-green-500"
+                                : "border-red-500/20 text-red-400/60"
+                            }`}
+                          >
+                            {ci.is_done ? "OK" : "Pendente"}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Campo de comentário para rejeição */}
                 <div className="space-y-2">
-                  <label className="text-xs text-neutral-400">Comentário (opcional)</label>
-                  <Textarea 
-                    className="bg-[#0A0A0A] border-[#2A2A2A] text-white resize-none" 
-                    placeholder="Adicione um comentário..."
+                  <label className="text-xs text-neutral-400">Comentário de retorno (obrigatório para rejeitar)</label>
+                  <Textarea
+                    className="bg-[#0A0A0A] border-[#2A2A2A] text-white resize-none"
+                    placeholder="Descreva o motivo da rejeição ou feedback para o dev..."
                     rows={3}
+                    value={rejectComment}
+                    onChange={(e) => setRejectComment(e.target.value)}
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4">
-                  <Button variant="outline" className="border-red-500/50 text-red-500 hover:bg-red-500/10" onClick={() => { onAction("reprovado"); setDialogOpen(false); }}>
+                <div className="flex justify-end gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    className="border-red-500/50 text-red-500 hover:bg-red-500/10"
+                    disabled={!rejectComment.trim()}
+                    onClick={() => { onAction("reprovado", rejectComment); setDialogOpen(false); }}
+                  >
                     <XCircle className="w-4 h-4 mr-2" />
                     Rejeitar
                   </Button>
-                  <Button className="bg-green-500 hover:bg-green-600" onClick={() => { onAction("aprovado"); setDialogOpen(false); }}>
+                  <Button
+                    className="bg-green-500 hover:bg-green-600"
+                    onClick={() => { onAction("aprovado"); setDialogOpen(false); }}
+                  >
                     <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Aprovar
+                    Aprovar Tarefa
                   </Button>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
-          
+
           <Button size="sm" variant="outline" className="h-8 text-xs border-red-500/50 text-red-500 hover:bg-red-500/10" onClick={() => onAction("reprovado")}>
             <XCircle className="w-3 h-3" />
           </Button>

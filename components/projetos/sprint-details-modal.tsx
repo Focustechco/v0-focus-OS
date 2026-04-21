@@ -5,13 +5,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { Zap, Calendar, Target, Clock, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Zap, Calendar, Target, Clock, Loader2, Hourglass, ArrowRight } from "lucide-react"
 import { useTarefas } from "@/lib/hooks/use-tarefas"
 import { TaskCard } from "./task-card"
+import { useRouter } from "next/navigation"
 
 export function SprintDetailsModal({ open, onOpenChange, sprint }: any) {
   // Call useTarefas safely only passing ID when sprint exists
   const { tasks, isLoading } = useTarefas(sprint?.id)
+  const router = useRouter()
 
   if (!sprint) return null
 
@@ -19,6 +22,11 @@ export function SprintDetailsModal({ open, onOpenChange, sprint }: any) {
   const today = new Date()
   const diffTime = endDate.getTime() - today.getTime()
   const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  // Tarefas prontas para revisão: progress 100% ou status em_revisao
+  const tarefasParaRevisao = (tasks || []).filter(
+    (t: any) => t.status === "em_revisao" || (t.progress ?? 0) === 100
+  )
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -72,6 +80,18 @@ export function SprintDetailsModal({ open, onOpenChange, sprint }: any) {
             <h3 className="text-sm font-medium text-neutral-300 tracking-wider font-mono">
               TAREFAS DESTA SPRINT ({tasks?.length || 0})
             </h3>
+            {tarefasParaRevisao.length > 0 && (
+              <button
+                onClick={() => { onOpenChange(false); router.push("/projetos?tab=aprovacoes") }}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+              >
+                <Hourglass className="w-3 h-3 text-amber-400" />
+                <span className="text-[10px] font-mono font-bold text-amber-400">
+                  {tarefasParaRevisao.length} aguardando TL
+                </span>
+                <ArrowRight className="w-3 h-3 text-amber-400" />
+              </button>
+            )}
           </div>
 
           {isLoading ? (

@@ -23,7 +23,10 @@ export async function PATCH(
       .from("tarefas")
       .update(updates)
       .eq("id", id)
-      .select()
+      .select(`
+        *,
+        checklist_items(id, title, is_done, assigned_to)
+      `)
       .single()
 
     if (error) throw error
@@ -39,6 +42,33 @@ export async function PATCH(
         .from("checklist_items")
         .update({ is_done: false })
         .eq("task_id", id)
+    }
+
+    // — Fluxo de Aprovação Automático —
+    // Quando tarefa entra em revisão, cria entrada automática em aprovacoes (upsert p/ evitar duplicatas)
+    if (status === 'em_revisao' && data) {
+      const tarefa = data as any
+      const { error: aprovErr } = await supabase
+        .from("aprovacoes")
+        .upsert(
+          {
+            tarefa_id: id,
+            projeto_id: tarefa.projeto_id,
+            titulo: tarefa.titulo,
+            descricao: tarefa.descricao || `Tarefa pronta para revisão: ${tarefa.titulo}`,
+            status: "pendente",
+            assigned_to: tarefa.responsavel_id || "dev",
+            priority: tarefa.prioridade === "alta" ? "high" : tarefa.prioridade === "baixa" ? "low" : "normal",
+            approval_type: "task_review",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "tarefa_id", ignoreDuplicates: false }
+        )
+
+      if (aprovErr) {
+        // Não falha a request principal — apenas loga o erro de aprovação
+        console.error("[PATCH tarefas] Erro ao criar aprovação automática:", aprovErr.message)
+      }
     }
 
     return NextResponse.json({ task: data })

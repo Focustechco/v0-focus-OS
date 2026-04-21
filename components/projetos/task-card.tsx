@@ -12,9 +12,12 @@ import {
   FolderKanban,
   User,
   MoreVertical,
+  Send,
+  Hourglass,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSWRConfig } from "swr"
+import { usePermissoes } from "@/lib/hooks/use-permissoes"
 
 export const statusConfig: Record<string, { label: string; color: string; icon: typeof Circle }> = {
   a_fazer: { label: "A FAZER", color: "bg-neutral-500", icon: Circle },
@@ -32,6 +35,8 @@ export const priorityConfig: Record<string, { label: string; color: string; bar:
 export function TaskCard({ task, onClick }: { task: any, onClick?: () => void }) {
   const { mutate } = useSWRConfig()
   const [optimisticTask, setOptimisticTask] = useState(task)
+  const [requestingReview, setRequestingReview] = useState(false)
+  const { canCreateTask, canRequestReview } = usePermissoes()
 
   useEffect(() => {
     setOptimisticTask(task)
@@ -47,6 +52,8 @@ export function TaskCard({ task, onClick }: { task: any, onClick?: () => void })
   const priority = priorityConfig[optimisticTask.prioridade] || priorityConfig["media"]
 
   const isCompleted = optimisticTask.status === "concluida"
+  const isReadyForReview = currentProgress === 100 && !isCompleted
+  const isAwaitingReview = optimisticTask.status === "em_revisao"
 
   // Zona 1 - Accent Bar color
   const accentBarColor = isCompleted ? "bg-green-800" : priority.bar
@@ -55,6 +62,23 @@ export function TaskCard({ task, onClick }: { task: any, onClick?: () => void })
   let progressColor = "bg-orange-500"
   if (currentProgress >= 50 && currentProgress < 100) progressColor = "bg-yellow-500"
   if (currentProgress === 100) progressColor = "bg-green-500"
+
+  const handleRequestReview = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setRequestingReview(true)
+    
+    // Muda status para "em_revisao"
+    setOptimisticTask({ ...optimisticTask, status: "em_revisao" })
+    
+    await fetch(`/api/tarefas/${optimisticTask.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'em_revisao' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    
+    mutate(key => typeof key === 'string' && key.startsWith('tarefas'))
+    setRequestingReview(false)
+  }
 
   const handleToggleCircle = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -153,6 +177,16 @@ export function TaskCard({ task, onClick }: { task: any, onClick?: () => void })
           </p>
         </div>
 
+        {/* Badge: Aguardando Revisão do TL */}
+        {(isReadyForReview || isAwaitingReview) && (
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 animate-pulse">
+            <Hourglass className="w-3 h-3 text-amber-400" />
+            <span className="text-[9px] font-mono font-bold text-amber-400 uppercase tracking-widest">
+              {isAwaitingReview ? "Aguardando TL" : "Pronto p/ Revisão"}
+            </span>
+          </div>
+        )}
+
         {/* Zona 3: Meta */}
         <div className="flex items-center gap-3 text-[10px] text-neutral-500">
           <div className="flex items-center gap-1">
@@ -215,9 +249,24 @@ export function TaskCard({ task, onClick }: { task: any, onClick?: () => void })
           <Badge className={`text-[9px] uppercase ${isCompleted ? 'bg-transparent border border-neutral-700 text-neutral-500' : 'bg-transparent border border-neutral-700 text-neutral-400 hover:text-white'}`}>
             {status.label}
           </Badge>
-          <span className="text-[9px] font-mono text-red-500">
-            {optimisticTask.prazo ? new Date(optimisticTask.prazo).toISOString().split('T')[0] : "Sem prazo"}
-          </span>
+          <div className="flex items-center gap-2">
+            {/* Botão Solicitar Revisão — apenas para devs quando tarefa 100% */}
+            {canRequestReview && isReadyForReview && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-6 text-[9px] border-amber-500/40 text-amber-400 hover:bg-amber-500/10 px-2 py-0"
+                onClick={handleRequestReview}
+                disabled={requestingReview}
+              >
+                <Send className="w-2.5 h-2.5 mr-1" />
+                Solicitar Revisão
+              </Button>
+            )}
+            <span className="text-[9px] font-mono text-red-500">
+              {optimisticTask.prazo ? new Date(optimisticTask.prazo).toISOString().split('T')[0] : "Sem prazo"}
+            </span>
+          </div>
         </div>
 
       </CardContent>

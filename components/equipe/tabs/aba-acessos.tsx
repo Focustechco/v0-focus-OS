@@ -47,12 +47,12 @@ interface Pasta {
 
 // ─── Seções fixas ───────────────────────────────────────
 const SECOES = [
-  { id: "nossas_plataformas",   label: "Nossas Plataformas",      icon: LayoutGrid,  desc: "Ferramentas internas da empresa" },
-  { id: "projetos",             label: "Projetos",                 icon: Briefcase,   desc: "Ambientes de cada projeto" },
-  { id: "redes_sociais",        label: "Redes Sociais",            icon: Share2,      desc: "Perfis e painéis das redes da equipe" },
-  { id: "ferramentas_operacao", label: "Ferramentas de Operação",  icon: Cpu,         desc: "Ferramentas operacionais" },
-  { id: "ecosystem_focus",      label: "Ecosystem Focus",          icon: Layers,      desc: "Stack interno Focus" },
-  { id: "projetos_clientes",    label: "Projetos dos Clientes",   icon: Users,       desc: "Acessos dos projetos de clientes" },
+  { id: "nossas_plataformas",   label: "Nossas Plataformas",      icon: LayoutGrid,  desc: "Ferramentas internas da empresa",   categoriaDefault: "plataforma_interna" },
+  { id: "projetos",             label: "Projetos",                 icon: Briefcase,   desc: "Ambientes de cada projeto",          categoriaDefault: "projeto" },
+  { id: "redes_sociais",        label: "Redes Sociais",            icon: Share2,      desc: "Perfis e pains das redes da equipe", categoriaDefault: "rede_social" },
+  { id: "ferramentas_operacao", label: "Ferramentas de Operação",  icon: Cpu,         desc: "Ferramentas operacionais",            categoriaDefault: "ferramenta" },
+  { id: "ecosystem_focus",      label: "Ecosystem Focus",          icon: Layers,      desc: "Stack interno Focus",                categoriaDefault: "ferramenta" },
+  { id: "projetos_clientes",    label: "Projetos dos Clientes",   icon: Users,       desc: "Acessos dos projetos de clientes",   categoriaDefault: "cliente" },
 ]
 
 const CATEGORIAS = [
@@ -63,6 +63,12 @@ const CATEGORIAS = [
   { value: "cliente",            label: "Cliente" },
   { value: "outro",              label: "Outro" },
 ]
+
+// Mapeamento seção → categoria padrão
+function getCategoriaDefault(secaoId: string): string {
+  return SECOES.find(s => s.id === secaoId)?.categoriaDefault || "plataforma_interna"
+}
+
 
 function getFavicon(url: string) {
   try {
@@ -245,11 +251,10 @@ function PastaGroup({ nome, acessos, onEdit, onDelete, userType }: {
 }
 
 // ─── Seção ───────────────────────────────────────────────
-function SecaoBlock({ secao, acessos, pastas, onAdd, onEdit, onDelete, userType }: {
+function SecaoBlock({ secao, acessos, pastas, onEdit, onDelete, userType }: {
   secao: typeof SECOES[0]
   acessos: Acesso[]
   pastas: string[]
-  onAdd: (secaoId: string) => void
   onEdit: (a: Acesso) => void
   onDelete: (id: string) => void
   userType: string
@@ -271,14 +276,6 @@ function SecaoBlock({ secao, acessos, pastas, onAdd, onEdit, onDelete, userType 
             {acessos.length} links
           </Badge>
         </div>
-        <Button
-          onClick={() => onAdd(secao.id)}
-          variant="outline"
-          className="h-7 px-3 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all text-[9px] font-mono uppercase tracking-widest rounded-sm"
-        >
-          <Plus className="w-3 h-3 mr-1.5" />
-          Adicionar
-        </Button>
       </div>
 
       {acessos.length === 0 ? (
@@ -326,15 +323,37 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
   secaoInicial: string
   pastasExistentes: string[]
 }) {
-  const [form, setForm] = useState({ ...FORM_DEFAULT, secao: secaoInicial })
+  // Ao abrir, inicializa form com seção e categoria corretas
+  const [form, setForm] = useState({
+    ...FORM_DEFAULT,
+    secao: secaoInicial,
+    categoria: getCategoriaDefault(secaoInicial),
+  })
   const [saving, setSaving] = useState(false)
   const [showSenha, setShowSenha] = useState(false)
   const [novaPasta, setNovaPasta] = useState("")
   const [criandoPasta, setCriandoPasta] = useState(false)
 
   useEffect(() => {
-    if (open) setForm({ ...FORM_DEFAULT, secao: secaoInicial })
+    if (open) {
+      setForm({
+        ...FORM_DEFAULT,
+        secao: secaoInicial,
+        categoria: getCategoriaDefault(secaoInicial), // ← Fix: categoria sempre derivada da seção
+      })
+      setNovaPasta("")
+      setCriandoPasta(false)
+    }
   }, [open, secaoInicial])
+
+  // Ao mudar a seção, atualiza a categoria padrão automaticamente
+  const handleSecaoChange = (novaSecao: string) => {
+    setForm(prev => ({
+      ...prev,
+      secao: novaSecao,
+      categoria: getCategoriaDefault(novaSecao), // ← Fix: sincroniza categoria
+    }))
+  }
 
   const handleSalvar = async () => {
     if (!form.nome || !form.url || !form.secao) return
@@ -362,7 +381,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
         secao: form.secao,
         pasta: pastaFinal || null,
         descricao: form.descricao || null,
-        visivel_para: form.visivel_para,
+        visivel_para: form.visivel_para === 'todos' ? [] : [form.visivel_para],
         tem_credencial: form.temCredencial,
         login: form.temCredencial ? form.login : null,
         senha_enc: form.temCredencial ? form.senha : null,
@@ -373,11 +392,13 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
       const { error: fullError } = await supabase.from("acessos").insert(fullRow)
 
       if (fullError) {
-        // Fallback: tenta com somente os campos base (schema antigo)
+        // Fallback: tenta com somente os campos base
         const baseRow: any = {
           nome: form.nome,
           url: urlFinal,
           categoria: form.categoria,
+          secao: form.secao, // FIX: Inclui secao no fallback!
+          pasta: pastaFinal || null,
           descricao: form.descricao || null,
           criado_por: equipeMember?.id || null,
         }
@@ -390,8 +411,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
           return
         }
 
-        // Salvo com schema antigo — avisa que faltam colunas
-        console.warn("[AbaAcessos] Salvo com schema antigo. Execute o SQL de migração para habilitar todas as funcionalidades.")
+        console.warn("[AbaAcessos] Salvo com schema antigo parcial. Erro original:", fullError)
       }
 
       onSalvo()
@@ -448,7 +468,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className={labelInput}>Seção <span className="text-orange-500">*</span></Label>
-              <Select value={form.secao} onValueChange={v => setForm({ ...form, secao: v })}>
+              <Select value={form.secao} onValueChange={handleSecaoChange}>
                 <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
                 <SelectContent className="bg-[#111] border-[#2A2A2A]">
                   {SECOES.map(s => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}
@@ -580,8 +600,6 @@ export function AbaAcessos({ userType }: { userType: string }) {
   const [secaoModal, setSecaoModal] = useState("nossas_plataformas")
   const [editando, setEditando] = useState<Acesso | null>(null)
 
-  useEffect(() => { loadAcessos() }, [])
-
   const loadAcessos = async () => {
     try {
       setLoading(true)
@@ -597,6 +615,9 @@ export function AbaAcessos({ userType }: { userType: string }) {
       setLoading(false)
     }
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { loadAcessos() }, [])
 
   const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir este acesso?")) return
@@ -637,15 +658,24 @@ export function AbaAcessos({ userType }: { userType: string }) {
 
   return (
     <div className="space-y-10">
-      {/* Busca global */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
-        <Input
-          value={pesquisa}
-          onChange={e => setPesquisa(e.target.value)}
-          placeholder="Buscar por nome, URL, categoria ou pasta..."
-          className="pl-9 bg-[#141414] border-[#2A2A2A] text-white placeholder:text-neutral-600 focus:border-orange-500/50"
-        />
+      {/* Header com busca e botão único */}
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
+          <Input
+            value={pesquisa}
+            onChange={e => setPesquisa(e.target.value)}
+            placeholder="Buscar por nome, URL, categoria ou pasta..."
+            className="pl-9 bg-[#141414] border-[#2A2A2A] text-white placeholder:text-neutral-600 focus:border-orange-500/50"
+          />
+        </div>
+        <Button
+          onClick={() => { setSecaoModal("nossas_plataformas"); setModalOpen(true) }}
+          className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] uppercase tracking-widest h-10 px-4 flex-shrink-0"
+        >
+          <Plus className="w-3.5 h-3.5 mr-2" />
+          Novo Acesso
+        </Button>
       </div>
 
       {/* Resultados de busca */}
@@ -683,7 +713,6 @@ export function AbaAcessos({ userType }: { userType: string }) {
               secao={secao}
               acessos={secaoAcessos}
               pastas={secaoPastas}
-              onAdd={openModal}
               onEdit={setEditando}
               onDelete={handleDelete}
               userType={userType}

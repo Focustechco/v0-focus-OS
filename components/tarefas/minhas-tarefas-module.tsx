@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useMinhasTarefas, type MinhasTarefasItem } from "@/lib/hooks/use-minhas-tarefas"
+import { usePermissoes } from "@/lib/hooks/use-permissoes"
 import { cn } from "@/lib/utils"
 import {
   ChevronRight,
@@ -17,7 +18,10 @@ import {
   Loader2,
   Clock,
   ListTodo,
+  CalendarDays,
 } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AgendaModule } from "@/components/agenda-module"
 
 const prioridadeConfig = {
   alta: { label: "Alta", color: "text-red-500", bg: "bg-red-500/10 border-red-500/20" },
@@ -198,7 +202,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
   )
 }
 
-export function MinhasTarefasModule() {
+function AbaMinhasTarefas() {
   const {
     tarefas,
     isLoading,
@@ -208,6 +212,7 @@ export function MinhasTarefasModule() {
   } = useMinhasTarefas()
   
   const router = useRouter()
+  const { canCreateTask } = usePermissoes()
 
   if (isLoading) {
     return (
@@ -227,13 +232,15 @@ export function MinhasTarefasModule() {
             <h2 className="text-sm font-display font-bold text-white tracking-tight">Tasks do Dia</h2>
             <p className="text-[11px] text-neutral-500 mt-0.5">Tarefas e subtarefas atribuídas a você</p>
           </div>
-          <Button
-            size="sm"
-            className="bg-orange-500 hover:bg-orange-600 text-white h-8 text-xs"
-            onClick={() => router.push("/projetos?new-task=true")}
-          >
-            + Nova Tarefa
-          </Button>
+          {canCreateTask && (
+            <Button
+              size="sm"
+              className="bg-orange-500 hover:bg-orange-600 text-white h-8 text-xs"
+              onClick={() => router.push("/projetos?new-task=true")}
+            >
+              + Nova Tarefa
+            </Button>
+          )}
         </div>
 
         {/* Contador global */}
@@ -277,6 +284,40 @@ export function MinhasTarefasModule() {
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+export function MinhasTarefasModule() {
+  return (
+    <div className="space-y-6">
+      <Tabs defaultValue="lista" className="w-full">
+        <TabsList className="
+          w-full bg-[#141414] border border-[#2A2A2A] p-1 h-auto
+          flex overflow-x-auto scrollbar-hide flex-nowrap gap-1
+          justify-start md:justify-center
+        ">
+          <TabsTrigger value="lista" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+            <ListTodo className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
+            Lista de Tarefas
+          </TabsTrigger>
+          <TabsTrigger value="agenda" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+            <CalendarDays className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
+            Minha Agenda
+          </TabsTrigger>
+        </TabsList>
+
+        <div className="mt-6">
+          <TabsContent value="lista" className="mt-0 outline-none">
+            <AbaMinhasTarefas />
+          </TabsContent>
+          <TabsContent value="agenda" className="mt-0 outline-none">
+            <div className="h-[750px]">
+              <AgendaModule />
+            </div>
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   )
 }

@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
 
-export async function GET(request: Request, context: any) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { params } = context
-    const projectId = params.id
+    const { id: projectId } = await params
     
     if (!projectId) {
       return NextResponse.json({ error: "Project ID is required" }, { status: 400 })
@@ -25,20 +27,24 @@ export async function GET(request: Request, context: any) {
     }
 
     // O list() da Supabase as vezes retorna uma pasta vazia como item
-    const files = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder')
-      .map(file => {
-        const { data: publicUrlData } = supabase.storage
+    const filePromises = (data || [])
+      .filter(f => f.name !== '.emptyFolderPlaceholder')
+      .map(async file => {
+        // Gera uma URL assinada válida por 24 horas para garantir acesso mesmo que o bucket seja privado
+        const { data: signedUrlData } = await supabase.storage
           .from('project-documents')
-          .getPublicUrl(`${projectId}/${file.name}`)
+          .createSignedUrl(`${projectId}/${file.name}`, 60 * 60 * 24)
           
         return {
           id: file.id,
           name: file.name,
           size: file.metadata?.size || 0,
           created_at: file.created_at,
-          url: publicUrlData.publicUrl
+          url: signedUrlData?.signedUrl || null
         }
       })
+
+    const files = await Promise.all(filePromises)
 
     return NextResponse.json(files)
   } catch (error: any) {
@@ -47,10 +53,12 @@ export async function GET(request: Request, context: any) {
   }
 }
 
-export async function POST(request: Request, context: any) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { params } = context
-    const projectId = params.id
+    const { id: projectId } = await params
     
     if (!projectId) {
       return NextResponse.json({ error: "Project ID is required" }, { status: 400 })
@@ -89,13 +97,13 @@ export async function POST(request: Request, context: any) {
         continue
       }
       
-      const { data: publicUrlData } = supabase.storage
+      const { data: signedUrlData } = await supabase.storage
         .from('project-documents')
-        .getPublicUrl(filePath)
+        .createSignedUrl(filePath, 60 * 60 * 24)
         
       uploadedFiles.push({
         name: safeName,
-        url: publicUrlData.publicUrl
+        url: signedUrlData?.signedUrl || null
       })
     }
 

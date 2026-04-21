@@ -33,6 +33,7 @@ export function usePermissoes() {
     tipo,
     isLoading,
     isAdmin: tipo === "admin",
+    isTechLeader: tipo === "admin", // Alias semântico — TL = admin no sistema
     isColaborador: tipo === "colaborador",
     isEstagiario: tipo === "estagiario",
     canSeeFinancials: tipo === "admin",
@@ -40,5 +41,9 @@ export function usePermissoes() {
     canManageTeam: tipo === "admin",
     canSeeIntelligence: tipo !== "estagiario",
     canSeeComercial: tipo !== "estagiario",
+    // Fluxo de aprovação (metaprompt)
+    canCreateTask: tipo === "admin",        // Só TL cria tarefas
+    canApprove: tipo === "admin",           // Só TL aprova tarefas
+    canRequestReview: tipo !== "admin",     // Devs/estagiários solicitam revisão
   }
 }

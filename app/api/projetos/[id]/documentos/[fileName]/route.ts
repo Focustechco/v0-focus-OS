@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
 
-export async function DELETE(request: Request, context: any) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string, fileName: string }> }
+) {
   try {
-    const { params } = context
-    const projectId = params.id
-    const fileName = params.fileName
+    const { id: projectId, fileName } = await params
     
     if (!projectId || !fileName) {
       return NextResponse.json({ error: "Project ID and File Name are required" }, { status: 400 })

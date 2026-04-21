@@ -57,6 +57,8 @@ export function createAdminClient() {
     console.warn("[createAdminClient] Aviso: Usando variáveis de ambiente de fallback.")
   }
 
+  console.log(`[createAdminClient] Inicializando. URL presente: ${!!url}. Service Role presente: ${!!process.env.SUPABASE_SERVICE_ROLE_KEY}. Usando chave com início: ${key.substring(0, 10)}...`)
+
   return createSupabaseClient(url, key, {
     auth: {
       autoRefreshToken: false,
