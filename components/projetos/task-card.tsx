@@ -14,6 +14,7 @@ import {
   MoreVertical,
   Send,
   Hourglass,
+  Trash2,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSWRConfig } from "swr"
@@ -32,7 +33,7 @@ export const priorityConfig: Record<string, { label: string; color: string; bar:
   alta: { label: "ALTA", color: "border-red-500/50 text-red-500", bar: "bg-red-800" },
 }
 
-export function TaskCard({ task, onClick }: { task: any, onClick?: () => void }) {
+export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () => void, onDelete?: (id: string) => void }) {
   const { mutate } = useSWRConfig()
   const [optimisticTask, setOptimisticTask] = useState(task)
   const [requestingReview, setRequestingReview] = useState(false)
@@ -162,6 +163,17 @@ export function TaskCard({ task, onClick }: { task: any, onClick?: () => void })
             <Badge variant="outline" className={`text-[9px] uppercase ${priority.color}`}>
               {priority.label}
             </Badge>
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 text-[9px] uppercase font-mono tracking-widest text-red-500 hover:text-red-400 hover:bg-red-500/10 px-2 mr-1"
+                onClick={(e) => { e.stopPropagation(); onDelete(optimisticTask.id); }}
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Excluir
+              </Button>
+            )}
             <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white" onClick={(e) => e.stopPropagation()}>
               <MoreVertical className="w-4 h-4" />
             </Button>

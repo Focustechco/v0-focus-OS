@@ -12,7 +12,8 @@ import {
   ExternalLink,
   FolderKanban,
   FileText,
-  Paperclip
+  Paperclip,
+  Trash2
 } from "lucide-react"
 import { 
   DropdownMenu,
@@ -27,7 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export function ClienteCard({ cliente, projectCount, onViewDetails }: any) {
+export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: any) {
   
   // Extrai iniciais
   const getInitials = (name: string) => {
@@ -93,6 +94,18 @@ export function ClienteCard({ cliente, projectCount, onViewDetails }: any) {
               </TooltipProvider>
             )}
 
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-[10px] uppercase font-mono tracking-widest text-red-500 hover:text-red-400 hover:bg-red-500/10 px-2.5 mr-1"
+                onClick={(e) => { e.stopPropagation(); onDelete(cliente.id); }}
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                Excluir
+              </Button>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-white">
@@ -105,9 +118,6 @@ export function ClienteCard({ cliente, projectCount, onViewDetails }: any) {
                 </DropdownMenuItem>
                 <DropdownMenuItem className="focus:bg-[#2A2A2A] focus:text-white cursor-pointer">
                   Editar
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-[#2A2A2A] focus:text-red-500 cursor-pointer text-red-500">
-                  Excluir
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

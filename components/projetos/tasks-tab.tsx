@@ -44,6 +44,7 @@ import { useProjetos } from "@/lib/hooks/use-projetos"
 import { useSprints } from "@/lib/hooks/use-sprints"
 import { useEquipe } from "@/lib/hooks/use-equipe"
 import { useToast } from "../reports/toast-notification"
+import { supabase } from "@/lib/supabase"
 
 import { TaskCard } from "./task-card"
 import { TaskDetailsModal } from "./task-details-modal"
@@ -119,6 +120,19 @@ export function TasksTab() {
       showToast("error", "Erro ao criar tarefa.")
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleDeleteTask = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta tarefa permanentemente? A exclusão também removerá os sub-itens do checklist atrelados a ela.")) return
+    try {
+      const { error } = await supabase.from("tarefas").delete().eq("id", id)
+      if (error) throw error
+      showToast("success", "Tarefa excluída com sucesso.")
+      mutate()
+    } catch (err) {
+      console.error(err)
+      showToast("error", "Erro ao excluir tarefa.")
     }
   }
 
@@ -397,6 +411,7 @@ export function TasksTab() {
                   setSelectedTask(task)
                   setIsDetailsOpen(true)
                 }}
+                onDelete={handleDeleteTask}
               />
             ))}
           </div>

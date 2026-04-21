@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Book, FileText, PlayCircle, Folder, Search, Plus, ExternalLink, Loader2, X } from "lucide-react"
+import { Book, FileText, PlayCircle, Folder, Search, Plus, ExternalLink, Loader2, X, Trash2 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { toast } from "sonner"
 import {
@@ -158,6 +158,21 @@ export function AbaConteudos({ userType }: { userType: string }) {
     }
   }
 
+  const handleDeleteConteudo = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este conteúdo?")) return
+    try {
+      setLoading(true)
+      const { error } = await supabase.from("conteudos").delete().eq("id", id)
+      if (error) throw error
+      toast.success("Conteúdo excluído com sucesso")
+      loadContents()
+    } catch (err) {
+      toast.error("Erro ao excluir conteúdo")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const filteredContents = contents.filter(c => {
     const matchesFilter = filter === "Todos" || c.tipo === filter
     const matchesSearch = c.titulo.toLowerCase().includes(search.toLowerCase()) || 
@@ -241,16 +256,26 @@ export function AbaConteudos({ userType }: { userType: string }) {
                 <p className="text-xs text-neutral-400 line-clamp-2 flex-1">
                   {c.descricao || 'Sem descrição disponível.'}
                 </p>
-                <Button 
-                  asChild
-                  variant="outline"
-                  className="w-full bg-[#0A0A0A] border-[#2A2A2A] hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all font-mono text-[10px] tracking-[0.2em] uppercase"
-                >
-                  <a href={c.url} target="_blank" rel="noopener noreferrer">
-                    ACESSAR CONTEÚDO
-                    <ExternalLink className="w-3 h-3 ml-2" />
-                  </a>
-                </Button>
+                <div className="flex gap-2 w-full mt-auto">
+                  <Button 
+                    asChild
+                    variant="outline"
+                    className="flex-1 bg-[#0A0A0A] border-[#2A2A2A] hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all font-mono text-[10px] tracking-[0.2em] uppercase"
+                  >
+                    <a href={c.url} target="_blank" rel="noopener noreferrer">
+                      ACESSAR
+                      <ExternalLink className="w-3 h-3 ml-2" />
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-10 bg-[#2a1010] border-red-900/40 hover:bg-red-500 hover:border-red-500 text-red-500 hover:text-white transition-all px-0 flex-shrink-0"
+                    onClick={() => handleDeleteConteudo(c.id)}
+                    title="Excluir Conteúdo"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

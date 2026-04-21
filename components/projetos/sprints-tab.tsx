@@ -32,6 +32,7 @@ import {
 import { useSprints } from "@/lib/hooks/use-sprints"
 import { useProjetos } from "@/lib/hooks/use-projetos"
 import { useTarefas } from "@/lib/hooks/use-tarefas"
+import { supabase } from "@/lib/supabase"
 import { SprintDetailsModal } from "./sprint-details-modal"
 
 import { SprintCard } from "./sprint-card"
@@ -77,6 +78,19 @@ export function SprintsTab() {
     
     setNewSprintOpen(false)
     setFormData({ nome: "", projeto_id: "", objetivo: "", data_inicio: "", data_fim: "" })
+  }
+
+  const handleDeleteSprint = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta sprint permanentemente? As tarefas associadas podem perder o seu agrupamento de Sprint.")) return
+    try {
+      const { error } = await supabase.from("sprints").delete().eq("id", id)
+      if (error) throw error
+      alert("Sprint excluída com sucesso.")
+      window.location.reload()
+    } catch (err) {
+      console.error(err)
+      alert("Erro ao excluir sprint.")
+    }
   }
 
   if (isLoading) {
@@ -217,7 +231,7 @@ export function SprintsTab() {
           <div className="space-y-4">
             <h2 className="text-xs sm:text-sm font-medium text-neutral-400 tracking-wider">HISTORICO DE SPRINTS</h2>
             {sprints.map((sprint: any) => (
-               <SprintCard key={sprint.id} sprint={sprint} onView={() => handleViewSprint(sprint)} />
+               <SprintCard key={sprint.id} sprint={sprint} onView={() => handleViewSprint(sprint)} onDelete={handleDeleteSprint} />
             ))}
           </div>
         </div>

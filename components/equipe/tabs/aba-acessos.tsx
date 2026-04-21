@@ -190,26 +190,26 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
           </Button>
         )}
 
-        {userType === "admin" && (
-          <>
+          <div className="flex items-center gap-1.5 ml-auto">
             <Button
               size="sm"
-              variant="ghost"
-              className="h-7 w-7 p-0 text-neutral-600 hover:text-white hover:bg-[#1A1A1A]"
+              variant="outline"
+              className="h-7 w-7 p-0 bg-transparent border-[#2A2A2A] text-neutral-500 hover:bg-[#1A1A1A] hover:text-white hover:border-neutral-500 transition-all"
               onClick={() => onEdit(acesso)}
+              title="Editar"
             >
-              <Pencil className="w-3 h-3" />
+              <Pencil className="w-3.5 h-3.5" />
             </Button>
             <Button
               size="sm"
-              variant="ghost"
-              className="h-7 w-7 p-0 text-neutral-600 hover:text-red-500 hover:bg-red-500/10"
+              variant="outline"
+              className="h-7 w-7 p-0 bg-transparent border-[#2A2A2A] text-red-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all"
               onClick={() => onDelete(acesso.id)}
+              title="Excluir"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-3.5 h-3.5" />
             </Button>
-          </>
-        )}
+          </div>
       </div>
     </div>
   )

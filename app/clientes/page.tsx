@@ -4,6 +4,8 @@ import { useState } from "react"
 import { PageWrapper } from "@/components/page-wrapper"
 import { useClientes } from "@/lib/hooks/use-clientes"
 import { useProjects } from "@/lib/hooks/use-projetos"
+import { supabase } from "@/lib/supabase"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -46,6 +48,19 @@ export default function ClientesPage() {
   const handleOpenDetalhes = (id: string) => {
     setSelectedClienteId(id)
     setDetalhesOpen(true)
+  }
+
+  const handleDeleteCliente = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este cliente? Isso pode afetar os projetos atrelados.")) return
+    try {
+      const { error } = await supabase.from("clientes").delete().eq("id", id)
+      if (error) throw error
+      toast.success("Cliente excluído com sucesso!")
+      refetch()
+    } catch (err) {
+      console.error(err)
+      toast.error("Erro ao excluir. Verifique se não há projetos presos a ele.")
+    }
   }
 
   return (
@@ -109,6 +124,7 @@ export default function ClientesPage() {
                   cliente={cliente} 
                   projectCount={getProjectCount(cliente.id)}
                   onViewDetails={() => handleOpenDetalhes(cliente.id)}
+                  onDelete={handleDeleteCliente}
                 />
               ))}
             </div>
