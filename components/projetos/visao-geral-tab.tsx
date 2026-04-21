@@ -115,14 +115,14 @@ function ProjectCard({ project, onClick }: { project: any; onClick: () => void }
 
         <div className="space-y-3">
           <div className="flex items-end justify-between">
-            <div className="flex -space-x-2">
-              <Avatar className="w-7 h-7 border-2 border-[#141414]">
-                <AvatarFallback className="bg-orange-500 text-[8px]">
+            <div className="flex -space-x-1">
+              <Avatar className="w-3.5 h-3.5 border border-[#141414]">
+                <AvatarFallback className="bg-orange-500 text-[5px]">
                   {project.tech_lead?.substring(0, 2) ?? "TL"}
                 </AvatarFallback>
               </Avatar>
-              <Avatar className="w-7 h-7 border-2 border-[#141414]">
-                <AvatarFallback className="bg-neutral-700 text-[8px]">
+              <Avatar className="w-3.5 h-3.5 border border-[#141414]">
+                <AvatarFallback className="bg-neutral-700 text-[5px]">
                   {project.dev?.substring(0, 2) ?? "DV"}
                 </AvatarFallback>
               </Avatar>
