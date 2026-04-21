@@ -166,12 +166,11 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
             {onDelete && (
               <Button
                 variant="ghost"
-                size="sm"
-                className="h-6 text-[9px] uppercase font-mono tracking-widest text-red-500 hover:text-red-400 hover:bg-red-500/10 px-2 mr-1"
+                size="icon"
+                className="h-6 w-6 text-neutral-500 hover:text-red-500 hover:bg-red-500/10"
                 onClick={(e) => { e.stopPropagation(); onDelete(optimisticTask.id); }}
               >
-                <Trash2 className="w-3 h-3 mr-1" />
-                Excluir
+                <Trash2 className="w-3.5 h-3.5" />
               </Button>
             )}
             <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white" onClick={(e) => e.stopPropagation()}>

@@ -341,8 +341,8 @@ function DetailModal({ ev, onClose, onDelete, onEdit }: { ev: any, onClose: any,
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
           <button onClick={() => onDelete(ev.id)}
-            style={{ ...S.ghostBtn, color: "#ef4444", borderColor: "#ef444435", display: "flex", alignItems: "center", gap: 5 } as any}>
-            {Icon.trash(13, "#ef4444")} Excluir
+            style={{ ...S.ghostBtn, color: "#ef4444", borderColor: "#ef444435", display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, padding: 0 } as any}>
+            {Icon.trash(13, "#ef4444")}
           </button>
           <button onClick={onEdit}
             style={{ ...S.ghostBtn, display: "flex", alignItems: "center", gap: 5 } as any}>

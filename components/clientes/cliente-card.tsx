@@ -97,12 +97,11 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
             {onDelete && (
               <Button
                 variant="ghost"
-                size="sm"
-                className="h-8 text-[10px] uppercase font-mono tracking-widest text-red-500 hover:text-red-400 hover:bg-red-500/10 px-2.5 mr-1"
+                size="icon"
+                className="h-8 w-8 text-neutral-500 hover:text-red-500 hover:bg-red-500/10"
                 onClick={(e) => { e.stopPropagation(); onDelete(cliente.id); }}
               >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                Excluir
+                <Trash2 className="w-3.5 h-3.5" />
               </Button>
             )}
 

@@ -88,10 +88,10 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
                       <Shield className={`w-5 h-5 ${session.current ? "text-green-500" : "text-neutral-500"}`} />
                     </div>
                     <div>
-                      <p className="text-white text-sm font-medium flex items-center gap-2">
+                      <div className="text-white text-sm font-medium flex items-center gap-2">
                         {session.device}
                         {session.current && <Badge className="bg-green-500/20 text-green-500 text-[9px]">ATUAL</Badge>}
-                      </p>
+                      </div>
                       <p className="text-neutral-500 text-xs font-mono">
                         {session.ip} • {session.location} • {session.started}
                       </p>
