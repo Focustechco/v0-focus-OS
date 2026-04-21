@@ -2,13 +2,19 @@ import { NextRequest, NextResponse } from "next/server"
 import { google } from "googleapis"
 import { createClient } from "@supabase/supabase-js"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const dynamic = 'force-dynamic'
+
+// Helper para criar o cliente Supabase de forma segura
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+  )
+}
 
 // GET /api/auth/google/callback — Google redireciona aqui após login
 export async function GET(req: NextRequest) {
+  const supabase = getSupabase()
   const { searchParams } = new URL(req.url)
   const code = searchParams.get("code")
   const userId = searchParams.get("state") // user_id que mandamos no state
