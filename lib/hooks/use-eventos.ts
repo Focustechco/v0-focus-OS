@@ -1,30 +1,27 @@
 import useSWR from "swr"
-import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 
 export interface Evento {
   id: string
   titulo: string
   descricao?: string
-  data: string          // "YYYY-MM-DD"
-  hora_inicio: string   // "HH:MM"
-  hora_fim: string      // "HH:MM"
+  data: string
+  hora_inicio: string
+  hora_fim: string
   duracao_minutos: number
-  tipo: "reuniao" | "tarefa" | "lembrete" | "outro"
+  tipo: string
   cor: string
   criado_por?: string
   google_event_id?: string
   sincronizado_google: boolean
-  evento_membros?: Array<{
-    usuario_id: string
-    perfil: { nome_completo: string; avatar_url?: string }
-  }>
+  google_cal_url?: string
 }
 
 const fetcher = async (url: string) => {
   const res = await fetch(url)
-  if (!res.ok) throw new Error("Erro ao buscar eventos")
-  return res.json()
+  const json = await res.json()
+  if (!res.ok) throw new Error(json.error || "Erro ao buscar eventos")
+  return json
 }
 
 export function useEventos(dataInicio?: string, dataFim?: string) {
@@ -35,7 +32,7 @@ export function useEventos(dataInicio?: string, dataFim?: string) {
   const { data, error, isLoading, mutate } = useSWR(
     `/api/eventos?${params.toString()}`,
     fetcher,
-    { refreshInterval: 30000 }
+    { refreshInterval: 15000, revalidateOnFocus: true }
   )
 
   const criarEvento = async (payload: {
@@ -45,45 +42,38 @@ export function useEventos(dataInicio?: string, dataFim?: string) {
     hora_inicio: string
     duracao_minutos: number
     tipo: string
-    cor: string
+    cor?: string
     membros_ids?: string[]
     attendees_emails?: string[]
     criar_no_google?: boolean
   }) => {
-    // Busca usuário atual
     const { data: { user } } = await supabase.auth.getUser()
 
     const res = await fetch("/api/eventos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, criado_por: user?.id }),
+      body: JSON.stringify({
+        ...payload,
+        criado_por: user?.id || null
+      }),
     })
 
+    const result = await res.json()
+
     if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.error || "Erro ao criar evento")
+      throw new Error(result.error || "Erro ao criar evento")
     }
 
-    const result = await res.json()
-    mutate() // Revalida lista
+    // Revalida a lista para mostrar o novo evento
+    await mutate()
+
     return result
   }
 
   const deletarEvento = async (id: string) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    const res = await fetch(`/api/eventos/${id}?user_id=${user?.id}`, { method: "DELETE" })
+    const res = await fetch(`/api/eventos/${id}`, { method: "DELETE" })
     if (!res.ok) throw new Error("Erro ao deletar evento")
-    mutate()
-  }
-
-  const atualizarEvento = async (id: string, payload: Partial<Evento>) => {
-    const res = await fetch(`/api/eventos/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-    if (!res.ok) throw new Error("Erro ao atualizar evento")
-    mutate()
+    await mutate()
   }
 
   return {
@@ -93,6 +83,5 @@ export function useEventos(dataInicio?: string, dataFim?: string) {
     mutate,
     criarEvento,
     deletarEvento,
-    atualizarEvento,
   }
 }
