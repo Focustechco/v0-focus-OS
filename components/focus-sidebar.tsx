@@ -38,9 +38,9 @@ import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
 const projetosSubItems: any[] = [];
 
 const intelligenceSubItems = [
-  { id: "fluxo", href: "/intelligence/fluxo", icon: GitBranch, label: "FLUXO DE ETAPAS" },
-  { id: "setores", href: "/setores", icon: Cpu, label: "SETORES TECH" },
-  { id: "comercial-intel", href: "/intelligence/comercial", icon: Briefcase, label: "SETOR COMERCIAL" },
+  { id: "fluxo", href: "/intelligence/fluxo", icon: GitBranch, label: "Fluxo de Etapas" },
+  { id: "setores", href: "/setores", icon: Cpu, label: "Setores Tech" },
+  { id: "comercial-intel", href: "/intelligence/comercial", icon: Briefcase, label: "Setor Comercial" },
 ]
 
 interface FocusSidebarProps {
@@ -60,16 +60,16 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
 
   // Atualizar contagens dinamicamente no navigation
   const navigation: any[] = [
-    { id: "command-center", href: "/", icon: LayoutDashboard, label: "DASHBOARD" },
-    { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: stats.projects > 0 ? stats.projects : null },
-    { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "TAREFAS" },
-    { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL", badge: stats.comercial > 0 ? stats.comercial : null },
-    { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
-    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "INTELIGENCE", hasSubmenu: "intelligence" },
-    { id: "clientes", href: "/clientes", icon: Box, label: "CLIENTES" },
-    { id: "relatorios", href: "/relatorios", icon: FileText, label: "RELATORIOS" },
-    { id: "sistemas", href: "/sistemas", icon: Settings, label: "SISTEMAS" },
-    { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "CONFIGURACOES" },
+    { id: "command-center", href: "/", icon: LayoutDashboard, label: "Dashboard" },
+    { id: "projetos", href: "/projetos", icon: FolderKanban, label: "Projetos", badge: stats.projects > 0 ? stats.projects : null },
+    { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "Tarefas" },
+    { id: "comercial", href: "/comercial", icon: Briefcase, label: "Comercial", badge: stats.comercial > 0 ? stats.comercial : null },
+    { id: "equipe", href: "/equipe", icon: Users, label: "Equipe" },
+    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "Intelligence", hasSubmenu: "intelligence" },
+    { id: "clientes", href: "/clientes", icon: Box, label: "Clientes" },
+    { id: "relatorios", href: "/relatorios", icon: FileText, label: "Relatórios" },
+    { id: "sistemas", href: "/sistemas", icon: Settings, label: "Sistemas" },
+    { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "Configurações" },
   ]
   // Filtrar navegacao baseado nos modulos ativos
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
@@ -156,7 +156,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                   <div className="flex items-center">
                     <Link
                       href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative flex-1 ${
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative flex-1 ${
                         isActive(item.href) && !isSubItemActive
                           ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
                           : isSubItemActive || isExpanded
@@ -167,7 +167,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!collapsed && (
                         <>
-                          <span className="text-xs font-medium tracking-wide flex-1">{item.label}</span>
+                          <span className="text-xs font-bold tracking-wide flex-1">{item.label}</span>
                           {item.badge && (
                             <Badge
                               variant="secondary"
@@ -217,7 +217,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                           }`}
                         >
                           <subItem.icon className="w-4 h-4 flex-shrink-0" />
-                          <span className="text-xs font-medium tracking-wide flex-1">{subItem.label}</span>
+                          <span className="text-xs font-bold tracking-wide flex-1">{subItem.label}</span>
                           {subItem.badge && (
                             <Badge
                               variant="secondary"
@@ -239,7 +239,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
             ) : (
               <Link
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
                   isActive(item.href)
                     ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
                     : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
@@ -248,7 +248,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!collapsed && (
                   <>
-                    <span className="text-xs font-medium tracking-wide flex-1">{item.label}</span>
+                    <span className="text-xs font-bold tracking-wide flex-1">{item.label}</span>
                     {item.badge && (
                       <Badge
                         variant="secondary"

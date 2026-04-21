@@ -240,7 +240,7 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
                           saude === opt.id ? "bg-white/10 border-white/30" : "bg-transparent border-[#2A2A2A]"
                         )}
                       >
-                        <div className={cn("w-2 h-2 rounded-full", opt.color)} />
+                        <div className={cn("w-2 h-2 rounded-[1px]", opt.color)} />
                       </button>
                     ))}
                   </div>

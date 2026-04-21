@@ -175,10 +175,10 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
-                      <Avatar className="w-12 h-12 border border-[#2A2A2A]">
-                        <AvatarImage src={m.foto_url} />
+                      <Avatar className="w-12! h-12! min-w-[48px] min-h-[48px] rounded-full! border border-[#2A2A2A] flex-shrink-0">
+                        <AvatarImage src={m.foto_url} className="rounded-full!" />
                         <AvatarFallback
-                          className="text-sm font-bold"
+                          className="text-sm font-bold rounded-full!"
                           style={{ backgroundColor: m.cor_avatar ?? "#FF6B00" }}
                         >
                           {initials(m.nome)}
@@ -245,10 +245,10 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <Avatar className="w-9 h-9 flex-shrink-0">
-                              <AvatarImage src={m.foto_url} />
+                            <Avatar className="w-9! h-9! min-w-[36px] min-h-[36px] rounded-full! flex-shrink-0">
+                              <AvatarImage src={m.foto_url} className="rounded-full!" />
                               <AvatarFallback
-                                className="text-xs font-bold"
+                                className="text-xs font-bold rounded-full!"
                                 style={{ backgroundColor: m.cor_avatar ?? "#FF6B00" }}
                               >
                                 {initials(m.nome)}

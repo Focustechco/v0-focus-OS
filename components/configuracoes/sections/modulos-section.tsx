@@ -143,11 +143,19 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
                 return (
                   <Card
                     key={module.id}
-                    className={`bg-[#141414] border-[#2a2a2a] transition-all duration-300 ${
+                    className={`relative bg-[#141414] border-[#2a2a2a] transition-all duration-300 ${
                       animatingModule === module.id ? "ring-2 ring-orange-500 shadow-lg shadow-orange-500/20" : ""
                     } ${enabled ? "border-[#2a2a2a]" : "opacity-60"}`}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-4 relative">
+                      {!module.essential && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <Switch
+                            checked={enabled}
+                            onCheckedChange={() => handleToggle(module.id, enabled)}
+                          />
+                        </div>
+                      )}
                       <div className="flex items-start justify-between mb-3">
                         <div
                           className={`w-10 h-10 rounded flex items-center justify-center ${
@@ -159,17 +167,11 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
                           />
                         </div>
                         <div className="flex items-center gap-2">
-                          {module.essential ? (
+                          {module.essential && (
                             <Badge className="bg-neutral-800 text-neutral-500 text-[9px] font-mono flex items-center gap-1">
                               <Lock className="w-3 h-3" />
                               ESSENCIAL
                             </Badge>
-                          ) : (
-                            <Switch
-                              checked={enabled}
-                              onCheckedChange={() => handleToggle(module.id, enabled)}
-                              className="data-[state=checked]:bg-orange-500"
-                            />
                           )}
                         </div>
                       </div>

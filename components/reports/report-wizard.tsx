@@ -226,10 +226,10 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               )}
             >
               <div className={cn(
-                "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                "w-4 h-4 rounded-sm border-2 flex items-center justify-center",
                 reportType === type.id ? "border-orange-500" : "border-neutral-500"
               )}>
-                {reportType === type.id && <div className="w-2 h-2 rounded-full bg-orange-500" />}
+                {reportType === type.id && <div className="w-2 h-2 rounded-[1px] bg-orange-500" />}
               </div>
               <div>
                 <p className={cn("text-sm", reportType === type.id ? "text-orange-500" : "text-neutral-300")}>

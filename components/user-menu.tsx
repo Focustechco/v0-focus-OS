@@ -66,25 +66,34 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative h-9 w-9 rounded-full border border-[#2A2A2A] bg-[#141414] overflow-visible group"
+        <div
+          role="button"
+          tabIndex={0}
+          className="relative flex-none min-h-0 min-w-0 shrink-0 cursor-pointer group outline-none"
+          style={{ width: '36px', height: '36px' }}
         >
-          {profile?.avatar_url ? (
-            <img 
-              src={profile.avatar_url} 
-              alt={profile.nome_completo} 
-              className="w-full h-full rounded-full object-cover" 
-            />
-          ) : (
-            <span className="text-xs font-mono font-bold text-orange-500 group-hover:text-orange-400">
-              {initials}
-            </span>
-          )}
-          {/* Status Dot */}
-          <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#111111] ${statusColors[profile?.status_cor || "verde"]}`} />
-        </Button>
+          {/* Circular Wrapper for Image/Initials */}
+          <div 
+            className="avatar-circle border border-[#2A2A2A] bg-[#141414] transition-colors group-hover:border-orange-500/50"
+            style={{ width: '36px', height: '36px' }}
+          >
+            {profile?.avatar_url ? (
+              <img 
+                src={profile.avatar_url} 
+                alt={profile.nome_completo} 
+              />
+            ) : (
+              <span className="text-xs font-mono font-bold text-orange-500 group-hover:text-orange-400">
+                {initials}
+              </span>
+            )}
+          </div>
+          {/* Status Dot - Outside the overflow:hidden wrapper */}
+          <span 
+            className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#111111] ${statusColors[profile?.status_cor || "verde"]}`} 
+            style={{ borderRadius: '50%', zIndex: 10 }}
+          />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

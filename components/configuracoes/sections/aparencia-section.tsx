@@ -95,7 +95,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
               <button
                 key={color.hex}
                 onClick={() => { setAccentColor(color.hex); onChange() }}
-                className={`w-10 h-10 rounded-full transition-all flex items-center justify-center ${
+                className={`w-10 h-10 rounded-md transition-all flex items-center justify-center ${
                   accentColor === color.hex ? "ring-2 ring-white ring-offset-2 ring-offset-[#141414]" : ""
                 }`}
                 style={{ backgroundColor: color.hex }}
@@ -217,14 +217,14 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
               <p className="text-white text-sm font-medium">Animacoes</p>
               <p className="text-neutral-500 text-xs">Ativar micro-animacoes e transicoes</p>
             </div>
-            <Switch defaultChecked onCheckedChange={onChange} className="data-[state=checked]:bg-orange-500" />
+            <Switch defaultChecked onCheckedChange={onChange} />
           </div>
           <div className="flex items-center justify-between pt-4 border-t border-[#2a2a2a]">
             <div>
               <p className="text-white text-sm font-medium">Timestamps Relativos</p>
               <p className="text-neutral-500 text-xs">Exibir horarios relativos (ex: ha 2 horas)</p>
             </div>
-            <Switch defaultChecked onCheckedChange={onChange} className="data-[state=checked]:bg-orange-500" />
+            <Switch defaultChecked onCheckedChange={onChange} />
           </div>
         </CardContent>
       </Card>

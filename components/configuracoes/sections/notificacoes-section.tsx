@@ -74,7 +74,6 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                   <Switch
                     checked={channelStates[channel.id]}
                     onCheckedChange={() => toggleChannel(channel.id)}
-                    className="data-[state=checked]:bg-orange-500"
                   />
                 </div>
               ))}
@@ -108,7 +107,6 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                             defaultChecked={channel.enabled}
                             disabled={!channelStates[channel.id]}
                             onCheckedChange={onChange}
-                            className="scale-75 data-[state=checked]:bg-orange-500"
                           />
                         </td>
                       ))}
@@ -132,7 +130,6 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
             <Switch
               checked={quietMode}
               onCheckedChange={(checked) => { setQuietMode(checked); onChange() }}
-              className="data-[state=checked]:bg-orange-500"
             />
           </div>
 

@@ -233,7 +233,7 @@ export function NovoRelatorioWizard({ open, onOpenChange, onSuccess, defaultProj
         {/* ── Progress Bar ── */}
         <div className="flex gap-1 px-6 pb-5">
           {[1, 2, 3].map((s) => (
-            <div key={s} className={cn("h-1 flex-1 rounded-full transition-all duration-500", s <= step ? "bg-orange-500" : "bg-[#2A2A2A]")} />
+            <div key={s} className={cn("h-1 flex-1 rounded-sm transition-all duration-500", s <= step ? "bg-orange-500" : "bg-[#2A2A2A]")} />
           ))}
         </div>
 
@@ -392,10 +392,10 @@ function Step1({ projetoSearch, setProjetoSearch, projetoId, setProjetoId, proje
               )}
             >
               <div className={cn(
-                "w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
+                "w-4 h-4 rounded-sm border-2 flex items-center justify-center flex-shrink-0 transition-all",
                 tipo === t.id ? "border-orange-500" : "border-neutral-600"
               )}>
-                {tipo === t.id && <div className="w-2 h-2 rounded-full bg-orange-500" />}
+                {tipo === t.id && <div className="w-2 h-2 rounded-[1px] bg-orange-500" />}
               </div>
               <div>
                 <p className={cn("text-sm font-bold", tipo === t.id ? "text-orange-500" : "text-white")}>{t.label}</p>

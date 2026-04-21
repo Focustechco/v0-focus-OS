@@ -142,7 +142,6 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
                           <Switch
                             checked={user.status}
                             onCheckedChange={onChange}
-                            className="data-[state=checked]:bg-orange-500"
                           />
                         </td>
                         <td className="p-4">

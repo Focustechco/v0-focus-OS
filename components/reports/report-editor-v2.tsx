@@ -275,7 +275,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
             {/* Tags */}
             <div className="flex flex-wrap items-center gap-2">
               {resumoTags.map((tag) => (
-                <span key={tag} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-full text-xs text-neutral-300">
+                <span key={tag} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-xs text-neutral-300">
                   {tag}
                   <button onClick={() => setResumoTags((t) => t.filter((x) => x !== tag))}>
                     <X className="w-3 h-3 text-neutral-600 hover:text-red-400" />
@@ -296,12 +296,12 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                     if (e.key === "Escape") { setAddingTag(false); setNovaTag("") }
                   }}
                   placeholder="Nova tag..."
-                  className="px-2.5 py-1 bg-[#1A1A1A] border border-orange-500 rounded-full text-xs text-white outline-none w-24"
+                  className="px-2.5 py-1 bg-[#1A1A1A] border border-orange-500 rounded text-xs text-white outline-none w-24"
                 />
               ) : (
                 <button
                   onClick={() => setAddingTag(true)}
-                  className="flex items-center gap-1 px-2.5 py-1 border border-dashed border-[#2A2A2A] rounded-full text-xs text-neutral-600 hover:border-orange-500 hover:text-orange-500 transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 border border-dashed border-[#2A2A2A] rounded text-xs text-neutral-600 hover:border-orange-500 hover:text-orange-500 transition-colors"
                 >
                   <Plus className="w-3 h-3" /> Nova tag...
                 </button>
@@ -320,7 +320,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                 <select
                   value={statusEtapa}
                   onChange={(e) => setStatusEtapa(e.target.value)}
-                  className="bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full border-none outline-none cursor-pointer"
+                  className="bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded border-none outline-none cursor-pointer"
                 >
                   {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                 </select>
@@ -347,11 +347,11 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                       key={o.id}
                       onClick={() => setStatusSaude(o.id)}
                       className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium border transition-all",
                         statusSaude === o.id ? o.color : "border-[#2A2A2A] text-neutral-600 bg-transparent hover:border-neutral-500"
                       )}
                     >
-                      <span className={cn("w-1.5 h-1.5 rounded-full",
+                      <span className={cn("w-1.5 h-1.5 rounded-sm",
                         o.id === "verde" ? "bg-green-400" : o.id === "amarelo" ? "bg-yellow-400" : "bg-red-400"
                       )} />
                       {o.label}
