@@ -81,8 +81,8 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
     <div className={cn(
       "border rounded-xl overflow-hidden transition-all",
       tarefa.isOwner
-        ? "bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30"
-        : "bg-[#0F0F0F] border-[#1E1E1E] hover:border-[#2A2A2A]"
+        ? "bg-card border-border hover:border-orange-500/30"
+        : "bg-background border-[#1E1E1E] hover:border-border"
     )}>
       {/* Header da tarefa */}
       <div className="p-4">
@@ -94,7 +94,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
             className={cn(
               "mt-0.5 w-6 h-6 rounded flex items-center justify-center transition-all flex-shrink-0",
               checklistToShow.length > 0
-                ? "text-neutral-400 hover:text-white hover:bg-[#2A2A2A]"
+                ? "text-neutral-400 hover:text-foreground hover:bg-[#2A2A2A]"
                 : "text-neutral-700 cursor-default"
             )}
           >
@@ -109,7 +109,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
                 onClick={handleGoToTask}
                 className={cn(
                   "text-sm font-medium text-left leading-snug hover:text-orange-400 transition-colors",
-                  tarefa.isOwner ? "text-white" : "text-neutral-400"
+                  tarefa.isOwner ? "text-foreground" : "text-neutral-400"
                 )}
               >
                 {tarefa.titulo}
@@ -145,7 +145,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-neutral-500 font-mono">
-                    <span className={tarefa.checklistDone === tarefa.checklistTotal ? "text-green-500" : "text-white"}>
+                    <span className={tarefa.checklistDone === tarefa.checklistTotal ? "text-green-500" : "text-foreground"}>
                       {tarefa.checklistDone}
                     </span>
                     {" de "}{tarefa.checklistTotal} subtarefas concluídas
@@ -161,7 +161,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
 
       {/* Checklist expandido */}
       {expanded && checklistToShow.length > 0 && (
-        <div className="border-t border-[#1E1E1E] bg-[#0A0A0A]">
+        <div className="border-t border-[#1E1E1E] bg-background">
           <div className="p-3 space-y-1">
             {checklistToShow.map((ci) => {
               const ciStatus = ci.is_done ? statusConfig.concluida : statusConfig.a_fazer
@@ -171,8 +171,8 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group",
                     tarefa.myChecklist.some((m) => m.id === ci.id)
-                      ? "bg-[#141414] hover:bg-[#1A1A1A]"
-                      : "hover:bg-[#111111] opacity-60"
+                      ? "bg-card hover:bg-accent/10"
+                      : "hover:bg-background opacity-60"
                   )}
                 >
                   <Checkbox
@@ -185,7 +185,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
                     htmlFor={`ci-${ci.id}`}
                     className={cn(
                       "flex-1 text-xs cursor-pointer leading-tight",
-                      ci.is_done ? "line-through text-neutral-600" : "text-neutral-300"
+                      ci.is_done ? "line-through text-neutral-600" : "text-foreground"
                     )}
                   >
                     {ci.title}
@@ -201,7 +201,7 @@ function TarefaCard({ tarefa }: { tarefa: MinhasTarefasItem }) {
                       "text-[8px] h-4 px-1.5 font-bold uppercase tracking-widest flex-shrink-0",
                       ci.is_done
                         ? "border-green-500/20 text-green-500 bg-green-500/5"
-                        : "border-[#2A2A2A] text-neutral-500 bg-transparent"
+                        : "border-border text-neutral-500 bg-transparent"
                     )}
                   >
                     {ci.is_done ? "OK" : "—"}
@@ -240,16 +240,16 @@ function AbaMinhasTarefas() {
     <div className="space-y-6">
 
       {/* Card Minha Pauta do Dia */}
-      <div className="p-5 bg-[#141414] border border-[#2A2A2A] rounded-xl">
+      <div className="p-5 bg-card border border-border rounded-xl">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-sm font-display font-bold text-white tracking-tight">Tasks do Dia</h2>
+            <h2 className="text-sm font-display font-bold text-foreground tracking-tight">Tasks do Dia</h2>
             <p className="text-[11px] text-neutral-500 mt-0.5">Tarefas e subtarefas atribuídas a você</p>
           </div>
           {canCreateTask && (
             <Button
               size="sm"
-              className="bg-orange-500 hover:bg-orange-600 text-white h-8 text-xs"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground h-8 text-xs"
               onClick={() => router.push("/projetos?new-task=true")}
             >
               + Nova Tarefa
@@ -260,7 +260,7 @@ function AbaMinhasTarefas() {
         {/* Contador global */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold font-mono text-white">{doneItems}</span>
+            <span className="text-2xl font-bold font-mono text-foreground">{doneItems}</span>
             <span className="text-neutral-500 text-sm font-mono">/ {totalItems} CONCLUÍDAS</span>
           </div>
           <span className="text-xs font-mono text-neutral-500">{progressGlobal}%</span>
@@ -271,10 +271,10 @@ function AbaMinhasTarefas() {
       {/* Lista de tarefas */}
       {tarefas.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#141414] border border-[#2A2A2A] flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center mb-4">
             <ListTodo className="w-7 h-7 text-neutral-700" />
           </div>
-          <h3 className="text-white font-medium mb-1">Você está livre!</h3>
+          <h3 className="text-foreground font-medium mb-1">Você está livre!</h3>
           <p className="text-neutral-500 text-sm max-w-xs">
             Nenhuma tarefa ou subtarefa está atribuída a você no momento.
           </p>
@@ -391,29 +391,29 @@ export function MinhasTarefasModule() {
     <div className="space-y-6 flex flex-col h-full">
       {/* HEADER KANBAN */}
       <div>
-        <h1 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tight">Gerenciador de Tarefas</h1>
+        <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground tracking-tight">Gerenciador de Tarefas</h1>
         <p className="text-sm text-neutral-500 mt-1">Organize, delegue e acompanhe o progresso da sua equipe.</p>
       </div>
 
       {/* TOOLBAR */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#141414] border border-[#1E1E1E] p-3 rounded-xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card border border-[#1E1E1E] p-3 rounded-xl">
         <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto scroolbar-hide">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg min-w-[150px]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-lg min-w-[150px]">
             <Search className="w-4 h-4 text-neutral-500 flex-shrink-0" />
             <input
               type="text"
               placeholder="Buscar tarefas..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-xs text-white placeholder:text-neutral-600 outline-none w-full"
+              className="bg-transparent text-xs text-foreground placeholder:text-neutral-600 outline-none w-full"
             />
           </div>
           
           <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-            <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-xs h-9 min-w-[140px]">
+            <SelectTrigger className="bg-background border-border text-xs h-9 min-w-[140px]">
               <div className="flex items-center gap-2"><Filter className="w-3.5 h-3.5"/> <SelectValue placeholder="Responsável" /></div>
             </SelectTrigger>
-            <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+            <SelectContent className="bg-card border-border">
               <SelectItem value="all">Qualquer responsável</SelectItem>
               {equipe.map(m => (
                 <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>
@@ -422,10 +422,10 @@ export function MinhasTarefasModule() {
           </Select>
 
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-xs h-9 min-w-[120px]">
+            <SelectTrigger className="bg-background border-border text-xs h-9 min-w-[120px]">
               <div className="flex items-center gap-2"><Filter className="w-3.5 h-3.5"/> <SelectValue placeholder="Prioridade" /></div>
             </SelectTrigger>
-            <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+            <SelectContent className="bg-card border-border">
               <SelectItem value="all">Qualquer prioridade</SelectItem>
               <SelectItem value="alta">Alta</SelectItem>
               <SelectItem value="media">Média</SelectItem>
@@ -434,7 +434,7 @@ export function MinhasTarefasModule() {
           </Select>
         </div>
 
-        <Button onClick={openNewTask} className="bg-[#e65c00] hover:bg-[#ff7a1f] text-white flex-shrink-0">
+        <Button onClick={openNewTask} className="bg-[#e65c00] hover:bg-[#ff7a1f] text-foreground flex-shrink-0">
           <Plus className="w-4 h-4 mr-2" />
           Nova Tarefa
         </Button>
@@ -483,7 +483,7 @@ export function MinhasTarefasModule() {
 
       {/* MODAL NOVA/EDITAR TAREFA */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-[#111] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="font-display">{isEditMode ? "Editar Tarefa" : "Nova Tarefa"}</DialogTitle>
           </DialogHeader>
@@ -491,7 +491,7 @@ export function MinhasTarefasModule() {
             <div className="space-y-2">
               <Label className="text-neutral-400 text-xs uppercase">Título da Tarefa *</Label>
               <Input 
-                className="bg-[#1A1A1A] border-[#2A2A2A]" 
+                className="bg-[#1A1A1A] border-border" 
                 value={formData.titulo} 
                 onChange={e => setFormData({...formData, titulo: e.target.value})} 
               />
@@ -499,7 +499,7 @@ export function MinhasTarefasModule() {
             <div className="space-y-2">
               <Label className="text-neutral-400 text-xs uppercase">Descrição</Label>
               <Textarea 
-                className="bg-[#1A1A1A] border-[#2A2A2A]" 
+                className="bg-[#1A1A1A] border-border" 
                 value={formData.descricao} 
                 onChange={e => setFormData({...formData, descricao: e.target.value})} 
               />
@@ -509,8 +509,8 @@ export function MinhasTarefasModule() {
               <div className="space-y-2">
                 <Label className="text-neutral-400 text-xs uppercase">Status</Label>
                 <Select value={formData.status} onValueChange={v => setFormData({...formData, status: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]"><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-background border-border">
                     <SelectItem value="a_fazer">Pendente</SelectItem>
                     <SelectItem value="em_progresso">Em Progresso</SelectItem>
                     <SelectItem value="concluida">Concluída</SelectItem>
@@ -520,8 +520,8 @@ export function MinhasTarefasModule() {
               <div className="space-y-2">
                 <Label className="text-neutral-400 text-xs uppercase">Prioridade</Label>
                 <Select value={formData.prioridade} onValueChange={v => setFormData({...formData, prioridade: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]"><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-background border-border">
                     <SelectItem value="alta">Alta</SelectItem>
                     <SelectItem value="media">Média</SelectItem>
                     <SelectItem value="baixa">Baixa</SelectItem>
@@ -534,8 +534,8 @@ export function MinhasTarefasModule() {
               <div className="space-y-2">
                 <Label className="text-neutral-400 text-xs uppercase">Atribuído a</Label>
                 <Select value={formData.responsavel_id} onValueChange={v => setFormData({...formData, responsavel_id: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]"><SelectValue placeholder="Nenhum" /></SelectTrigger>
-                  <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue placeholder="Nenhum" /></SelectTrigger>
+                  <SelectContent className="bg-background border-border">
                     <SelectItem value="none">Nenhum membro</SelectItem>
                     {equipe.map(m => <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>)}
                   </SelectContent>
@@ -545,7 +545,7 @@ export function MinhasTarefasModule() {
                 <Label className="text-neutral-400 text-xs uppercase">Vencimento</Label>
                 <Input 
                   type="date" 
-                  className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]" 
+                  className="bg-[#1A1A1A] border-border [color-scheme:dark]" 
                   value={formData.prazo} 
                   onChange={e => setFormData({...formData, prazo: e.target.value})} 
                 />
@@ -557,7 +557,7 @@ export function MinhasTarefasModule() {
                 <Label className="text-neutral-400 text-xs uppercase">Tempo Estimado (min)</Label>
                 <Input 
                   type="number" 
-                  className="bg-[#1A1A1A] border-[#2A2A2A]" 
+                  className="bg-[#1A1A1A] border-border" 
                   placeholder="Ex: 60"
                   value={formData.tempo_estimado} 
                   onChange={e => setFormData({...formData, tempo_estimado: e.target.value})} 
@@ -566,8 +566,8 @@ export function MinhasTarefasModule() {
                <div className="space-y-2">
                 <Label className="text-neutral-400 text-xs uppercase">Vincular a Meta</Label>
                 <Select value={formData.meta_id} onValueChange={v => setFormData({...formData, meta_id: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A] text-neutral-500"><SelectValue placeholder="Opcional" /></SelectTrigger>
-                  <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  <SelectTrigger className="bg-[#1A1A1A] border-border text-neutral-500"><SelectValue placeholder="Opcional" /></SelectTrigger>
+                  <SelectContent className="bg-background border-border">
                     <SelectItem value="none">Sem meta vinculada</SelectItem>
                     <SelectItem value="meta1">Aumentar Receita (Mock)</SelectItem>
                   </SelectContent>
@@ -576,8 +576,8 @@ export function MinhasTarefasModule() {
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-[#1A1A1A]">
-              <Button variant="outline" className="border-[#2A2A2A]" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-              <Button onClick={handleSaveTask} disabled={isSubmitting} className="bg-[#e65c00] hover:bg-[#ff7a1f] text-white">
+              <Button variant="outline" className="border-border" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
+              <Button onClick={handleSaveTask} disabled={isSubmitting} className="bg-[#e65c00] hover:bg-[#ff7a1f] text-foreground">
                 {isEditMode ? "Salvar" : "Criar Tarefa"}
               </Button>
             </div>

@@ -59,10 +59,10 @@ export function ClientLogoPopover({ logo, onSave, onClose }: ClientLogoPopoverPr
   return (
     <div
       ref={popoverRef}
-      className="absolute left-0 top-full mt-2 z-50 bg-[#1e1e1e] border border-[#333] rounded-[10px] p-4 shadow-xl w-[200px]"
+      className="absolute left-0 top-full mt-2 z-50 bg-[#1e1e1e] border border-border rounded-[10px] p-4 shadow-xl w-[200px]"
       style={{ transition: "all 0.15s ease" }}
     >
-      <p className="text-xs font-medium text-white mb-3">Logo do Cliente</p>
+      <p className="text-xs font-medium text-foreground mb-3">Logo do Cliente</p>
       
       {previewLogo ? (
         <div className="relative w-[120px] h-[80px] mx-auto mb-3 bg-white rounded-lg overflow-hidden">
@@ -73,7 +73,7 @@ export function ClientLogoPopover({ logo, onSave, onClose }: ClientLogoPopoverPr
           />
           <button
             onClick={() => setPreviewLogo(null)}
-            className="absolute top-1 right-1 w-5 h-5 bg-[#1e1e1e] rounded-full flex items-center justify-center text-white hover:bg-red-500 transition-colors"
+            className="absolute top-1 right-1 w-5 h-5 bg-[#1e1e1e] rounded-full flex items-center justify-center text-foreground hover:bg-red-500 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -108,7 +108,7 @@ export function ClientLogoPopover({ logo, onSave, onClose }: ClientLogoPopoverPr
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="flex-1 h-7 text-xs text-neutral-400 hover:text-white"
+          className="flex-1 h-7 text-xs text-neutral-400 hover:text-foreground"
         >
           Cancelar
         </Button>
@@ -118,7 +118,7 @@ export function ClientLogoPopover({ logo, onSave, onClose }: ClientLogoPopoverPr
             onSave(previewLogo)
             onClose()
           }}
-          className="flex-1 h-7 text-xs bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white"
+          className="flex-1 h-7 text-xs bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground"
         >
           Salvar
         </Button>

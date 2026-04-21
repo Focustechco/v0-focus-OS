@@ -89,9 +89,9 @@ export function ConfiguracoesModule() {
   const currentSection = sections.find((s) => s.id === activeSection)
 
   return (
-    <div className="flex h-full bg-[#0d0d0d]">
+    <div className="flex h-full bg-secondary">
       {/* Sidebar */}
-      <div className={`w-full md:w-60 bg-[#0d0d0d] border-r border-[#2a2a2a] flex-col ${mobileView === 'content' ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`w-full md:w-60 bg-secondary border-r border-[#2a2a2a] flex-col ${mobileView === 'content' ? 'hidden md:flex' : 'flex'}`}>
         <ScrollArea className="flex-1 p-3">
           <div className="space-y-6">
             {Object.entries(groupedSections).map(([group, items]) => (
@@ -110,7 +110,7 @@ export function ConfiguracoesModule() {
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded text-left transition-all ${
                         activeSection === section.id
                           ? "bg-[#1a1a1a] text-orange-500 border-l-[3px] border-l-orange-500"
-                          : "text-neutral-400 hover:bg-[#1f1f1f] hover:text-white"
+                          : "text-neutral-400 hover:bg-[#1f1f1f] hover:text-foreground"
                       }`}
                     >
                       <section.icon className="w-4 h-4" />
@@ -141,7 +141,7 @@ export function ConfiguracoesModule() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden -ml-2 text-neutral-400 hover:text-white"
+              className="md:hidden -ml-2 text-neutral-400 hover:text-foreground"
               onClick={() => setMobileView("menu")}
             >
               <ChevronLeft className="w-5 h-5" />
@@ -155,7 +155,7 @@ export function ConfiguracoesModule() {
           </div>
           {hasChanges && (
             <Button
-              className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs tracking-widest uppercase"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs tracking-widest uppercase"
               onClick={() => setHasChanges(false)}
               title="CMD+S para salvar"
             >
@@ -172,7 +172,7 @@ export function ConfiguracoesModule() {
 
         {/* Unsaved Changes Bar */}
         {hasChanges && (
-          <div className="px-4 md:px-6 py-3 bg-[#141414] border-t border-[#2a2a2a] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in slide-in-from-bottom-2">
+          <div className="px-4 md:px-6 py-3 bg-card border-t border-[#2a2a2a] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in slide-in-from-bottom-2">
             <p className="text-neutral-400 text-xs md:text-sm font-mono flex items-center gap-2">
               <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse flex-shrink-0" />
               Voce tem alteracoes nao salvas
@@ -181,14 +181,14 @@ export function ConfiguracoesModule() {
               <Button
                 variant="ghost"
                 onClick={() => setHasChanges(false)}
-                className="text-neutral-400 hover:text-white font-mono text-xs"
+                className="text-neutral-400 hover:text-foreground font-mono text-xs"
               >
                 <X className="w-4 h-4 mr-2" />
                 Descartar
               </Button>
               <Button
                 onClick={() => setHasChanges(false)}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Salvar Alteracoes

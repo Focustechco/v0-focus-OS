@@ -88,7 +88,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       style={{ borderLeft: `3px solid ${borderColor}` }}
     >
       <Icon className="w-5 h-5 flex-shrink-0" style={{ color: borderColor }} />
-      <span className="text-sm text-white flex-1">{toast.message}</span>
+      <span className="text-sm text-foreground flex-1">{toast.message}</span>
       {toast.action && (
         <button
           onClick={toast.action.onClick}
@@ -99,7 +99,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       )}
       <button
         onClick={handleClose}
-        className="text-neutral-500 hover:text-white transition-colors"
+        className="text-neutral-500 hover:text-foreground transition-colors"
       >
         <X className="w-4 h-4" />
       </button>

@@ -94,10 +94,10 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
     .replace(/\/$/, "")
 
   return (
-    <div className="group bg-[#141414] border border-[#2A2A2A] rounded-xl p-4 hover:border-orange-500/30 transition-all space-y-3">
+    <div className="group bg-card border border-border rounded-xl p-4 hover:border-orange-500/30 transition-all space-y-3">
       {/* Header */}
       <div className="flex items-start gap-3">
-        <div className="w-9 h-9 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
           {favicon ? (
             <img src={favicon} alt="" className="w-5 h-5" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
           ) : (
@@ -106,7 +106,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <h4 className="text-sm font-bold text-white truncate">{acesso.nome}</h4>
+            <h4 className="text-sm font-bold text-foreground truncate">{acesso.nome}</h4>
             {acesso.tem_credencial && (
               <Lock className="w-3 h-3 text-orange-500 flex-shrink-0" />
             )}
@@ -120,7 +120,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
             {cleanUrl}
           </a>
         </div>
-        <Badge variant="outline" className="text-[8px] border-[#2A2A2A] text-neutral-500 uppercase tracking-widest h-4 px-1.5 flex-shrink-0">
+        <Badge variant="outline" className="text-[8px] border-border text-neutral-500 uppercase tracking-widest h-4 px-1.5 flex-shrink-0">
           {CATEGORIAS.find(c => c.value === acesso.categoria)?.label || acesso.categoria}
         </Badge>
       </div>
@@ -132,11 +132,11 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
 
       {/* Credenciais expandidas */}
       {showCreds && acesso.tem_credencial && (
-        <div className="bg-[#0A0A0A] border border-orange-500/20 rounded-lg p-3 space-y-1.5 text-xs">
+        <div className="bg-background border border-orange-500/20 rounded-lg p-3 space-y-1.5 text-xs">
           {acesso.login && (
             <div className="flex items-center justify-between">
               <span className="text-neutral-500 font-mono">Login:</span>
-              <span className="text-white font-mono">{acesso.login}</span>
+              <span className="text-foreground font-mono">{acesso.login}</span>
             </div>
           )}
           {acesso.senha_enc && (
@@ -157,7 +157,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
           asChild
           size="sm"
           variant="outline"
-          className="h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-[#2A2A2A] text-neutral-400 hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all"
+          className="h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-border text-neutral-400 hover:bg-orange-500 hover:text-foreground hover:border-orange-500 transition-all"
         >
           <a href={acesso.url} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="w-3 h-3 mr-1" />
@@ -168,7 +168,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
         <Button
           size="sm"
           variant="outline"
-          className="h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-[#2A2A2A] text-neutral-400 hover:bg-[#1A1A1A] hover:text-white transition-all"
+          className="h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-border text-neutral-400 hover:bg-accent/10 hover:text-foreground transition-all"
           onClick={() => navigator.clipboard.writeText(acesso.url)}
         >
           <Copy className="w-3 h-3 mr-1" />
@@ -180,7 +180,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
             size="sm"
             variant="outline"
             className={cn(
-              "h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-[#2A2A2A] transition-all",
+              "h-7 px-2.5 text-[9px] font-mono uppercase tracking-widest bg-transparent border-border transition-all",
               showCreds ? "text-orange-500 border-orange-500/30 hover:bg-red-500/10 hover:text-red-400" : "text-neutral-400 hover:bg-orange-500/10 hover:text-orange-400 hover:border-orange-500/30"
             )}
             onClick={() => setShowCreds(!showCreds)}
@@ -194,7 +194,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
             <Button
               size="sm"
               variant="outline"
-              className="h-7 w-7 p-0 bg-transparent border-[#2A2A2A] text-neutral-500 hover:bg-[#1A1A1A] hover:text-white hover:border-neutral-500 transition-all"
+              className="h-7 w-7 p-0 bg-transparent border-border text-neutral-500 hover:bg-accent/10 hover:text-foreground hover:border-neutral-500 transition-all"
               onClick={() => onEdit(acesso)}
               title="Editar"
             >
@@ -203,7 +203,7 @@ function AcessoCard({ acesso, onEdit, onDelete, userType }: {
             <Button
               size="sm"
               variant="outline"
-              className="h-7 w-7 p-0 bg-transparent border-[#2A2A2A] text-red-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all"
+              className="h-7 w-7 p-0 bg-transparent border-border text-red-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all"
               onClick={() => onDelete(acesso.id)}
               title="Excluir"
             >
@@ -226,16 +226,16 @@ function PastaGroup({ nome, acessos, onEdit, onDelete, userType }: {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="border border-[#2A2A2A] rounded-xl overflow-hidden">
+    <div className="border border-border rounded-xl overflow-hidden">
       <button
-        className="w-full flex items-center gap-3 px-4 py-3 bg-[#111] hover:bg-[#161616] transition-colors text-left"
+        className="w-full flex items-center gap-3 px-4 py-3 bg-background hover:bg-card transition-colors text-left"
         onClick={() => setOpen(!open)}
       >
         {open
           ? <FolderOpen className="w-4 h-4 text-orange-500 flex-shrink-0" />
           : <FolderClosed className="w-4 h-4 text-neutral-500 flex-shrink-0" />
         }
-        <span className="text-sm font-medium text-white flex-1">{nome}</span>
+        <span className="text-sm font-medium text-foreground flex-1">{nome}</span>
         <span className="text-[10px] font-mono text-neutral-500">{acessos.length} acessos</span>
         <ChevronRight className={cn("w-3.5 h-3.5 text-neutral-600 transition-transform", open && "rotate-90")} />
       </button>
@@ -279,7 +279,7 @@ function SecaoBlock({ secao, acessos, pastas, onEdit, onDelete, userType }: {
       </div>
 
       {acessos.length === 0 ? (
-        <div className="py-8 text-center border border-dashed border-[#2A2A2A] rounded-xl text-neutral-600 text-xs">
+        <div className="py-8 text-center border border-dashed border-border rounded-xl text-neutral-600 text-xs">
           Nenhum acesso cadastrado nesta seção.
         </div>
       ) : (
@@ -426,11 +426,11 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
   }
 
   const labelInput = "text-[10px] uppercase font-mono text-neutral-500 tracking-wider"
-  const inputClass = "bg-[#0A0A0A] border-[#2A2A2A] text-white focus:border-orange-500/50 text-sm"
+  const inputClass = "bg-background border-border text-foreground focus:border-orange-500/50 text-sm"
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-background border-border text-foreground sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-orange-500 font-mono text-xs tracking-widest uppercase">
             Novo Acesso / Link
@@ -450,7 +450,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
               <Label className={labelInput}>Categoria <span className="text-orange-500">*</span></Label>
               <Select value={form.categoria} onValueChange={v => setForm({ ...form, categoria: v })}>
                 <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                <SelectContent className="bg-background border-border">
                   {CATEGORIAS.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -470,7 +470,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
               <Label className={labelInput}>Seção <span className="text-orange-500">*</span></Label>
               <Select value={form.secao} onValueChange={handleSecaoChange}>
                 <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                <SelectContent className="bg-background border-border">
                   {SECOES.map(s => <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -494,7 +494,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
                   setForm({ ...form, pasta: v })
                 }}>
                   <SelectTrigger className={inputClass}><SelectValue placeholder="Sem pasta" /></SelectTrigger>
-                  <SelectContent className="bg-[#111] border-[#2A2A2A]">
+                  <SelectContent className="bg-background border-border">
                     <SelectItem value="_sem_pasta">Sem pasta</SelectItem>
                     {pastasExistentes.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                     <SelectItem value="_criar" className="text-orange-400">+ Criar nova pasta</SelectItem>
@@ -513,10 +513,10 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
           </div>
 
           {/* Toggle Credenciais */}
-          <div className="border border-[#2A2A2A] rounded-xl p-4 space-y-4">
+          <div className="border border-border rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-white">Credenciais de Acesso</p>
+                <p className="text-sm font-medium text-foreground">Credenciais de Acesso</p>
                 <p className="text-[10px] text-neutral-500">Login e senha para este acesso</p>
               </div>
               <Switch
@@ -544,7 +544,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-foreground"
                       onClick={() => setShowSenha(!showSenha)}
                     >
                       {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -565,7 +565,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
             <Label className={labelInput}>Visível para</Label>
             <Select value={form.visivel_para} onValueChange={v => setForm({ ...form, visivel_para: v })}>
               <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-[#111] border-[#2A2A2A]">
+              <SelectContent className="bg-background border-border">
                 <SelectItem value="todos">Toda a equipe</SelectItem>
                 <SelectItem value="admins">Apenas admins</SelectItem>
                 <SelectItem value="especifico">Membros específicos</SelectItem>
@@ -581,7 +581,7 @@ function NovoAcessoModal({ open, onOpenChange, onSalvo, secaoInicial, pastasExis
           <Button
             onClick={handleSalvar}
             disabled={saving || !form.nome || !form.url}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase tracking-widest"
+            className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs uppercase tracking-widest"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Acesso"}
           </Button>
@@ -666,12 +666,12 @@ export function AbaAcessos({ userType }: { userType: string }) {
             value={pesquisa}
             onChange={e => setPesquisa(e.target.value)}
             placeholder="Buscar por nome, URL, categoria ou pasta..."
-            className="pl-9 bg-[#141414] border-[#2A2A2A] text-white placeholder:text-neutral-600 focus:border-orange-500/50"
+            className="pl-9 bg-card border-border text-foreground placeholder:text-neutral-600 focus:border-orange-500/50"
           />
         </div>
         <Button
           onClick={() => { setSecaoModal("nossas_plataformas"); setModalOpen(true) }}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] uppercase tracking-widest h-10 px-4 flex-shrink-0"
+          className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-[10px] uppercase tracking-widest h-10 px-4 flex-shrink-0"
         >
           <Plus className="w-3.5 h-3.5 mr-2" />
           Novo Acesso

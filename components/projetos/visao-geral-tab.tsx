@@ -83,12 +83,12 @@ function ProjectCard({ project, onClick }: { project: any; onClick: () => void }
     ? "text-red-500"
     : isNearDeadline
     ? "text-yellow-500"
-    : "text-white"
+    : "text-foreground"
 
   return (
     <Card
       onClick={onClick}
-      className="bg-[#141414] border-[#2A2A2A] border-b-2 border-b-transparent hover:border-b-orange-500 transition-all cursor-pointer group hover:bg-[#1A1A1A]"
+      className="bg-card border-border border-b-2 border-b-transparent hover:border-b-orange-500 transition-all cursor-pointer group hover:bg-accent/10"
     >
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
@@ -97,18 +97,18 @@ function ProjectCard({ project, onClick }: { project: any; onClick: () => void }
               <span className="text-[10px] text-orange-500 font-mono tracking-tighter">
                 {project.codigo}
               </span>
-              <Badge className={cn("text-[8px] uppercase tracking-widest", stageConfig?.color, "text-white")}>
+              <Badge className={cn("text-[8px] uppercase tracking-widest", stageConfig?.color, "text-foreground")}>
                 {stageConfig?.label}
               </Badge>
             </div>
-            <h3 className="text-sm font-bold text-white group-hover:text-orange-500 transition-colors truncate mb-0.5">
+            <h3 className="text-sm font-bold text-foreground group-hover:text-orange-500 transition-colors truncate mb-0.5">
               {project.nome}
             </h3>
             <p className="text-[10px] text-neutral-500 truncate">
               {project.client_name || project.clientes?.nome || "—"}
             </p>
           </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white -mr-2">
+          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-foreground -mr-2">
             <MoreVertical className="w-4 h-4" />
           </Button>
         </div>
@@ -139,7 +139,7 @@ function ProjectCard({ project, onClick }: { project: any; onClick: () => void }
           <div className="pt-2">
             <div className="flex items-center justify-between text-[9px] mb-1.5 uppercase tracking-tighter">
               <span className="text-neutral-500">Progresso</span>
-              <span className="text-white font-mono">{project.progresso ?? 0}%</span>
+              <span className="text-foreground font-mono">{project.progresso ?? 0}%</span>
             </div>
             <Progress value={project.progresso ?? 0} className="h-1 bg-[#2A2A2A]" />
           </div>
@@ -240,18 +240,18 @@ export function VisaoGeralTab() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-lg sm:text-xl font-display font-bold text-white">Projetos</h1>
+            <h1 className="text-lg sm:text-xl font-display font-bold text-foreground">Projetos</h1>
             <p className="text-xs sm:text-sm text-neutral-500">Gerencie todos os projetos da Focus</p>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {/* Search */}
-            <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg flex-1 sm:flex-none">
+            <div className="flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-lg flex-1 sm:flex-none">
               <Search className="w-4 h-4 text-neutral-500" />
               <input
                 type="text"
                 placeholder="Buscar projetos..."
-                className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-full sm:w-32 lg:w-40"
+                className="bg-transparent text-sm text-foreground placeholder:text-neutral-600 outline-none w-full sm:w-32 lg:w-40"
               />
             </div>
 
@@ -259,7 +259,7 @@ export function VisaoGeralTab() {
             <Button
               variant="outline"
               size="sm"
-              className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white hover:border-orange-500/50"
+              className="border-border bg-card text-neutral-400 hover:text-foreground hover:border-orange-500/50"
             >
               <Filter className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Filtros</span>
@@ -267,22 +267,22 @@ export function VisaoGeralTab() {
 
             {/* View Toggle */}
             <Tabs value={viewMode} onValueChange={setViewMode}>
-              <TabsList className="bg-[#141414] border border-[#2A2A2A] h-9">
+              <TabsList className="bg-card border border-border h-9">
                 <TabsTrigger
                   value="kanban"
-                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-2 sm:px-3"
+                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground px-2 sm:px-3"
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </TabsTrigger>
                 <TabsTrigger
                   value="list"
-                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-2 sm:px-3 hidden sm:flex"
+                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground px-2 sm:px-3 hidden sm:flex"
                 >
                   <List className="w-4 h-4" />
                 </TabsTrigger>
                 <TabsTrigger
                   value="timeline"
-                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-white px-2 sm:px-3 hidden md:flex"
+                  className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground px-2 sm:px-3 hidden md:flex"
                 >
                   <Calendar className="w-4 h-4" />
                 </TabsTrigger>
@@ -295,13 +295,13 @@ export function VisaoGeralTab() {
                 <Button
                   size="sm"
                   onClick={handleOpenNewProject}
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                  className="bg-orange-500 hover:bg-orange-600 text-foreground"
                 >
                   <Plus className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Novo Projeto</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white sm:max-w-[500px]">
+              <DialogContent className="bg-card border-border text-foreground sm:max-w-[500px]">
                 <DialogHeader>
                   <DialogTitle className="font-display">Criar Novo Projeto</DialogTitle>
                 </DialogHeader>
@@ -313,7 +313,7 @@ export function VisaoGeralTab() {
                     </Label>
                     <Input
                       placeholder="Ex: Landing Page TechCorp"
-                      className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                      className="bg-[#1A1A1A] border-border focus:border-orange-500"
                       value={formData.nome}
                       onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                     />
@@ -334,7 +334,7 @@ export function VisaoGeralTab() {
                           role="combobox"
                           disabled={isClientLocked}
                           className={cn(
-                            "w-full justify-between bg-[#1A1A1A] border-[#2A2A2A] text-neutral-400 font-normal hover:bg-[#2A2A2A]",
+                            "w-full justify-between bg-[#1A1A1A] border-border text-neutral-400 font-normal hover:bg-[#2A2A2A]",
                             isClientLocked && "opacity-70 cursor-not-allowed"
                           )}
                         >
@@ -344,7 +344,7 @@ export function VisaoGeralTab() {
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-[#1A1A1A] border-[#2A2A2A]">
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-[#1A1A1A] border-border">
                         <Command className="bg-transparent">
                           <CommandInput placeholder="Buscar cliente..." className="h-9" />
                           <CommandList className="scrollbar-hide">
@@ -360,7 +360,7 @@ export function VisaoGeralTab() {
                                     setFormData({ ...formData, cliente_id: c.id })
                                     setClientSearchOpen(false)
                                   }}
-                                  className="text-xs text-neutral-300 aria-selected:bg-[#2A2A2A] aria-selected:text-white"
+                                  className="text-xs text-foreground aria-selected:bg-[#2A2A2A] aria-selected:text-foreground"
                                 >
                                   <Check
                                     className={cn(
@@ -389,7 +389,7 @@ export function VisaoGeralTab() {
                         onValueChange={(v) => setFormData({ ...formData, tech_lead_id: v })}
                         placeholder="Selecione o Tech Lead..."
                         filter={(m) => m.setor === "tech" || m.cargo?.toLowerCase().includes("lead") || true}
-                        triggerClassName="bg-[#1A1A1A] border-[#2A2A2A]"
+                        triggerClassName="bg-[#1A1A1A] border-border"
                       />
                     </div>
                     <div className="space-y-2">
@@ -401,7 +401,7 @@ export function VisaoGeralTab() {
                         onValueChange={(v) => setFormData({ ...formData, dev_secundario_id: v })}
                         placeholder="Dev secundário..."
                         exclude={formData.tech_lead_id ? [formData.tech_lead_id] : []}
-                        triggerClassName="bg-[#1A1A1A] border-[#2A2A2A]"
+                        triggerClassName="bg-[#1A1A1A] border-border"
                       />
                     </div>
                   </div>
@@ -416,10 +416,10 @@ export function VisaoGeralTab() {
                         value={formData.status}
                         onValueChange={(v) => setFormData({ ...formData, status: v })}
                       >
-                        <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]">
+                        <SelectTrigger className="bg-[#1A1A1A] border-border">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                        <SelectContent className="bg-[#1A1A1A] border-border">
                           {stages.map((s) => (
                             <SelectItem key={s.id} value={s.id} className="text-xs">
                               {s.label}
@@ -435,7 +435,7 @@ export function VisaoGeralTab() {
                       <Input
                         type="date"
                         className={cn(
-                          "bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]",
+                          "bg-[#1A1A1A] border-border [color-scheme:dark]",
                           isPastDate && "border-yellow-500 text-yellow-500"
                         )}
                         value={formData.prazo}
@@ -452,7 +452,7 @@ export function VisaoGeralTab() {
                   <Button
                     onClick={handleCreateProject}
                     disabled={isSubmitting}
-                    className="w-full bg-orange-500 hover:bg-orange-600 mt-4 text-white font-bold h-12"
+                    className="w-full bg-orange-500 hover:bg-orange-600 mt-4 text-foreground font-bold h-12"
                   >
                     {isSubmitting ? (
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -486,7 +486,7 @@ export function VisaoGeralTab() {
                         {stage.label.toUpperCase()}
                       </span>
                     </div>
-                    <Badge variant="outline" className="text-[10px] border-[#2A2A2A] text-neutral-500">
+                    <Badge variant="outline" className="text-[10px] border-border text-neutral-500">
                       {getProjectsByStage(stage.id).length}
                     </Badge>
                   </div>
@@ -499,7 +499,7 @@ export function VisaoGeralTab() {
                       />
                     ))}
                     {getProjectsByStage(stage.id).length === 0 && (
-                      <div className="p-8 border border-dashed border-[#2A2A2A] rounded-lg text-center">
+                      <div className="p-8 border border-dashed border-border rounded-lg text-center">
                         <p className="text-xs text-neutral-600">Nenhum projeto</p>
                       </div>
                     )}
@@ -511,11 +511,11 @@ export function VisaoGeralTab() {
 
           {/* List View */}
           {viewMode === "list" && (
-            <Card className="bg-[#141414] border-[#2A2A2A] overflow-hidden">
+            <Card className="bg-card border-border overflow-hidden">
               <CardContent className="p-0 overflow-x-auto">
                 <table className="w-full min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-[#2A2A2A]">
+                    <tr className="border-b border-border">
                       <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">CODE</th>
                       <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">PROJETO</th>
                       <th className="text-left p-3 sm:p-4 text-[10px] text-neutral-500 font-medium tracking-wider">CLIENTE</th>
@@ -532,11 +532,11 @@ export function VisaoGeralTab() {
                         <tr
                           key={project.id}
                           onClick={() => openDrawer(project)}
-                          className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors cursor-pointer group"
+                          className="border-b border-border hover:bg-accent/10 transition-colors cursor-pointer group"
                         >
                           <td className="p-3 sm:p-4 text-xs text-orange-500 font-mono">{project.codigo}</td>
                           <td className="p-3 sm:p-4">
-                            <div className="text-sm text-white group-hover:text-orange-500 transition-colors">
+                            <div className="text-sm text-foreground group-hover:text-orange-500 transition-colors">
                               {project.nome}
                             </div>
                           </td>
@@ -544,7 +544,7 @@ export function VisaoGeralTab() {
                             {project.client_name ?? project.clientes?.nome ?? "—"}
                           </td>
                           <td className="p-3 sm:p-4">
-                            <Badge className={`text-[8px] uppercase tracking-widest ${stageConfig?.color} text-white`}>
+                            <Badge className={`text-[8px] uppercase tracking-widest ${stageConfig?.color} text-foreground`}>
                               {stageConfig?.label}
                             </Badge>
                           </td>
@@ -556,7 +556,7 @@ export function VisaoGeralTab() {
                           </td>
                           <td className="p-3 sm:p-4 text-xs text-neutral-400 font-mono">{project.prazo}</td>
                           <td className="p-3 sm:p-4">
-                            <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-neutral-500 hover:text-white">
+                            <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-neutral-500 hover:text-foreground">
                               <MoreVertical className="w-4 h-4" />
                             </Button>
                           </td>

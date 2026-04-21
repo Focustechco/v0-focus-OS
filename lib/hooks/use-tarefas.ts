@@ -15,6 +15,8 @@ export interface Task {
   created_at?: string
 }
 
+const EMPTY_TASKS: Task[] = []
+
 export function useTarefas(sprintId?: string, projetoId?: string) {
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession()
@@ -101,7 +103,7 @@ export function useTarefas(sprintId?: string, projetoId?: string) {
   }
 
   return {
-    tasks: data || [],
+    tasks: data || EMPTY_TASKS,
     isLoading,
     isError: error,
     mutate,

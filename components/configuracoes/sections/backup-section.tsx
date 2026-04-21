@@ -107,7 +107,7 @@ export function BackupSection() {
     <div className="space-y-6">
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -115,13 +115,13 @@ export function BackupSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Ultimo Backup</p>
-                <p className="text-sm font-mono text-white">Hoje, 14:00</p>
+                <p className="text-sm font-mono text-foreground">Hoje, 14:00</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
@@ -129,13 +129,13 @@ export function BackupSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Armazenamento Usado</p>
-                <p className="text-sm font-mono text-white">1.2 GB / 5 GB</p>
+                <p className="text-sm font-mono text-foreground">1.2 GB / 5 GB</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -151,9 +151,9 @@ export function BackupSection() {
       </div>
 
       {/* Backup Settings */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-white font-mono text-sm tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-foreground font-mono text-sm tracking-wider flex items-center gap-2">
             <Database className="w-4 h-4 text-orange-500" />
             CONFIGURACOES DE BACKUP
           </CardTitle>
@@ -161,7 +161,7 @@ export function BackupSection() {
         <CardContent className="p-6 space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label className="text-white">Backup Automatico</Label>
+              <Label className="text-foreground">Backup Automatico</Label>
               <p className="text-xs text-neutral-500">
                 Realizar backups automaticos no horario programado
               </p>
@@ -173,11 +173,11 @@ export function BackupSection() {
             <div className="space-y-2">
               <Label className="text-neutral-400 text-sm">Frequencia</Label>
               <Select value={backupFrequency} onValueChange={setBackupFrequency}>
-                <SelectTrigger className="w-[200px] bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                <SelectTrigger className="w-[200px] bg-background border-border text-foreground">
                   <Calendar className="w-4 h-4 mr-2" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                <SelectContent className="bg-[#1A1A1A] border-border">
                   <SelectItem value="hourly">A cada hora</SelectItem>
                   <SelectItem value="daily">Diariamente</SelectItem>
                   <SelectItem value="weekly">Semanalmente</SelectItem>
@@ -187,9 +187,9 @@ export function BackupSection() {
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-4 border-t border-[#2A2A2A]">
+          <div className="flex items-center justify-between pt-4 border-t border-border">
             <div className="space-y-1">
-              <Label className="text-white">Sincronizacao na Nuvem</Label>
+              <Label className="text-foreground">Sincronizacao na Nuvem</Label>
               <p className="text-xs text-neutral-500">
                 Enviar backups automaticamente para armazenamento cloud
               </p>
@@ -201,7 +201,7 @@ export function BackupSection() {
             <Button
               onClick={handleManualBackup}
               disabled={isBackingUp}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground"
             >
               {isBackingUp ? (
                 <>
@@ -215,7 +215,7 @@ export function BackupSection() {
                 </>
               )}
             </Button>
-            <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white">
+            <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground">
               <Upload className="w-4 h-4 mr-2" />
               Restaurar Backup
             </Button>
@@ -234,9 +234,9 @@ export function BackupSection() {
       </Card>
 
       {/* Backup History */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-white font-mono text-sm tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-foreground font-mono text-sm tracking-wider flex items-center gap-2">
             <Clock className="w-4 h-4 text-orange-500" />
             HISTORICO DE BACKUPS
           </CardTitle>
@@ -246,7 +246,7 @@ export function BackupSection() {
             {mockBackups.map((backup) => (
               <div
                 key={backup.id}
-                className="flex items-center justify-between p-4 hover:bg-[#1A1A1A] transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-accent/10 transition-colors"
               >
                 <div className="flex items-center gap-4">
                   <div
@@ -267,7 +267,7 @@ export function BackupSection() {
                     )}
                   </div>
                   <div>
-                    <p className="text-white font-mono text-sm">{backup.name}</p>
+                    <p className="text-foreground font-mono text-sm">{backup.name}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs text-neutral-500">{backup.date}</span>
                       <span className="text-xs text-neutral-600">|</span>
@@ -291,7 +291,7 @@ export function BackupSection() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-neutral-400 hover:text-white"
+                        className="text-neutral-400 hover:text-foreground"
                       >
                         <Download className="w-4 h-4" />
                       </Button>

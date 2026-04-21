@@ -94,13 +94,13 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
 
         {/* USUARIOS Tab */}
         <TabsContent value="usuarios" className="mt-0">
-          <Card className="bg-[#141414] border-[#2a2a2a]">
+          <Card className="bg-card border-[#2a2a2a]">
             <CardContent className="p-0">
               <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
                 <span className="text-neutral-400 text-sm font-mono">{users.length} usuarios</span>
                 <Button
                   onClick={() => setInviteModalOpen(true)}
-                  className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs tracking-widest uppercase"
+                  className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs tracking-widest uppercase"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Convidar Usuario
@@ -129,7 +129,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
                                 {user.initials}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-white font-medium">{user.name}</span>
+                            <span className="text-foreground font-medium">{user.name}</span>
                           </div>
                         </td>
                         <td className="p-4 text-neutral-400 font-mono text-sm">{user.email}</td>
@@ -166,7 +166,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
         {/* FUNCOES Tab */}
         <TabsContent value="funcoes" className="mt-0 space-y-4">
           {roles.map((role) => (
-            <Card key={role.name} className="bg-[#141414] border-[#2a2a2a]">
+            <Card key={role.name} className="bg-card border-[#2a2a2a]">
               <CardContent className="p-0">
                 <button
                   onClick={() => setExpandedRole(expandedRole === role.name ? null : role.name)}
@@ -193,7 +193,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
                       <tbody>
                         {modules.slice(0, 4).map((mod) => (
                           <tr key={mod} className="border-t border-[#2a2a2a]">
-                            <td className="p-2 text-white text-sm">{mod}</td>
+                            <td className="p-2 text-foreground text-sm">{mod}</td>
                             {Object.keys(role.permissions).map((perm) => (
                               <td key={perm} className="text-center p-2">
                                 <Checkbox
@@ -212,7 +212,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
               </CardContent>
             </Card>
           ))}
-          <Button variant="outline" className="w-full bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono">
+          <Button variant="outline" className="w-full bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-foreground font-mono">
             <Plus className="w-4 h-4 mr-2" />
             Criar Funcao
           </Button>
@@ -220,7 +220,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
 
         {/* CONVITES Tab */}
         <TabsContent value="convites" className="mt-0">
-          <Card className="bg-[#141414] border-[#2a2a2a]">
+          <Card className="bg-card border-[#2a2a2a]">
             <CardContent className="p-0">
               <ScrollArea className="w-full">
                 <table className="w-full">
@@ -237,7 +237,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
                   <tbody>
                     {invites.map((invite, i) => (
                       <tr key={i} className="border-b border-[#2a2a2a] hover:bg-[#1f1f1f]">
-                        <td className="p-4 text-white font-mono text-sm">{invite.email}</td>
+                        <td className="p-4 text-foreground font-mono text-sm">{invite.email}</td>
                         <td className="p-4">
                           <Badge className={`${roleColors[invite.role]} text-[10px] font-mono`}>{invite.role}</Badge>
                         </td>
@@ -270,9 +270,9 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
 
       {/* Invite Modal */}
       <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
-        <DialogContent className="bg-[#141414] border-[#2a2a2a] max-w-md">
+        <DialogContent className="bg-card border-[#2a2a2a] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white font-display">Convidar Usuario</DialogTitle>
+            <DialogTitle className="text-foreground font-display">Convidar Usuario</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
@@ -280,13 +280,13 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
               <Input
                 type="email"
                 placeholder="email@empresa.com"
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono"
               />
             </div>
             <div className="space-y-2">
               <Label className="text-neutral-400 font-mono text-xs uppercase">Funcao</Label>
               <Select>
-                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -312,7 +312,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
             <Button variant="ghost" onClick={() => setInviteModalOpen(false)} className="text-neutral-400 font-mono">
               Cancelar
             </Button>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono">
               <Mail className="w-4 h-4 mr-2" />
               Enviar Convite
             </Button>

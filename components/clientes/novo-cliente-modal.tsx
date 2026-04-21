@@ -160,7 +160,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border text-foreground sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-xl tracking-tight flex items-center gap-2">
             <User className="w-5 h-5 text-orange-500" />
@@ -171,9 +171,9 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
         <form onSubmit={handleSubmit} className="space-y-6 mt-2">
           
           {/* Seção 1 — Upload de logo */}
-          <div className="flex items-center gap-4 p-4 border border-[#2A2A2A] border-dashed rounded-xl bg-[#1A1A1A]/30">
+          <div className="flex items-center gap-4 p-4 border border-border border-dashed rounded-xl bg-[#1A1A1A]/30">
             <div 
-              className="w-16 h-16 rounded-xl border border-dashed border-[#444] bg-[#0A0A0A] flex items-center justify-center cursor-pointer overflow-hidden group relative hover:border-orange-500 transition-colors flex-shrink-0"
+              className="w-16 h-16 rounded-xl border border-dashed border-[#444] bg-background flex items-center justify-center cursor-pointer overflow-hidden group relative hover:border-orange-500 transition-colors flex-shrink-0"
               onClick={() => logoInputRef.current?.click()}
             >
               {logoPreview ? (
@@ -186,9 +186,9 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               )}
             </div>
             <div className="flex-1">
-              <h4 className="text-sm font-medium text-white">Logo do cliente</h4>
+              <h4 className="text-sm font-medium text-foreground">Logo do cliente</h4>
               <p className="text-xs text-neutral-500 mb-2">PNG, JPG ou SVG · Máx. 2MB<br/>Aparecerá no card e no perfil do cliente</p>
-              <Button type="button" variant="outline" size="sm" className="h-7 text-xs border-[#2A2A2A]" onClick={() => logoInputRef.current?.click()}>
+              <Button type="button" variant="outline" size="sm" className="h-7 text-xs border-border" onClick={() => logoInputRef.current?.click()}>
                 <Upload className="w-3 h-3 mr-2" />
                 Selecionar arquivo
               </Button>
@@ -205,7 +205,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               </Label>
               <Input 
                 placeholder="Ex: Carlos Silva"
-                className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                className="bg-[#1A1A1A] border-border focus:border-orange-500"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 required
@@ -219,7 +219,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               </Label>
               <Input 
                 placeholder="Ex: TechCorp LTDA"
-                className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                className="bg-[#1A1A1A] border-border focus:border-orange-500"
                 value={empresa}
                 onChange={(e) => setEmpresa(e.target.value)}
                 required
@@ -236,7 +236,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               </Label>
               <Input 
                 placeholder="00.000.000/0000-00"
-                className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                className="bg-[#1A1A1A] border-border focus:border-orange-500"
                 value={cnpj}
                 onChange={handleCnpjChange}
                 required
@@ -250,7 +250,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               </Label>
               <Input 
                 placeholder="(00) 00000-0000"
-                className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                className="bg-[#1A1A1A] border-border focus:border-orange-500"
                 value={telefone}
                 onChange={handleTelefoneChange}
               />
@@ -266,7 +266,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
             <Input 
               type="email"
               placeholder="contato@empresa.com"
-              className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+              className="bg-[#1A1A1A] border-border focus:border-orange-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -280,14 +280,14 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
             </Label>
             <Textarea 
               placeholder="Detalhes adicionais sobre o cliente..."
-              className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500 min-h-[80px] resize-none"
+              className="bg-[#1A1A1A] border-border focus:border-orange-500 min-h-[80px] resize-none"
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
             />
           </div>
 
           {/* Seção 6 — Upload de contrato PDF */}
-          <div className="space-y-3 pt-4 border-t border-[#2A2A2A]">
+          <div className="space-y-3 pt-4 border-t border-border">
             <Label className="text-neutral-400 text-xs font-mono uppercase tracking-widest flex items-center gap-2">
               <FileIcon className="w-3 h-3 text-orange-500" />
               Contrato (PDF)
@@ -299,7 +299,7 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               <div className="flex items-center justify-between p-3 rounded-lg border border-green-500/30 bg-green-500/5">
                 <div className="flex items-center gap-3 overflow-hidden">
                   <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm font-medium text-white truncate">{contractFile.name}</span>
+                  <span className="text-sm font-medium text-foreground truncate">{contractFile.name}</span>
                 </div>
                 <Button 
                   type="button" 
@@ -313,37 +313,37 @@ export function NovoClienteModal({ open, onOpenChange, onSuccess }: any) {
               </div>
             ) : (
               <div 
-                className="flex items-center gap-4 p-4 border border-[#2A2A2A] border-dashed rounded-xl bg-[#1A1A1A]/30 cursor-pointer hover:border-orange-500 transition-colors group"
+                className="flex items-center gap-4 p-4 border border-border border-dashed rounded-xl bg-[#1A1A1A]/30 cursor-pointer hover:border-orange-500 transition-colors group"
                 onClick={() => contractInputRef.current?.click()}
               >
-                <div className="w-10 h-10 rounded-lg bg-[#0A0A0A] flex items-center justify-center text-neutral-500 group-hover:text-orange-500 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center text-neutral-500 group-hover:text-orange-500 transition-colors">
                   <FileIcon className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-medium text-neutral-300 group-hover:text-white transition-colors">Anexar contrato do cliente</h4>
+                  <h4 className="text-sm font-medium text-foreground group-hover:text-foreground transition-colors">Anexar contrato do cliente</h4>
                   <p className="text-xs text-neutral-500">Apenas PDF · Máx. 10MB<br/>Ficará disponível no perfil do cliente</p>
                 </div>
-                <div className="px-3 py-1 rounded bg-[#0A0A0A] border border-[#2A2A2A] text-xs font-mono text-neutral-500 group-hover:border-orange-500/50 group-hover:text-orange-500 transition-colors">
+                <div className="px-3 py-1 rounded bg-background border border-border text-xs font-mono text-neutral-500 group-hover:border-orange-500/50 group-hover:text-orange-500 transition-colors">
                   PDF
                 </div>
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-[#2A2A2A]">
+          <div className="flex items-center justify-between pt-4 border-t border-border">
             <p className="text-[10px] text-neutral-500">Campos com <span className="text-orange-500">*</span> são obrigatórios</p>
             <div className="flex gap-3">
               <Button 
                 type="button" 
                 variant="ghost" 
                 onClick={() => onOpenChange(false)}
-                className="text-neutral-400 hover:text-white"
+                className="text-neutral-400 hover:text-foreground"
               >
                 Cancelar
               </Button>
               <Button 
                 type="submit" 
-                className="bg-orange-500 hover:bg-orange-600 text-white min-w-[140px]"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground min-w-[140px]"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

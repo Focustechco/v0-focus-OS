@@ -59,7 +59,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Channels */}
-        <Card className="bg-[#141414] border-[#2a2a2a]">
+        <Card className="bg-card border-[#2a2a2a]">
           <CardContent className="p-6">
             <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Canais</Label>
             <div className="space-y-4">
@@ -67,7 +67,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                 <div key={channel.id} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded border border-[#2a2a2a]">
                   <div className="flex items-center gap-3">
                     <channel.icon className={`w-5 h-5 ${channelStates[channel.id] ? "text-orange-500" : "text-neutral-500"}`} />
-                    <span className={`text-sm ${channelStates[channel.id] ? "text-white" : "text-neutral-500"}`}>
+                    <span className={`text-sm ${channelStates[channel.id] ? "text-foreground" : "text-neutral-500"}`}>
                       {channel.label}
                     </span>
                   </div>
@@ -82,7 +82,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
         </Card>
 
         {/* Event Matrix */}
-        <Card className="bg-[#141414] border-[#2a2a2a]">
+        <Card className="bg-card border-[#2a2a2a]">
           <CardContent className="p-6">
             <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Eventos por Canal</Label>
             <div className="overflow-x-auto">
@@ -100,7 +100,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                 <tbody>
                   {events.map((event) => (
                     <tr key={event} className="border-t border-[#2a2a2a]">
-                      <td className="p-2 text-white text-xs">{event}</td>
+                      <td className="p-2 text-foreground text-xs">{event}</td>
                       {channels.map((channel) => (
                         <td key={channel.id} className="text-center p-2">
                           <Switch
@@ -120,7 +120,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
       </div>
 
       {/* Quiet Hours */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -142,7 +142,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                     type="time"
                     defaultValue="22:00"
                     onChange={onChange}
-                    className="w-28 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono"
+                    className="w-28 bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono"
                   />
                 </div>
                 <div className="space-y-2">
@@ -151,7 +151,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                     type="time"
                     defaultValue="08:00"
                     onChange={onChange}
-                    className="w-28 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono"
+                    className="w-28 bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono"
                   />
                 </div>
               </div>
@@ -161,7 +161,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
                   <button
                     key={i}
                     onClick={onChange}
-                    className="w-10 h-10 rounded border border-[#2a2a2a] text-neutral-400 font-mono text-sm hover:border-orange-500 hover:text-orange-500 transition-colors data-[selected=true]:bg-orange-500 data-[selected=true]:text-white data-[selected=true]:border-orange-500"
+                    className="w-10 h-10 rounded border border-[#2a2a2a] text-neutral-400 font-mono text-sm hover:border-orange-500 hover:text-orange-500 transition-colors data-[selected=true]:bg-orange-500 data-[selected=true]:text-foreground data-[selected=true]:border-orange-500"
                     data-selected={i > 0 && i < 6}
                   >
                     {day}

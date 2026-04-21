@@ -55,7 +55,7 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
   }, [title, breadcrumb])
 
   return (
-    <header className="h-14 bg-[#111111] border-b border-[#2A2A2A] flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
+    <header className="h-14 bg-background border-b border-border flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
       <div className="flex items-center gap-2 sm:gap-4">
         {/* Logo for mobile — links back to dashboard */}
         <a href="/" className="lg:hidden">
@@ -70,14 +70,14 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
 
       <div className="flex items-center gap-1 sm:gap-3">
         {/* Search - Hidden on small mobile */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-md">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-background border border-border rounded-md">
           <Search className="w-4 h-4 text-neutral-500" />
           <input
             type="text"
             placeholder="Buscar..."
-            className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-24 md:w-40"
+            className="bg-transparent text-sm text-foreground placeholder:text-neutral-600 outline-none w-24 md:w-40"
           />
-          <kbd className="hidden md:inline-block text-[10px] text-neutral-600 bg-[#1A1A1A] px-1.5 py-0.5 rounded font-mono">
+          <kbd className="hidden md:inline-block text-[10px] text-neutral-600 bg-accent/10 px-1.5 py-0.5 rounded font-mono">
             /
           </kbd>
         </div>
@@ -86,7 +86,7 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="sm:hidden text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
+          className="hidden sm:flex text-neutral-400 hover:text-orange-500 hover:bg-accent/10"
         >
           <Search className="w-4 h-4" />
         </Button>
@@ -103,7 +103,7 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="hidden sm:flex text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A]"
+          className="hidden sm:flex text-neutral-400 hover:text-orange-500 hover:bg-accent/10"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>

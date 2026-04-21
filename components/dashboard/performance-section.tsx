@@ -52,15 +52,15 @@ export function PerformanceSection() {
         <div className="p-2 bg-orange-500/10 rounded">
           <TrendingUp className="w-5 h-5 text-orange-500" />
         </div>
-        <h2 className="text-lg font-display font-bold text-white tracking-widest uppercase">
+        <h2 className="text-lg font-display font-bold text-foreground tracking-widest uppercase">
           Visão Geral do Desempenho da Equipe
         </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Card 1: Progresso das Tarefas (Donut) */}
-        <Card className="bg-[#1a1a1a] border-[#2A2A2A] overflow-hidden">
-          <CardHeader className="py-4 border-b border-[#2A2A2A]">
+        <Card className="bg-[#1a1a1a] border-border overflow-hidden">
+          <CardHeader className="py-4 border-b border-border">
             <CardTitle className="text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-400 uppercase">
               Progresso das Tarefas
             </CardTitle>
@@ -115,8 +115,8 @@ export function PerformanceSection() {
         </Card>
 
         {/* Card 2: Produtividade por Setor (Bar) */}
-        <Card className="bg-[#1a1a1a] border-[#2A2A2A] overflow-hidden">
-          <CardHeader className="py-2 px-4 border-b border-[#2A2A2A] flex-row items-center justify-between">
+        <Card className="bg-[#1a1a1a] border-border overflow-hidden">
+          <CardHeader className="py-2 px-4 border-b border-border flex-row items-center justify-between">
             <CardTitle className="text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-400 uppercase">
               Produtividade do Periodo
             </CardTitle>
@@ -129,8 +129,8 @@ export function PerformanceSection() {
                   className={cn(
                     "px-2 py-1 h-6 text-[9px] font-bold uppercase transition-all rounded-sm",
                     selectedSector === sector 
-                      ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" 
-                      : "text-neutral-500 hover:text-white hover:bg-neutral-800"
+                      ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20" 
+                      : "text-neutral-500 hover:text-foreground hover:bg-neutral-800"
                   )}
                 >
                   {sector}

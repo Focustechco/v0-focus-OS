@@ -70,7 +70,7 @@ export function CommandCenter() {
             <p className="text-xs text-neutral-400 mt-1">{errorMessage || "Verifique a conexão com o servidor."}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-3 text-[10px] font-mono uppercase text-neutral-500 hover:text-white border border-[#333] rounded px-3 py-1 transition-colors"
+              className="mt-3 text-[10px] font-mono uppercase text-neutral-500 hover:text-foreground border border-border rounded px-3 py-1 transition-colors"
             >
               Tentar novamente
             </button>
@@ -92,12 +92,12 @@ export function CommandCenter() {
   const intelligence = data?.intelligence || ""
 
   return (
-    <div className="space-y-6 pb-12 font-sans text-neutral-300">
+    <div className="space-y-6 pb-12 font-sans text-foreground">
       
       {/* 1. Header (Fixo no topo visual do dashboard) */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[#111] border border-[#222] p-[18px] rounded-[10px] sticky top-0 z-10 shadow-md">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card border border-border p-[18px] rounded-[10px] sticky top-0 z-10 shadow-md">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-[#161616] border border-[#222] flex items-center justify-center text-[#e05c00] font-mono font-bold text-lg select-none overflow-hidden">
+          <div className="w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-primary font-mono font-bold text-lg select-none overflow-hidden">
             {sessionUser?.avatar_url ? (
                <img src={sessionUser.avatar_url} alt={sessionUser.name} className="w-full h-full object-cover" />
             ) : (
@@ -105,34 +105,32 @@ export function CommandCenter() {
             )}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-xl font-bold text-foreground">
               {greeting}, {sessionUser ? sessionUser.name : "Carregando..."}
             </h1>
             <p className="text-xs text-neutral-500 capitalize">{currentDate} · Focus Tecnologia</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Badge className="bg-[#161616] border-[#222] text-neutral-400 font-mono text-[10px] py-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] mr-2 inline-block"></span>
+          <Badge className="bg-card border border-border text-neutral-400 font-mono text-[10px] py-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 inline-block"></span>
             Sistema online
           </Badge>
           
-          <Link href="/projetos?tab=aprovacoes">
-            <Badge className={`border font-mono text-[10px] py-1 cursor-pointer transition-colors ${kpis.aprovacoes_pendentes > 0 ? "bg-[#e05c00]/10 border-[#e05c00]/30 text-[#e05c00] hover:bg-[#e05c00]/20" : "bg-[#161616] border-[#222] text-neutral-500"}`}>
-              {kpis.aprovacoes_pendentes || 0} Aprovações Pendentes
-            </Badge>
-          </Link>
+          <Badge className={`border font-mono text-[10px] py-1 cursor-pointer transition-colors ${kpis.aprovacoes_pendentes > 0 ? "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20" : "bg-card border-border text-neutral-500"}`}>
+            {kpis.aprovacoes_pendentes || 0} Aprovações Pendentes
+          </Badge>
         </div>
       </div>
 
       {isLoading ? (
         <div className="space-y-6 animate-pulse">
            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[1,2,3,4].map(i => <div key={i} className="h-24 bg-[#161616] border border-[#222] rounded-[10px]" />)}
+              {[1,2,3,4].map(i => <div key={i} className="h-24 bg-card border border-border rounded-[10px]" />)}
            </div>
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="h-64 bg-[#161616] border border-[#222] rounded-[10px]" />
-              <div className="h-64 bg-[#161616] border border-[#222] rounded-[10px]" />
+              <div className="h-64 bg-card border border-border rounded-[10px]" />
+              <div className="h-64 bg-card border border-border rounded-[10px]" />
            </div>
         </div>
       ) : (
@@ -161,7 +159,7 @@ export function CommandCenter() {
               title="Aprovações" 
               value={kpis.aprovacoes_pendentes} 
               icon={CheckCircle2} 
-              valueColor={kpis.aprovacoes_pendentes > 0 ? "text-[#e05c00]" : "text-white"}
+              valueColor={kpis.aprovacoes_pendentes > 0 ? "text-primary" : "text-foreground"}
               subtext="Aguardando liberação" 
             />
           </div>
@@ -169,12 +167,12 @@ export function CommandCenter() {
           {/* 3. Grid Principal — linha do meio (2 colunas) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Projetos em andamento */}
-            <Card className="bg-[#161616] border-[#222] rounded-[10px]">
-              <div className="p-[18px] border-b border-[#222] flex items-center justify-between">
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                  <FolderKanban className="w-4 h-4 text-[#e05c00]" /> Projetos em andamento
+            <Card className="bg-card border-border rounded-[10px]">
+              <div className="p-[18px] border-b border-border flex items-center justify-between">
+                <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <FolderKanban className="w-4 h-4 text-primary" /> Projetos em andamento
                 </h2>
-                <Link href="/projetos" className="text-[11px] font-mono text-neutral-500 hover:text-[#e05c00] transition-colors">
+                <Link href="/projetos" className="text-[11px] font-mono text-neutral-500 hover:text-primary transition-colors">
                   Ver todos →
                 </Link>
               </div>
@@ -183,13 +181,13 @@ export function CommandCenter() {
                 {projetos.map((p: any) => (
                   <div key={p.id} className="group">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-neutral-200 group-hover:text-[#e05c00] transition-colors">{p.name}</span>
+                      <span className="text-xs font-medium text-neutral-200 group-hover:text-primary transition-colors">{p.name}</span>
                       <Badge variant="outline" className={`text-[9px] uppercase font-mono tracking-wider ${getStageBadgeColor(p.stage)}`}>
                         {p.stage || "GERAL"}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Progress value={p.progress} className="h-[5px] bg-[#222] flex-1 rounded-full [&>div]:rounded-full [&>div]:bg-[#e05c00]" />
+                      <Progress value={p.progress} className="h-[5px] bg-secondary flex-1 rounded-full [&>div]:rounded-full [&>div]:bg-primary" />
                       <span className="text-[9px] font-mono text-neutral-500 w-6 text-right">{p.progress}%</span>
                     </div>
                   </div>
@@ -198,18 +196,18 @@ export function CommandCenter() {
             </Card>
 
             {/* Tarefas urgentes / atrasadas */}
-            <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col">
-              <div className="p-[18px] border-b border-[#222]">
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+               <Card className="bg-card border-border rounded-[10px] flex flex-col flex-1">
+                 <div className="p-[18px] border-b border-border">
+                <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-[#ef4444]" /> Tarefas críticas
                 </h2>
               </div>
               <div className="p-[18px] flex-1 space-y-3 overflow-y-auto min-h-[150px]">
                 {tarefasUrg.length === 0 && <p className="text-xs text-neutral-600 text-center py-4">Sua pauta está limpa!</p>}
                 {tarefasUrg.map((t: any) => (
-                  <div key={t.id} className="p-3 bg-[#0d0d0d] border border-[#222] rounded-[8px] flex items-center justify-between">
+                  <div key={t.id} className="p-3 bg-background border border-border rounded-[8px] flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-medium text-white mb-1 line-clamp-1">{t.titulo}</p>
+                      <p className="text-xs font-medium text-foreground mb-1 line-clamp-1">{t.titulo}</p>
                       <p className="text-[9px] text-neutral-500 font-mono uppercase truncate w-48">
                         {t.projeto} {t.sprint && `• ${t.sprint}`}
                       </p>
@@ -217,20 +215,20 @@ export function CommandCenter() {
                     {t.isDelayed ? (
                       <Badge className="bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/20 text-[9px] uppercase font-mono">Atrasada</Badge>
                     ) : (
-                      <Badge className="bg-[#e05c00]/10 text-[#e05c00] border border-[#e05c00]/20 text-[9px] uppercase font-mono">Alta</Badge>
+                      <Badge className="bg-primary/10 text-primary border border-[#e05c00]/20 text-[9px] uppercase font-mono">Alta</Badge>
                     )}
                   </div>
                 ))}
               </div>
-              <div className="p-[18px] border-t border-[#222] bg-[#111]/50 rounded-b-[10px]">
+              <div className="p-[18px] border-t border-border bg-card rounded-b-[10px]">
                 <div className="flex items-center justify-between">
-                  <div className="text-center flex-1 border-r border-[#222]">
+                  <div className="text-center flex-1 border-r border-border">
                     <p className="text-[9px] text-neutral-500 font-mono mb-1">EM PROGRESSO</p>
-                    <p className="text-base font-bold text-white">{tarefasStats.in_progress}</p>
+                    <p className="text-base font-bold text-foreground">{tarefasStats.in_progress}</p>
                   </div>
-                  <div className="text-center flex-1 border-r border-[#222]">
+                  <div className="text-center flex-1 border-r border-border">
                     <p className="text-[9px] text-neutral-500 font-mono mb-1">REVISÃO</p>
-                    <p className="text-base font-bold text-[#e05c00]">{tarefasStats.review}</p>
+                    <p className="text-base font-bold text-primary">{tarefasStats.review}</p>
                   </div>
                   <div className="text-center flex-1">
                     <p className="text-[9px] text-neutral-500 font-mono mb-1">% MÊS</p>
@@ -245,63 +243,63 @@ export function CommandCenter() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             
             {/* Equipe */}
-            <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col">
-              <div className="p-[18px] border-b border-[#222] flex items-center justify-between">
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                  <User className="w-4 h-4 text-[#e05c00]" /> Equipe · Ocupação
+            <Card className="bg-card border-border rounded-[10px] flex flex-col">
+              <div className="p-[18px] border-b border-border flex items-center justify-between">
+                <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <User className="w-4 h-4 text-primary" /> Equipe · Ocupação
                 </h2>
               </div>
               <div className="p-[18px] flex-1 space-y-3">
                  {equipe.map((m: any) => (
                     <div key={m.id} className="flex items-center gap-3">
-                       <div className="w-7 h-7 rounded bg-[#222] text-[#e05c00] flex items-center justify-center text-[10px] font-bold shrink-0">
+                       <div className="w-7 h-7 rounded bg-[#222] text-primary flex items-center justify-center text-[10px] font-bold shrink-0">
                          {m.iniciais}
                        </div>
                        <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1.5">
-                             <span className="text-[11px] text-neutral-300 truncate pr-2">{m.nome}</span>
+                             <span className="text-[11px] text-foreground truncate pr-2">{m.nome}</span>
                              <span className="text-[9px] font-mono text-neutral-500">{m.ocupacao_percent}%</span>
                           </div>
                           <Progress 
                             value={m.ocupacao_percent} 
-                            className={`h-[5px] bg-[#222] rounded-full [&>div]:rounded-full ${m.ocupacao_percent > 80 ? '[&>div]:bg-[#ef4444]' : m.ocupacao_percent >= 60 ? '[&>div]:bg-[#e05c00]' : '[&>div]:bg-[#22c55e]'}`} 
+                            className={`h-[5px] bg-[#222] rounded-full [&>div]:rounded-full ${m.ocupacao_percent > 80 ? '[&>div]:bg-[#ef4444]' : m.ocupacao_percent >= 60 ? '[&>div]:bg-primary' : '[&>div]:bg-[#22c55e]'}`} 
                           />
                        </div>
                     </div>
                  ))}
               </div>
-              <div className="p-3 border-t border-[#222] flex justify-between bg-[#0d0d0d] rounded-b-[10px] text-[10px] font-mono">
-                 <span className="text-neutral-500">Membros ativos: <strong className="text-white font-sans">{equipeStats.total}</strong></span>
-                 <span className="text-neutral-500">Capacidade média: <strong className="text-white font-sans">{equipeStats.avg_capacity}%</strong></span>
+              <div className="p-3 border-t border-border flex justify-between bg-secondary rounded-b-[10px] text-[10px] font-mono">
+                 <span className="text-neutral-500">Membros ativos: <strong className="text-foreground font-sans">{equipeStats.total}</strong></span>
+                 <span className="text-neutral-500">Capacidade média: <strong className="text-foreground font-sans">{equipeStats.avg_capacity}%</strong></span>
               </div>
             </Card>
 
             {/* Comercial */}
-            <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col">
-              <div className="p-[18px] border-b border-[#222]">
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Briefcase className="w-4 h-4 text-[#e05c00]" /> Comercial · Pipeline
+               <Card className="bg-card border-border rounded-[10px] flex flex-col flex-1">
+                 <div className="p-[18px] border-b border-border">
+                <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-primary" /> Comercial · Pipeline
                 </h2>
               </div>
               <div className="p-[18px] flex-1 space-y-3">
                  {leads.length === 0 && <p className="text-xs text-neutral-600 text-center">Nenhum lead em negociação.</p>}
                  {leads.map((l: any) => (
-                   <div key={l.id} className="p-3 rounded-[8px] bg-[#0d0d0d] border border-[#222] flex items-center justify-between">
+                   <div key={l.id} className="p-3 rounded-[8px] bg-secondary border border-border flex items-center justify-between">
                       <span className="text-xs text-neutral-200 font-medium truncate pr-2">{l.nome}</span>
-                      <Badge className="bg-[#161616] text-[#22c55e] border border-[#22c55e]/20 text-[9px] uppercase font-mono shrink-0">
+                      <Badge className="bg-card text-[#22c55e] border border-[#22c55e]/20 text-[9px] uppercase font-mono shrink-0">
                         {l.status}
                       </Badge>
                    </div>
                  ))}
               </div>
-              <div className="p-3 border-t border-[#222] bg-[#0d0d0d] rounded-b-[10px] flex justify-around text-[9px] font-mono text-center">
+              <div className="p-3 border-t border-border bg-secondary rounded-b-[10px] flex justify-around text-[9px] font-mono text-center">
                  <div>
                     <p className="text-neutral-500 mb-0.5">ATIVOS</p>
-                    <p className="text-white font-sans font-bold text-sm">{leadsStats.ativos}</p>
+                    <p className="text-foreground font-sans font-bold text-sm">{leadsStats.ativos}</p>
                  </div>
                  <div>
                     <p className="text-neutral-500 mb-0.5">NEGOCIAÇÃO</p>
-                    <p className="text-[#e05c00] font-sans font-bold text-sm">{leadsStats.negociacao}</p>
+                    <p className="text-primary font-sans font-bold text-sm">{leadsStats.negociacao}</p>
                  </div>
                  <div>
                     <p className="text-neutral-500 mb-0.5">NOVOS MÊS</p>
@@ -313,19 +311,19 @@ export function CommandCenter() {
             {/* Aprovações + Intelligence */}
             <div className="flex flex-col gap-4">
                {/* Aprovações */}
-               <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col flex-1">
-                 <div className="p-[18px] border-b border-[#222]">
-                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-[#e05c00]" /> Fila de Aprovações
+               <Card className="bg-card border-border rounded-[10px] flex flex-col flex-1">
+                 <div className="p-[18px] border-b border-border">
+                    <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-primary" /> Fila de Aprovações
                     </h2>
                  </div>
                  <div className="p-[18px] space-y-3">
                     {aprovacoes.length === 0 && <p className="text-xs text-neutral-600 text-center">Tudo liberado!</p>}
                     {aprovacoes.map((a: any) => (
-                      <div key={a.id} className="flex gap-3 items-start relative px-3 py-2 -mx-3 hover:bg-[#0d0d0d] transition-colors rounded">
-                         <div className="w-1.5 h-1.5 rounded-full mt-1.5 bg-[#e05c00]" />
+                      <div key={a.id} className="flex gap-3 items-start relative px-3 py-2 -mx-3 hover:bg-secondary transition-colors rounded">
+                         <div className="w-1.5 h-1.5 rounded-full mt-1.5 bg-primary" />
                          <div>
-                            <p className="text-xs text-neutral-300 font-medium mb-0.5">{a.titulo}</p>
+                            <p className="text-xs text-foreground font-medium mb-0.5">{a.titulo}</p>
                             <p className="text-[9px] font-mono text-neutral-500 uppercase">{a.projeto || "Geral"}</p>
                          </div>
                       </div>
@@ -333,7 +331,7 @@ export function CommandCenter() {
                  </div>
                  {kpis.aprovacoes_pendentes > 3 && (
                    <div className="mt-auto px-[18px] pb-[18px]">
-                     <Link href="/projetos?tab=aprovacoes" className="block w-full py-2 text-center text-[10px] font-mono text-neutral-500 border border-[#222] rounded hover:border-[#e05c00]/30 hover:text-[#e05c00] transition-colors">
+                     <Link href="/projetos?tab=aprovacoes" className="block w-full py-2 text-center text-[10px] font-mono text-neutral-500 border border-border rounded hover:border-[#e05c00]/30 hover:text-primary transition-colors">
                         +{kpis.aprovacoes_pendentes - 3} Ocultas
                      </Link>
                    </div>
@@ -341,12 +339,12 @@ export function CommandCenter() {
                </Card>
 
                {/* Intelligence Box */}
-               <Card className="bg-gradient-to-br from-[#161616] to-[#0a0a0a] border-[#222] rounded-[10px] relative overflow-hidden">
+               <Card className="bg-gradient-to-br from-card to-background border-border rounded-[10px] relative overflow-hidden">
                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#e05c00] to-transparent opacity-50" />
                  <div className="p-[18px]">
                     <div className="flex items-center gap-2 mb-2">
-                       <BrainCircuit className="w-4 h-4 text-[#e05c00]" />
-                       <h3 className="text-[10px] font-mono tracking-widest text-white uppercase">Intelligence</h3>
+                       <BrainCircuit className="w-4 h-4 text-primary" />
+                       <h3 className="text-[10px] font-mono tracking-widest text-foreground uppercase">Intelligence</h3>
                     </div>
                     <p className="text-xs text-neutral-400 leading-relaxed italic">"{intelligence}"</p>
                  </div>
@@ -361,12 +359,12 @@ export function CommandCenter() {
   )
 }
 
-function KpiCard({ title, value, icon: Icon, subtext, valueColor = "text-white" }: any) {
+function KpiCard({ title, value, icon: Icon, subtext, valueColor = "text-foreground" }: any) {
   return (
-    <Card className="bg-[#161616] border-[#222] rounded-[10px] flex flex-col p-[18px]">
+    <Card className="bg-card border-border rounded-[10px] flex flex-col p-[18px]">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-xs font-mono text-neutral-500 uppercase">{title}</h3>
-        <Icon className="w-4 h-4 text-[#e05c00]" />
+        <Icon className="w-4 h-4 text-primary" />
       </div>
       <p className={`text-4xl font-bold font-display ${valueColor}`}>{value}</p>
       {subtext && <p className="text-[10px] text-neutral-500 mt-2 font-mono">{subtext}</p>}
@@ -379,5 +377,5 @@ function getStageBadgeColor(stage: string) {
   if (s.includes('mvp')) return 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
   if (s.includes('diagn')) return 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
   if (s.includes('prop')) return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
-  return 'bg-[#222] text-neutral-400 border border-[#333]'
+  return 'bg-secondary text-neutral-400 border border-border'
 }

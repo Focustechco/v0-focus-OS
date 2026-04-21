@@ -140,12 +140,12 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
       <div className="space-y-3">
         <Label className="text-xs text-neutral-400 tracking-wider">PROJETO *</Label>
         <Select value={selectedProject} onValueChange={setSelectedProject}>
-          <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A] text-white">
+          <SelectTrigger className="bg-[#1A1A1A] border-border text-foreground">
             <SelectValue placeholder="Selecionar projeto..." />
           </SelectTrigger>
-          <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+          <SelectContent className="bg-[#1A1A1A] border-border">
             {MOCK_PROJECTS.map(p => (
-              <SelectItem key={p.id} value={p.id} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+              <SelectItem key={p.id} value={p.id} className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                 {p.id} - {p.name}
               </SelectItem>
             ))}
@@ -154,10 +154,10 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
 
         {/* Preview do projeto */}
         {project && (
-          <div className="p-4 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg space-y-2">
+          <div className="p-4 bg-[#1A1A1A] border border-border rounded-lg space-y-2">
             <div className="flex items-center gap-2">
               <span className="text-xs text-orange-500 font-mono">{project.id}</span>
-              <span className="text-sm text-white font-medium">{project.name}</span>
+              <span className="text-sm text-foreground font-medium">{project.name}</span>
             </div>
             <div className="text-xs text-neutral-400 space-y-1">
               <p>Etapa atual: {project.stage} (Etapa {project.stageNumber})</p>
@@ -180,7 +180,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
                 "p-3 border rounded-lg text-center transition-colors",
                 selectedPeriod === period.id
                   ? "bg-orange-500/20 border-orange-500 text-orange-500"
-                  : "bg-[#1A1A1A] border-[#2A2A2A] text-neutral-400 hover:border-neutral-500"
+                  : "bg-[#1A1A1A] border-border text-neutral-400 hover:border-neutral-500"
               )}
             >
               <span className="text-xs font-medium">{period.name}</span>
@@ -197,14 +197,14 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               type="date"
               value={customStart}
               onChange={e => { setCustomStart(e.target.value); setSelectedPeriod("custom") }}
-              className="w-36 h-8 bg-[#1A1A1A] border-[#2A2A2A] text-white text-xs"
+              className="w-36 h-8 bg-[#1A1A1A] border-border text-foreground text-xs"
             />
             <span>ate</span>
             <Input
               type="date"
               value={customEnd}
               onChange={e => { setCustomEnd(e.target.value); setSelectedPeriod("custom") }}
-              className="w-36 h-8 bg-[#1A1A1A] border-[#2A2A2A] text-white text-xs"
+              className="w-36 h-8 bg-[#1A1A1A] border-border text-foreground text-xs"
             />
           </div>
         </div>
@@ -222,7 +222,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
                 "w-full flex items-center gap-3 p-3 border rounded-lg transition-colors text-left",
                 reportType === type.id
                   ? "bg-orange-500/20 border-orange-500"
-                  : "bg-[#1A1A1A] border-[#2A2A2A] hover:border-neutral-500"
+                  : "bg-[#1A1A1A] border-border hover:border-neutral-500"
               )}
             >
               <div className={cn(
@@ -232,7 +232,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
                 {reportType === type.id && <div className="w-2 h-2 rounded-[1px] bg-orange-500" />}
               </div>
               <div>
-                <p className={cn("text-sm", reportType === type.id ? "text-orange-500" : "text-neutral-300")}>
+                <p className={cn("text-sm", reportType === type.id ? "text-orange-500" : "text-foreground")}>
                   {type.name}
                 </p>
                 <p className="text-xs text-neutral-500">{type.description}</p>
@@ -253,9 +253,9 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
           {sections.map(section => (
             <div
               key={section.id}
-              className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg"
+              className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-border rounded-lg"
             >
-              <span className={cn("text-sm", section.enabled ? "text-white" : "text-neutral-500")}>
+              <span className={cn("text-sm", section.enabled ? "text-foreground" : "text-neutral-500")}>
                 {section.name}
               </span>
               <Switch
@@ -268,7 +268,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
         </div>
       </div>
 
-      <div className="border-t border-[#2A2A2A] pt-6">
+      <div className="border-t border-border pt-6">
         <Label className="text-xs text-neutral-400 tracking-wider mb-4 block">PERSONALIZACAO</Label>
 
         <div className="grid grid-cols-2 gap-4">
@@ -278,7 +278,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               value={recipientName}
               onChange={e => setRecipientName(e.target.value)}
               placeholder="Joao Silva"
-              className="bg-[#1A1A1A] border-[#2A2A2A] text-white"
+              className="bg-[#1A1A1A] border-border text-foreground"
             />
           </div>
           <div className="space-y-2">
@@ -287,7 +287,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               value={recipientRole}
               onChange={e => setRecipientRole(e.target.value)}
               placeholder="CEO, TechFlow Ltda"
-              className="bg-[#1A1A1A] border-[#2A2A2A] text-white"
+              className="bg-[#1A1A1A] border-border text-foreground"
             />
           </div>
         </div>
@@ -295,12 +295,12 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
         <div className="mt-4 space-y-2">
           <Label className="text-xs text-neutral-500">Preparado por</Label>
           <Select value={preparedBy} onValueChange={setPreparedBy}>
-            <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A] text-white">
+            <SelectTrigger className="bg-[#1A1A1A] border-border text-foreground">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+            <SelectContent className="bg-[#1A1A1A] border-border">
               {TEAM_MEMBERS.map(member => (
-                <SelectItem key={member.id} value={member.id} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                <SelectItem key={member.id} value={member.id} className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                   {member.name} - {member.role}
                 </SelectItem>
               ))}
@@ -309,19 +309,19 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
         </div>
 
         <div className="mt-4 space-y-3">
-          <div className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg">
-            <span className="text-sm text-neutral-300">Incluir logo da Focus</span>
+          <div className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-border rounded-lg">
+            <span className="text-sm text-foreground">Incluir logo da Focus</span>
             <Switch
               checked={includeFocusLogo}
               onCheckedChange={setIncludeFocusLogo}
               className="data-[state=checked]:bg-orange-500"
             />
           </div>
-          <div className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-border rounded-lg">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-neutral-300">Incluir logo do cliente</span>
+              <span className="text-sm text-foreground">Incluir logo do cliente</span>
               {includeClientLogo && (
-                <Button size="sm" variant="outline" className="h-7 text-xs border-[#2A2A2A] text-neutral-400">
+                <Button size="sm" variant="outline" className="h-7 text-xs border-border text-neutral-400">
                   <Upload className="w-3 h-3 mr-1" />
                   Upload logo...
                 </Button>
@@ -345,37 +345,37 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
 
     return (
       <div className="space-y-6">
-        <div className="p-6 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg space-y-4">
+        <div className="p-6 bg-[#1A1A1A] border border-border rounded-lg space-y-4">
           <h3 className="text-xs text-neutral-400 tracking-wider">RESUMO DA CONFIGURACAO</h3>
 
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-neutral-500">Projeto:</span>
-              <span className="text-white">{project?.id} - {project?.name}</span>
+              <span className="text-foreground">{project?.id} - {project?.name}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-neutral-500">Periodo:</span>
-              <span className="text-white">
+              <span className="text-foreground">
                 {selectedPeriod === "custom" ? "Customizado" : REPORT_PERIODS.find(p => p.id === selectedPeriod)?.name} ({dates.start.toLocaleDateString('pt-BR')} - {dates.end.toLocaleDateString('pt-BR')})
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-neutral-500">Tipo:</span>
-              <span className="text-white">{REPORT_TYPES.find(t => t.id === reportType)?.name}</span>
+              <span className="text-foreground">{REPORT_TYPES.find(t => t.id === reportType)?.name}</span>
             </div>
             {recipientName && (
               <div className="flex justify-between">
                 <span className="text-neutral-500">Para:</span>
-                <span className="text-white">{recipientName}{recipientRole && ` - ${recipientRole}`}</span>
+                <span className="text-foreground">{recipientName}{recipientRole && ` - ${recipientRole}`}</span>
               </div>
             )}
             <div className="flex justify-between">
               <span className="text-neutral-500">Preparado por:</span>
-              <span className="text-white">{teamMember?.name}</span>
+              <span className="text-foreground">{teamMember?.name}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-neutral-500">Secoes:</span>
-              <span className="text-white">{enabledSections.length} de {sections.length} ativas</span>
+              <span className="text-foreground">{enabledSections.length} de {sections.length} ativas</span>
             </div>
           </div>
         </div>
@@ -384,7 +384,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
           <div className="text-center py-8 space-y-4">
             <div className="w-12 h-12 mx-auto border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
             <div className="space-y-1">
-              <p className="text-sm text-white">Compilando dados do projeto...</p>
+              <p className="text-sm text-foreground">Compilando dados do projeto...</p>
               <p className="text-xs text-neutral-500">Montando relatorio...</p>
             </div>
           </div>
@@ -395,14 +395,14 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card border-border text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
               <FileText className="w-5 h-5 text-orange-500" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-display text-white tracking-wider">
+              <DialogTitle className="text-lg font-display text-foreground tracking-wider">
                 NOVO RELATORIO DE PROJETO
               </DialogTitle>
               <p className="text-xs text-neutral-500">Passo {step} de 3</p>
@@ -412,7 +412,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
             variant="ghost"
             size="icon"
             onClick={() => onOpenChange(false)}
-            className="text-neutral-500 hover:text-white"
+            className="text-neutral-500 hover:text-foreground"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -439,14 +439,14 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between pt-4 border-t border-[#2A2A2A]">
+        <div className="flex justify-between pt-4 border-t border-border">
           <div>
             {step > 1 && (
               <Button
                 variant="outline"
                 onClick={handleBack}
                 disabled={isGenerating}
-                className="border-[#2A2A2A] text-neutral-400 hover:text-white bg-transparent"
+                className="border-border text-neutral-400 hover:text-foreground bg-transparent"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 VOLTAR
@@ -458,7 +458,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isGenerating}
-              className="border-[#2A2A2A] text-neutral-400 hover:text-white bg-transparent"
+              className="border-border text-neutral-400 hover:text-foreground bg-transparent"
             >
               CANCELAR
             </Button>
@@ -466,7 +466,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               <Button
                 onClick={handleNext}
                 disabled={step === 1 && !selectedProject}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground"
               >
                 PROXIMO
                 <ChevronRight className="w-4 h-4 ml-1" />
@@ -475,7 +475,7 @@ export function ReportWizard({ open, onOpenChange, onComplete, preselectedProjec
               <Button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground"
               >
                 {isGenerating ? (
                   <>

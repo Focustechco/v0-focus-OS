@@ -48,7 +48,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
       </div>
 
       {/* 2FA */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -56,13 +56,13 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
                 <Smartphone className="w-6 h-6 text-orange-500" />
               </div>
               <div>
-                <p className="text-white font-medium">Autenticacao em 2 Fatores</p>
+                <p className="text-foreground font-medium">Autenticacao em 2 Fatores</p>
                 <p className="text-neutral-500 text-sm">Proteja sua conta com uma camada extra de seguranca</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Badge className="bg-green-500/20 text-green-500 text-xs font-mono">ATIVO</Badge>
-              <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono text-xs">
+              <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-foreground font-mono text-xs">
                 Configurar
               </Button>
             </div>
@@ -71,7 +71,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
       </Card>
 
       {/* Active Sessions */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Sessoes Ativas</Label>
           <div className="space-y-3">
@@ -84,11 +84,11 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded bg-[#0d0d0d] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded bg-secondary flex items-center justify-center">
                       <Shield className={`w-5 h-5 ${session.current ? "text-green-500" : "text-neutral-500"}`} />
                     </div>
                     <div>
-                      <div className="text-white text-sm font-medium flex items-center gap-2">
+                      <div className="text-foreground text-sm font-medium flex items-center gap-2">
                         {session.device}
                         {session.current && <Badge className="bg-green-500/20 text-green-500 text-[9px]">ATUAL</Badge>}
                       </div>
@@ -111,7 +111,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
       </Card>
 
       {/* Password Policy */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6 space-y-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase block">Politica de Senha</Label>
           
@@ -143,7 +143,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
       </Card>
 
       {/* Session Timeout */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -151,7 +151,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
               <p className="text-neutral-600 text-xs mt-1">Encerrar sessao automaticamente apos inatividade</p>
             </div>
             <Select defaultValue="1h" onValueChange={onChange}>
-              <SelectTrigger className="w-40 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+              <SelectTrigger className="w-40 bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -167,7 +167,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
       </Card>
 
       {/* Access Log */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Log de Acesso</Label>
           <ScrollArea className="h-[200px]">
@@ -185,7 +185,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
                   <tr key={i} className="border-b border-[#2a2a2a]">
                     <td className="p-2 text-neutral-400 font-mono text-xs">{log.timestamp}</td>
                     <td className="p-2 text-neutral-400 font-mono text-xs">{log.ip}</td>
-                    <td className="p-2 text-white text-xs">{log.device}</td>
+                    <td className="p-2 text-foreground text-xs">{log.device}</td>
                     <td className="p-2">
                       {log.status === "success" ? (
                         <Check className="w-4 h-4 text-green-500" />
@@ -202,7 +202,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="bg-[#141414] border-red-500/30">
+      <Card className="bg-card border-red-500/30">
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle className="w-4 h-4 text-red-500" />
@@ -217,7 +217,7 @@ export function SegurancaSection({ onChange }: SegurancaSectionProps) {
               <LogOut className="w-4 h-4 mr-2" />
               Encerrar Todas as Sessoes
             </Button>
-            <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono text-xs">
+            <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-foreground font-mono text-xs">
               Exportar Todos os Dados
             </Button>
           </div>

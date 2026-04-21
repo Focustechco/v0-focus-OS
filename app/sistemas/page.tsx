@@ -51,16 +51,16 @@ export default function SistemasPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-xl font-display font-bold text-white">Sistemas</h1>
+              <h1 className="text-xl font-display font-bold text-foreground">Sistemas</h1>
               <p className="text-sm text-neutral-500">Configuracoes e monitoramento do sistema</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* System Status */}
-            <Card className="lg:col-span-2 bg-[#141414] border-[#2A2A2A]">
-              <CardHeader className="border-b border-[#2A2A2A]">
-                <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+            <Card className="lg:col-span-2 bg-card border-border">
+              <CardHeader className="border-b border-border">
+                <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
                   <Activity className="w-4 h-4 text-orange-500" />
                   STATUS DO SISTEMA
                 </CardTitle>
@@ -68,14 +68,14 @@ export default function SistemasPage() {
               <CardContent className="pt-4">
                 <div className="space-y-3">
                   {systemStatus.map((service, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                    <div key={idx} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
                       <div className="flex items-center gap-3">
                         <div className={`w-2 h-2 rounded-full ${service.status === "online" ? "bg-green-500" : service.status === "degraded" ? "bg-yellow-500" : "bg-red-500"} animate-pulse`} />
-                        <span className="text-sm text-white">{service.name}</span>
+                        <span className="text-sm text-foreground">{service.name}</span>
                       </div>
                       <div className="flex items-center gap-4 text-xs">
                         <div className="text-neutral-500">
-                          Uptime: <span className="text-white font-mono">{service.uptime}</span>
+                          Uptime: <span className="text-foreground font-mono">{service.uptime}</span>
                         </div>
                         <div className="text-neutral-500">
                           Latency: <span className={`font-mono ${parseInt(service.latency) > 100 ? "text-yellow-500" : "text-green-500"}`}>{service.latency}</span>
@@ -90,19 +90,19 @@ export default function SistemasPage() {
 
                 {/* System Resources */}
                 <div className="grid grid-cols-3 gap-4 mt-6">
-                  <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A] text-center">
+                  <div className="p-4 bg-background rounded-lg border border-border text-center">
                     <Cpu className="w-6 h-6 text-orange-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold text-white font-mono">23%</div>
+                    <div className="text-lg font-bold text-foreground font-mono">23%</div>
                     <div className="text-[10px] text-neutral-500">CPU Usage</div>
                   </div>
-                  <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A] text-center">
+                  <div className="p-4 bg-background rounded-lg border border-border text-center">
                     <HardDrive className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold text-white font-mono">4.2GB</div>
+                    <div className="text-lg font-bold text-foreground font-mono">4.2GB</div>
                     <div className="text-[10px] text-neutral-500">Memory</div>
                   </div>
-                  <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A] text-center">
+                  <div className="p-4 bg-background rounded-lg border border-border text-center">
                     <Database className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                    <div className="text-lg font-bold text-white font-mono">67%</div>
+                    <div className="text-lg font-bold text-foreground font-mono">67%</div>
                     <div className="text-[10px] text-neutral-500">Storage</div>
                   </div>
                 </div>
@@ -110,42 +110,42 @@ export default function SistemasPage() {
             </Card>
 
             {/* Quick Settings */}
-            <Card className="bg-[#141414] border-[#2A2A2A]">
-              <CardHeader className="border-b border-[#2A2A2A]">
-                <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+            <Card className="bg-card border-border">
+              <CardHeader className="border-b border-border">
+                <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
                   <Settings className="w-4 h-4 text-orange-500" />
                   CONFIGURACOES RAPIDAS
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-4 space-y-4">
-                <div className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-background rounded-lg">
                   <div className="flex items-center gap-2">
                     <Bell className="w-4 h-4 text-neutral-400" />
-                    <Label className="text-sm text-white">Notificacoes</Label>
+                    <Label className="text-sm text-foreground">Notificacoes</Label>
                   </div>
                   <Switch checked={notifications} onCheckedChange={setNotifications} />
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-background rounded-lg">
                   <div className="flex items-center gap-2">
                     <Palette className="w-4 h-4 text-neutral-400" />
-                    <Label className="text-sm text-white">Modo Escuro</Label>
+                    <Label className="text-sm text-foreground">Modo Escuro</Label>
                   </div>
                   <Switch checked={darkMode} onCheckedChange={setDarkMode} />
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-background rounded-lg">
                   <div className="flex items-center gap-2">
                     <Database className="w-4 h-4 text-neutral-400" />
-                    <Label className="text-sm text-white">Backup Automatico</Label>
+                    <Label className="text-sm text-foreground">Backup Automatico</Label>
                   </div>
                   <Switch checked={autoBackup} onCheckedChange={setAutoBackup} />
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-background rounded-lg">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-neutral-400" />
-                    <Label className="text-sm text-white">Autenticacao 2FA</Label>
+                    <Label className="text-sm text-foreground">Autenticacao 2FA</Label>
                   </div>
                   <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
                 </div>
@@ -156,21 +156,21 @@ export default function SistemasPage() {
           {/* Integrations & Security */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             {/* Integrations */}
-            <Card className="bg-[#141414] border-[#2A2A2A]">
-              <CardHeader className="border-b border-[#2A2A2A]">
-                <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+            <Card className="bg-card border-border">
+              <CardHeader className="border-b border-border">
+                <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
                   <Globe className="w-4 h-4 text-orange-500" />
                   INTEGRACOES
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-4 space-y-3">
                 {integrations.map((integration, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                  <div key={idx} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded bg-[#1A1A1A] flex items-center justify-center">
                         <Cloud className="w-4 h-4 text-neutral-400" />
                       </div>
-                      <span className="text-sm text-white">{integration.name}</span>
+                      <span className="text-sm text-foreground">{integration.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {integration.status === "connected" ? (
@@ -194,56 +194,56 @@ export default function SistemasPage() {
             </Card>
 
             {/* Security & Access */}
-            <Card className="bg-[#141414] border-[#2A2A2A]">
-              <CardHeader className="border-b border-[#2A2A2A]">
-                <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+            <Card className="bg-card border-border">
+              <CardHeader className="border-b border-border">
+                <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
                   <Key className="w-4 h-4 text-orange-500" />
                   SEGURANCA & ACESSO
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-4 space-y-4">
-                <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                <div className="p-4 bg-background rounded-lg border border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-white">Usuarios Ativos</span>
+                    <span className="text-sm text-foreground">Usuarios Ativos</span>
                     <Badge className="bg-orange-500/20 text-orange-500">19</Badge>
                   </div>
                   <div className="grid grid-cols-4 gap-2">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white font-mono">4</div>
+                      <div className="text-lg font-bold text-foreground font-mono">4</div>
                       <div className="text-[9px] text-neutral-500">Admins</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white font-mono">5</div>
+                      <div className="text-lg font-bold text-foreground font-mono">5</div>
                       <div className="text-[9px] text-neutral-500">Tech Leads</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white font-mono">8</div>
+                      <div className="text-lg font-bold text-foreground font-mono">8</div>
                       <div className="text-[9px] text-neutral-500">Devs</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white font-mono">2</div>
+                      <div className="text-lg font-bold text-foreground font-mono">2</div>
                       <div className="text-[9px] text-neutral-500">Comercial</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                <div className="p-4 bg-background rounded-lg border border-border">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-white">Ultimo Backup</span>
+                    <span className="text-sm text-foreground">Ultimo Backup</span>
                     <span className="text-xs text-green-500 font-mono">Hoje, 03:00 UTC</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-white">Ultimo Acesso</span>
+                    <span className="text-sm text-foreground">Ultimo Acesso</span>
                     <span className="text-xs text-neutral-400 font-mono">Gabriel - 5 min atras</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white">
+                  <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground">
                     <Users className="w-4 h-4 mr-2" />
                     Gerenciar Usuarios
                   </Button>
-                  <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white">
+                  <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground">
                     <Key className="w-4 h-4 mr-2" />
                     API Keys
                   </Button>
@@ -253,7 +253,7 @@ export default function SistemasPage() {
           </div>
 
           {/* System Info */}
-          <Card className="bg-[#141414] border-[#2A2A2A] mt-6">
+          <Card className="bg-card border-border mt-6">
             <CardContent className="p-4">
               <div className="flex items-center justify-between text-xs text-neutral-500">
                 <div className="flex items-center gap-4">

@@ -153,30 +153,30 @@ export function TasksTab() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-lg sm:text-xl font-display font-bold text-white">Tarefas</h1>
+            <h1 className="text-lg sm:text-xl font-display font-bold text-foreground">Tarefas</h1>
             <p className="text-xs sm:text-sm text-neutral-500">Gerenciamento centralizado de atividades</p>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg flex-1 sm:flex-none">
+            <div className="flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-lg flex-1 sm:flex-none">
               <Search className="w-4 h-4 text-neutral-500" />
               <input
                 type="text"
                 placeholder="Buscar tasks..."
-                className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none w-full sm:w-32"
+                className="bg-transparent text-sm text-foreground placeholder:text-neutral-600 outline-none w-full sm:w-32"
               />
             </div>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
+                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-foreground">
                   <Plus className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Nova Tarefa</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-lg max-h-[90vh] overflow-y-auto">
+              <DialogContent className="bg-card border-border text-foreground max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-lg font-display text-white flex items-center gap-2">
+                  <DialogTitle className="text-lg font-display text-foreground flex items-center gap-2">
                     <ListTodo className="w-5 h-5 text-orange-500" />
                     Criar Nova Tarefa
                   </DialogTitle>
@@ -186,10 +186,10 @@ export function TasksTab() {
                     <div className="space-y-2">
                       <Label className="text-neutral-400 text-xs">Projeto *</Label>
                       <Select value={formData.projeto_id} onValueChange={(v) => setFormData({...formData, projeto_id: v})}>
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                           <SelectValue placeholder="Selecionar projeto" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                        <SelectContent className="bg-card border-border">
                           {projects.map(p => (
                             <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
                           ))}
@@ -199,10 +199,10 @@ export function TasksTab() {
                     <div className="space-y-2">
                       <Label className="text-neutral-400 text-xs">Sprint (Opcional)</Label>
                       <Select value={formData.sprint_id} onValueChange={(v) => setFormData({...formData, sprint_id: v})}>
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                           <SelectValue placeholder="Selecionar sprint" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                        <SelectContent className="bg-card border-border">
                           {sprints.filter(s => s.projeto_id === formData.projeto_id).map(s => (
                             <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>
                           ))}
@@ -214,10 +214,10 @@ export function TasksTab() {
                   <div className="space-y-2">
                     <Label className="text-neutral-400 text-xs">Atribuída para</Label>
                     <Select value={formData.responsavel_id} onValueChange={(v) => setFormData({...formData, responsavel_id: v})}>
-                      <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                      <SelectTrigger className="bg-background border-border text-foreground">
                         <SelectValue placeholder="Selecionar membro" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                      <SelectContent className="bg-card border-border">
                         {equipe.map(m => (
                           <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>
                         ))}
@@ -228,7 +228,7 @@ export function TasksTab() {
                   <div className="space-y-2">
                     <Label className="text-neutral-400 text-xs">Título *</Label>
                     <Input 
-                      className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
+                      className="bg-background border-border text-foreground" 
                       placeholder="Titulo da task"
                       value={formData.titulo}
                       onChange={(e) => setFormData({...formData, titulo: e.target.value})}
@@ -238,7 +238,7 @@ export function TasksTab() {
                   <div className="space-y-2">
                     <Label className="text-neutral-400 text-xs">Descrição</Label>
                     <Textarea 
-                      className="bg-[#0A0A0A] border-[#2A2A2A] text-white resize-none" 
+                      className="bg-background border-border text-foreground resize-none" 
                       placeholder="Descreva a task..." 
                       rows={3}
                       value={formData.descricao}
@@ -250,10 +250,10 @@ export function TasksTab() {
                     <div className="space-y-2">
                       <Label className="text-neutral-400 text-xs">Prioridade</Label>
                       <Select value={formData.prioridade} onValueChange={(v) => setFormData({...formData, prioridade: v})}>
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                        <SelectContent className="bg-card border-border">
                           <SelectItem value="baixa">Baixa</SelectItem>
                           <SelectItem value="media">Média</SelectItem>
                           <SelectItem value="alta">Alta</SelectItem>
@@ -263,10 +263,10 @@ export function TasksTab() {
                     <div className="space-y-2">
                       <Label className="text-neutral-400 text-xs">Status</Label>
                       <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v})}>
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                        <SelectContent className="bg-card border-border">
                           <SelectItem value="a_fazer">A Fazer</SelectItem>
                           <SelectItem value="em_progresso">Em Progresso</SelectItem>
                           <SelectItem value="revisao">Revisão</SelectItem>
@@ -278,7 +278,7 @@ export function TasksTab() {
                       <Label className="text-neutral-400 text-xs">Deadline</Label>
                       <Input 
                         type="date" 
-                        className="bg-[#0A0A0A] border-[#2A2A2A] text-white [color-scheme:dark]"
+                        className="bg-background border-border text-foreground [color-scheme:dark]"
                         value={formData.prazo}
                         onChange={(e) => setFormData({...formData, prazo: e.target.value})}
                       />
@@ -286,22 +286,22 @@ export function TasksTab() {
                   </div>
 
                   {/* Seção de Checklist */}
-                  <div className="space-y-4 pt-4 border-t border-[#2A2A2A]">
+                  <div className="space-y-4 pt-4 border-t border-border">
                     <Label className="text-orange-500 text-xs font-mono uppercase tracking-widest">Itens de Checklist</Label>
                     
-                    <div className="flex flex-col gap-3 p-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg">
+                    <div className="flex flex-col gap-3 p-3 bg-background border border-border rounded-lg">
                       <div className="flex flex-col sm:flex-row gap-2">
                         <Input 
                           placeholder="Título do item..."
-                          className="bg-[#141414] border-[#2A2A2A] text-xs h-8 flex-1"
+                          className="bg-card border-border text-xs h-8 flex-1"
                           value={newItemTitle}
                           onChange={(e) => setNewItemTitle(e.target.value)}
                         />
                         <Select value={newItemAssignedTo} onValueChange={setNewItemAssignedTo}>
-                          <SelectTrigger className="bg-[#141414] border-[#2A2A2A] text-xs h-8 sm:w-40">
+                          <SelectTrigger className="bg-card border-border text-xs h-8 sm:w-40">
                             <SelectValue placeholder="Atribuir..." />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+                          <SelectContent className="bg-card border-border">
                             <SelectItem value="none">Sem responsável</SelectItem>
                             {equipe.map(m => (
                               <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>
@@ -311,7 +311,7 @@ export function TasksTab() {
                         <Button 
                           size="sm" 
                           variant="secondary" 
-                          className="h-8 text-xs bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white border border-orange-500/20"
+                          className="h-8 text-xs bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-foreground border border-orange-500/20"
                           type="button"
                           onClick={() => {
                             if (!newItemTitle) return
@@ -330,9 +330,9 @@ export function TasksTab() {
                       {checklistItems.length > 0 && (
                         <div className="space-y-2 mt-2">
                           {checklistItems.map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-2 bg-[#141414] rounded-md border border-[#2A2A2A] group">
+                            <div key={idx} className="flex items-center justify-between p-2 bg-card rounded-md border border-border group">
                               <div className="flex flex-col overflow-hidden">
-                                <span className="text-xs text-white truncate">{item.title}</span>
+                                <span className="text-xs text-foreground truncate">{item.title}</span>
                                 {item.assigned_to && (
                                   <span className="text-[9px] text-orange-500 font-mono">
                                     Resp: {equipe.find(m => m.id === item.assigned_to)?.nome}
@@ -356,7 +356,7 @@ export function TasksTab() {
                   </div>
 
                   <div className="flex justify-end gap-3 pt-4">
-                    <Button variant="outline" className="border-[#2A2A2A]" onClick={() => setDialogOpen(false)}>
+                    <Button variant="outline" className="border-border" onClick={() => setDialogOpen(false)}>
                       Cancelar
                     </Button>
                     <Button 
@@ -375,27 +375,27 @@ export function TasksTab() {
       </div>
 
       {tasks.length === 0 ? (
-        <div className="p-8 border border-dashed border-[#2A2A2A] rounded-lg text-center bg-[#141414]">
+        <div className="p-8 border border-dashed border-border rounded-lg text-center bg-card">
            <p className="text-neutral-500 uppercase font-mono tracking-widest text-sm">Nenhuma tarefa encontrada no banco</p>
         </div>
       ) : (
         <>
           <div className="mb-6 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
             <Tabs value={statusFilter} onValueChange={setStatusFilter}>
-              <TabsList className="bg-[#141414] border border-[#2A2A2A] w-max sm:w-auto">
-                <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+              <TabsList className="bg-card border border-border w-max sm:w-auto">
+                <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground text-xs sm:text-sm px-2 sm:px-3">
                   Todas ({tasks.length})
                 </TabsTrigger>
-                <TabsTrigger value="a_fazer" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+                <TabsTrigger value="a_fazer" className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground text-xs sm:text-sm px-2 sm:px-3">
                   A Fazer ({tasks.filter((t:any) => t.status === "a_fazer").length})
                 </TabsTrigger>
-                <TabsTrigger value="em_progresso" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+                <TabsTrigger value="em_progresso" className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground text-xs sm:text-sm px-2 sm:px-3">
                   Progresso ({tasks.filter((t:any) => t.status === "em_progresso").length})
                 </TabsTrigger>
-                <TabsTrigger value="em_revisao" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+                <TabsTrigger value="em_revisao" className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground text-xs sm:text-sm px-2 sm:px-3">
                   Revisão ({tasks.filter((t:any) => t.status === "em_revisao").length})
                 </TabsTrigger>
-                <TabsTrigger value="concluida" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-3">
+                <TabsTrigger value="concluida" className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground text-xs sm:text-sm px-2 sm:px-3">
                   Concluídas ({tasks.filter((t:any) => t.status === "concluida").length})
                 </TabsTrigger>
               </TabsList>

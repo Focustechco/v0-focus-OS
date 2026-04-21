@@ -162,12 +162,12 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
   if (isLoading || !report) return <div className="p-8 text-neutral-500 animate-pulse">Carregando relatório do Supabase...</div>
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A]">
+    <div className="flex h-screen bg-background">
       <div className={cn("flex flex-col transition-all duration-300", previewMode ? "w-1/3" : "w-full")}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#2A2A2A] bg-[#141414]">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-card">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={handleBackAttempt} className="text-neutral-400 hover:text-white">
+            <Button variant="ghost" onClick={handleBackAttempt} className="text-neutral-400 hover:text-foreground">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
@@ -175,7 +175,7 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-orange-500 font-mono">[{report.projetos?.name}]</span>
-                <span className="text-sm text-white font-bold">{report.titulo}</span>
+                <span className="text-sm text-foreground font-bold">{report.titulo}</span>
                 {autoSaveTime && <span className="text-[10px] text-green-500 ml-2 font-mono flex items-center gap-1"><Check className="w-3 h-3"/> Salvo as {autoSaveTime}</span>}
               </div>
               <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-0.5">
@@ -185,19 +185,19 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button onClick={handleManualSave} variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white bg-transparent">
+            <Button onClick={handleManualSave} variant="outline" className="border-border text-neutral-400 hover:text-foreground bg-transparent">
               <Save className="w-4 h-4 mr-2" />
               Salvar
             </Button>
             <Button
               variant="outline"
               onClick={() => setPreviewMode(!previewMode)}
-              className={cn("border-[#2A2A2A] bg-transparent", previewMode ? "text-orange-500 border-orange-500" : "text-neutral-400 hover:text-white")}
+              className={cn("border-border bg-transparent", previewMode ? "text-orange-500 border-orange-500" : "text-neutral-400 hover:text-foreground")}
             >
               <Eye className="w-4 h-4 mr-2" />
               {previewMode ? "Fechar Preview" : "Preview"}
             </Button>
-            <Button onClick={handleExportPDF} className="bg-orange-500 hover:bg-orange-600 text-white font-bold">
+            <Button onClick={handleExportPDF} className="bg-orange-500 hover:bg-orange-600 text-foreground font-bold">
               <Download className="w-4 h-4 mr-2" />
               PDF
             </Button>
@@ -207,8 +207,8 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
         {/* Editor Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
           {/* Status Atual Card (Sempre visível) */}
-          <Card className="bg-[#141414] border-[#2A2A2A] overflow-hidden">
-            <div className="p-4 border-b border-[#2A2A2A] bg-[#1A1A1A] flex items-center justify-between">
+          <Card className="bg-card border-border overflow-hidden">
+            <div className="p-4 border-b border-border bg-[#1A1A1A] flex items-center justify-between">
               <span className="text-xs font-bold text-orange-500 tracking-wider uppercase">Status e Progresso</span>
               <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30">
                 {report.conteudo_json?.projectInfo?.stage || "Desenvolvimento"}
@@ -237,7 +237,7 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
                         onClick={() => setSaude(opt.id)}
                         className={cn(
                           "w-full h-8 rounded border transition-all flex items-center justify-center",
-                          saude === opt.id ? "bg-white/10 border-white/30" : "bg-transparent border-[#2A2A2A]"
+                          saude === opt.id ? "bg-white/10 border-white/30" : "bg-transparent border-border"
                         )}
                       >
                         <div className={cn("w-2 h-2 rounded-[1px]", opt.color)} />
@@ -251,7 +251,7 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
                     type="date" 
                     value={entregaPrevista} 
                     onChange={e => setEntregaPrevista(e.target.value)} 
-                    className="h-8 bg-[#1A1A1A] border-[#2A2A2A] text-xs [color-scheme:dark]" 
+                    className="h-8 bg-[#1A1A1A] border-border text-xs [color-scheme:dark]" 
                   />
                 </div>
               </div>
@@ -263,10 +263,10 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
             {sections && Object.entries(sections).map(([key, section]: [string, any]) => {
               if (!section) return null
               return (
-                <AccordionItem key={key} value={key} className="border border-[#2A2A2A] rounded-lg bg-[#141414] overflow-hidden">
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-[#1A1A1A]">
+                <AccordionItem key={key} value={key} className="border border-border rounded-lg bg-card overflow-hidden">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-accent/10">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-white tracking-wide uppercase">{section.titulo}</span>
+                      <span className="text-sm font-bold text-foreground tracking-wide uppercase">{section.titulo}</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 pb-4 space-y-4">
@@ -274,16 +274,16 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
                     {key === "resumo" && (
                       <div className="p-3 bg-orange-500/5 border border-orange-500/10 rounded-lg">
                         <p className="text-xs text-neutral-400 italic mb-2">Gerado Automaticamente:</p>
-                        <p className="text-sm text-neutral-300 leading-relaxed">{section.automatico}</p>
+                        <p className="text-sm text-foreground leading-relaxed">{section.automatico}</p>
                       </div>
                     )}
 
                     {(key === "entregas" || key === "emAndamento" || key === "sprints") && (
                       <div className="space-y-2">
                         {section.items?.map((item: any, i: number) => (
-                          <div key={i} className="flex items-center gap-2 p-2 bg-[#1A1A1A] border border-[#2A2A2A] rounded">
+                          <div key={i} className="flex items-center gap-2 p-2 bg-[#1A1A1A] border border-border rounded">
                             <Check className="w-3 h-3 text-green-500 shrink-0" />
-                            <span className="text-xs text-neutral-300">{item.titulo || item.nome}</span>
+                            <span className="text-xs text-foreground">{item.titulo || item.nome}</span>
                             {item.data && <span className="ml-auto text-[10px] text-neutral-500">{new Date(item.data).toLocaleDateString()}</span>}
                           </div>
                         ))}
@@ -293,10 +293,10 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
                     {key === "proximosPassos" && (
                       <div className="space-y-2">
                         {section.items?.map((item: any, i: number) => (
-                          <div key={i} className="flex items-start gap-2 p-2 bg-[#1A1A1A] border border-[#2A2A2A] rounded">
+                          <div key={i} className="flex items-start gap-2 p-2 bg-[#1A1A1A] border border-border rounded">
                             <ArrowRightCircle className="w-3 h-3 text-orange-500 mt-0.5 shrink-0" />
                             <div className="flex-1">
-                              <p className="text-xs text-neutral-300">{item.titulo}</p>
+                              <p className="text-xs text-foreground">{item.titulo}</p>
                               <div className="flex items-center gap-2 mt-1">
                                 <span className="text-[9px] text-neutral-500">Prazo: {item.prazo ? new Date(item.prazo).toLocaleDateString() : 'N/A'}</span>
                               </div>
@@ -318,13 +318,13 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
                     )}
 
                     {/* Manual Area below each section */}
-                    <div className="pt-2 border-t border-[#2A2A2A]">
+                    <div className="pt-2 border-t border-border">
                       <Label className="text-[10px] text-neutral-500 uppercase mb-2 block">Complemento Manual / Observações</Label>
                       <Textarea 
                         value={section.manual || ""} 
                         onChange={e => updateSectionManual(key, e.target.value)}
                         placeholder="Adicione detalhes personalizados aqui..."
-                        className="min-h-[80px] bg-[#1A1A1A] border-[#2A2A2A] text-sm text-neutral-300 placeholder:text-neutral-600 focus:border-orange-500"
+                        className="min-h-[80px] bg-[#1A1A1A] border-border text-sm text-foreground placeholder:text-neutral-600 focus:border-orange-500"
                       />
                     </div>
                   </AccordionContent>
@@ -337,7 +337,7 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
 
       {/* Preview Panel (PDF Style) */}
       {previewMode && (
-        <div className="flex-1 border-l border-[#2A2A2A] bg-[#0A0A0A] overflow-y-auto p-12 flex justify-center custom-scrollbar">
+        <div className="flex-1 border-l border-border bg-background overflow-y-auto p-12 flex justify-center custom-scrollbar">
           <div id="report-preview" className="w-full max-w-[800px] bg-white text-slate-900 p-16 shadow-2xl printable-document">
             {/* Header with Client Logo */}
             <div className="border-b-2 border-orange-500 pb-8 mb-10 flex justify-between items-start">
@@ -412,7 +412,7 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
 
       {/* Dirty Check Modal */}
       <Dialog open={showDirtyModal} onOpenChange={setShowDirtyModal}>
-        <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-card border-border text-foreground">
           <DialogHeader>
             <DialogTitle>Alterações não salvas</DialogTitle>
             <DialogDescription className="text-neutral-400 mt-2">
@@ -420,10 +420,10 @@ export function ReportEditor({ reportId, onBack }: ReportEditorProps) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4 flex gap-2">
-            <Button variant="ghost" onClick={() => onBack()} className="text-neutral-400 hover:text-white">
+            <Button variant="ghost" onClick={() => onBack()} className="text-neutral-400 hover:text-foreground">
               Descartar
             </Button>
-            <Button onClick={handleManualSave} className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button onClick={handleManualSave} className="bg-orange-500 hover:bg-orange-600 text-foreground">
               Salvar e Voltar
             </Button>
           </DialogFooter>

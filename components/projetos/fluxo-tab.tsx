@@ -238,16 +238,16 @@ function StageCard({ stage, isExpanded, onToggle }: { stage: typeof flowStages[0
 
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
-      <Card className={`bg-[#141414] border-[#2A2A2A] border-l-4 ${stage.borderColor} hover:border-orange-500/30 transition-colors`}>
+      <Card className={`bg-card border-border border-l-4 ${stage.borderColor} hover:border-orange-500/30 transition-colors`}>
         <CollapsibleTrigger className="w-full">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${stage.color}`}>
-                  <Icon className="w-5 h-5 text-white" />
+                  <Icon className="w-5 h-5 text-foreground" />
                 </div>
                 <div className="text-left">
-                  <CardTitle className="text-sm font-medium text-white tracking-wider flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
                     ETAPA {stage.id}: {stage.name}
                     {isExpanded ? (
                       <ChevronDown className="w-4 h-4 text-neutral-500" />
@@ -275,12 +275,12 @@ function StageCard({ stage, isExpanded, onToggle }: { stage: typeof flowStages[0
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <CardContent className="pt-0 border-t border-[#2A2A2A]">
+          <CardContent className="pt-0 border-t border-border">
             <div className="grid gap-4 mt-4">
               {stage.actors.map((actor, idx) => (
-                <div key={idx} className="p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
+                <div key={idx} className="p-4 bg-background rounded-lg border border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <Badge className={`text-[10px] ${actor.badge} text-white`}>
+                    <Badge className={`text-[10px] ${actor.badge} text-foreground`}>
                       {actor.role}
                     </Badge>
                     {actor.notes && (
@@ -298,7 +298,7 @@ function StageCard({ stage, isExpanded, onToggle }: { stage: typeof flowStages[0
                         ) : (
                           <Circle className="w-4 h-4 text-neutral-600 flex-shrink-0" />
                         )}
-                        <span className={`text-xs ${task.done ? "text-neutral-500 line-through" : "text-neutral-300"}`}>
+                        <span className={`text-xs ${task.done ? "text-neutral-500 line-through" : "text-foreground"}`}>
                           {task.text}
                         </span>
                       </div>
@@ -308,7 +308,7 @@ function StageCard({ stage, isExpanded, onToggle }: { stage: typeof flowStages[0
               ))}
 
               <div className="flex justify-end pt-2">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white text-xs">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-foreground text-xs">
                   Aprovar e Avancar
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -336,20 +336,20 @@ export function FluxoTab() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-xl font-display font-bold text-white">Fluxo de Etapas</h1>
+              <h1 className="text-xl font-display font-bold text-foreground">Fluxo de Etapas</h1>
               <p className="text-sm text-neutral-500">Pipeline das 6 etapas do processo Focus</p>
             </div>
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
-                className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white"
+                className="border-border bg-card text-neutral-400 hover:text-foreground"
                 onClick={() => setExpandedStages(flowStages.map(s => s.id))}
               >
                 Expandir Todos
               </Button>
               <Button
                 variant="outline"
-                className="border-[#2A2A2A] bg-[#141414] text-neutral-400 hover:text-white"
+                className="border-border bg-card text-neutral-400 hover:text-foreground"
                 onClick={() => setExpandedStages([])}
               >
                 Recolher Todos
@@ -365,8 +365,8 @@ export function FluxoTab() {
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg ${stage.color} cursor-pointer transition-transform hover:scale-105`}
                   onClick={() => toggleStage(stage.id)}
                 >
-                  <stage.icon className="w-4 h-4 text-white" />
-                  <span className="text-[10px] text-white font-medium whitespace-nowrap">
+                  <stage.icon className="w-4 h-4 text-foreground" />
+                  <span className="text-[10px] text-foreground font-medium whitespace-nowrap">
                     {stage.id}. {stage.name.split(" ")[0]}
                   </span>
                 </div>

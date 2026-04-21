@@ -191,7 +191,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-[#141414] p-4 border border-[#2A2A2A] rounded-2xl">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card p-4 border border-border rounded-2xl">
         <div className="flex gap-1 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
           {["Todos", "ebook", "playbook", "treinamento", "documento"].map((t) => (
             <button
@@ -199,8 +199,8 @@ export function AbaConteudos({ userType }: { userType: string }) {
               onClick={() => setFilter(t as ContentType)}
               className={`px-4 py-2 rounded-xl text-[10px] font-mono tracking-widest uppercase transition-all whitespace-nowrap ${
                 filter === t 
-                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" 
-                  : "text-neutral-500 hover:text-white hover:bg-white/5"
+                  ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20" 
+                  : "text-neutral-500 hover:text-foreground hover:bg-white/5"
               }`}
             >
               {t === "ebook" ? "Ebooks" : t === "playbook" ? "Playbooks" : t === "treinamento" ? "Treinamentos" : t === "documento" ? "Docs" : t}
@@ -215,12 +215,12 @@ export function AbaConteudos({ userType }: { userType: string }) {
               placeholder="Buscar conteúdos..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-[#0A0A0A] border-[#2A2A2A] h-9 text-xs pl-9" 
+              className="bg-background border-border h-9 text-xs pl-9" 
             />
           </div>
           <Button 
               onClick={() => setIsAddModalOpen(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] tracking-widest h-9"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-[10px] tracking-widest h-9"
           >
             <Plus className="w-4 h-4 mr-2" />
             ADICIONAR
@@ -235,22 +235,22 @@ export function AbaConteudos({ userType }: { userType: string }) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredContents.map((c) => (
-            <Card key={c.id} className="bg-[#141414] border-[#2A2A2A] group hover:border-orange-500/30 transition-all overflow-hidden flex flex-col">
-              <div className="aspect-video bg-[#0A0A0A] relative flex items-center justify-center text-neutral-800 transition-colors group-hover:text-orange-500/20">
+            <Card key={c.id} className="bg-card border-border group hover:border-orange-500/30 transition-all overflow-hidden flex flex-col">
+              <div className="aspect-video bg-background relative flex items-center justify-center text-neutral-800 transition-colors group-hover:text-orange-500/20">
                 {c.thumbnail_url ? (
                   <img src={c.thumbnail_url} alt={c.titulo} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
                 ) : (
                     getIcon(c.tipo)
                 )}
                 <div className="absolute top-2 right-2">
-                    <Badge className="bg-[#111111] border-[#2A2A2A] text-[9px] font-mono uppercase text-neutral-500">
+                    <Badge className="bg-background border-border text-[9px] font-mono uppercase text-neutral-500">
                         {c.tipo}
                     </Badge>
                 </div>
               </div>
               <CardContent className="p-4 flex-1 flex flex-col space-y-3">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-white leading-tight line-clamp-2">{c.titulo}</h4>
+                  <h4 className="text-sm font-bold text-foreground leading-tight line-clamp-2">{c.titulo}</h4>
                   <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest">{c.categoria || 'Sem Categoria'}</p>
                 </div>
                 <p className="text-xs text-neutral-400 line-clamp-2 flex-1">
@@ -260,7 +260,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
                   <Button 
                     asChild
                     variant="outline"
-                    className="flex-1 bg-[#0A0A0A] border-[#2A2A2A] hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all font-mono text-[10px] tracking-[0.2em] uppercase"
+                    className="flex-1 bg-background border-border hover:bg-orange-500 hover:text-foreground hover:border-orange-500 transition-all font-mono text-[10px] tracking-[0.2em] uppercase"
                   >
                     <a href={c.url} target="_blank" rel="noopener noreferrer">
                       ACESSAR
@@ -269,7 +269,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
                   </Button>
                   <Button
                     variant="outline"
-                    className="w-10 bg-[#2a1010] border-red-900/40 hover:bg-red-500 hover:border-red-500 text-red-500 hover:text-white transition-all px-0 flex-shrink-0"
+                    className="w-10 bg-[#2a1010] border-red-900/40 hover:bg-red-500 hover:border-red-500 text-red-500 hover:text-foreground transition-all px-0 flex-shrink-0"
                     onClick={() => handleDeleteConteudo(c.id)}
                     title="Excluir Conteúdo"
                   >
@@ -284,7 +284,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
 
       {/* Modal Adicionar */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-orange-500 font-mono text-sm tracking-widest uppercase">
               Novo Conteúdo
@@ -296,16 +296,16 @@ export function AbaConteudos({ userType }: { userType: string }) {
               <Input 
                 value={formData.titulo}
                 onChange={(e) => setFormData({...formData, titulo: e.target.value})}
-                className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
+                className="bg-background border-border text-foreground" 
               />
             </div>
             <div className="space-y-2">
               <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Tipo</Label>
               <Select value={formData.tipo} onValueChange={(val) => setFormData({...formData, tipo: val})}>
-                <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A]">
+                <SelectTrigger className="bg-background border-border">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111111] border-[#2A2A2A]">
+                <SelectContent className="bg-background border-border">
                   <SelectItem value="ebook">Ebook</SelectItem>
                   <SelectItem value="playbook">Playbook</SelectItem>
                   <SelectItem value="treinamento">Treinamento</SelectItem>
@@ -320,7 +320,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
                       value={formData.url}
                       onChange={(e) => setFormData({...formData, url: e.target.value})}
                       placeholder="https://... ou faça upload abaixo"
-                      className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
+                      className="bg-background border-border text-foreground" 
                       disabled={!!selectedFile}
                   />
                   
@@ -334,10 +334,10 @@ export function AbaConteudos({ userType }: { userType: string }) {
                     />
                     
                     {selectedFile ? (
-                      <div className="flex items-center justify-between p-3 bg-[#0A0A0A] border border-orange-500/30 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-background border border-orange-500/30 rounded-lg">
                         <div className="flex items-center gap-2">
                           <FileIcon className="w-4 h-4 text-orange-500" />
-                          <span className="text-xs text-neutral-300 truncate max-w-[200px]">{selectedFile.name}</span>
+                          <span className="text-xs text-foreground truncate max-w-[200px]">{selectedFile.name}</span>
                         </div>
                         <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)} className="h-6 w-6">
                           <X className="w-3 h-3 text-red-500" />
@@ -348,7 +348,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
                         type="button"
                         variant="outline" 
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full bg-[#0A0A0A] border-[#2A2A2A] h-14 border-dashed hover:border-orange-500/50 hover:bg-orange-500/5 transition-all flex flex-col items-center justify-center gap-1"
+                        className="w-full bg-background border-border h-14 border-dashed hover:border-orange-500/50 hover:bg-orange-500/5 transition-all flex flex-col items-center justify-center gap-1"
                       >
                         <Upload className="w-4 h-4 text-neutral-500" />
                         <span className="text-[10px] uppercase font-mono text-neutral-500">Upload PDF / DOC</span>
@@ -362,10 +362,10 @@ export function AbaConteudos({ userType }: { userType: string }) {
                 <Input 
                     value={formData.categoria}
                     onChange={(e) => setFormData({...formData, categoria: e.target.value})}
-                    className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
+                    className="bg-background border-border text-foreground" 
                 />
             </div>
-            <div className="flex items-center justify-between p-2 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A]">
+            <div className="flex items-center justify-between p-2 rounded-xl bg-background border border-border">
                 <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Público</Label>
                 <Switch 
                     checked={formData.publico}
@@ -377,7 +377,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
               <Textarea 
                 value={formData.descricao}
                 onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-                className="bg-[#0A0A0A] border-[#2A2A2A] text-white h-24" 
+                className="bg-background border-border text-foreground h-24" 
               />
             </div>
           </div>
@@ -386,7 +386,7 @@ export function AbaConteudos({ userType }: { userType: string }) {
             <Button 
                 onClick={handleAddContent} 
                 disabled={saving}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs uppercase"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Conteúdo"}
             </Button>

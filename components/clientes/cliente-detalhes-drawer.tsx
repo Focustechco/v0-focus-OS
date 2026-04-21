@@ -63,14 +63,14 @@ export function ClienteDetalhesDrawer({ clienteId, open, onOpenChange, onUpdate 
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-[#141414] border-[#2A2A2A] text-white sm:max-w-[500px] p-0 flex flex-col">
-        <SheetHeader className="p-6 border-b border-[#2A2A2A]">
+      <SheetContent className="bg-card border-border text-foreground sm:max-w-[500px] p-0 flex flex-col">
+        <SheetHeader className="p-6 border-b border-border">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
               <Building2 className="w-6 h-6 text-orange-500" />
             </div>
             <div>
-              <SheetTitle className="text-white font-display text-xl uppercase tracking-tight">
+              <SheetTitle className="text-foreground font-display text-xl uppercase tracking-tight">
                 {cliente?.empresa}
               </SheetTitle>
               <p className="text-neutral-500 text-sm font-mono tracking-widest uppercase">Detalhes do Cliente</p>
@@ -84,7 +84,7 @@ export function ClienteDetalhesDrawer({ clienteId, open, onOpenChange, onUpdate 
             <div className="space-y-4">
               <h3 className="text-xs font-mono font-bold text-neutral-500 tracking-[0.2em] uppercase">Informacoes Gerais</h3>
               
-              <div className="space-y-4 bg-[#0A0A0A] p-4 rounded-xl border border-[#1A1A1A]">
+              <div className="space-y-4 bg-background p-4 rounded-xl border border-[#1A1A1A]">
                 <div className="space-y-1.5">
                   <Label className="text-[10px] text-neutral-500 font-mono uppercase">Nome do Contato</Label>
                   <Input 
@@ -118,13 +118,13 @@ export function ClienteDetalhesDrawer({ clienteId, open, onOpenChange, onUpdate 
                  <Textarea 
                     value={formData?.observacoes || ""} 
                     onChange={e => setFormData({...formData, observacoes: e.target.value})}
-                    className="bg-[#0A0A0A] border-[#1A1A1A] text-sm min-h-[80px]"
+                    className="bg-background border-[#1A1A1A] text-sm min-h-[80px]"
                  />
               </div>
 
               <Button 
                 onClick={handleSave}
-                className="w-full bg-neutral-800 hover:bg-neutral-700 text-white h-9"
+                className="w-full bg-neutral-800 hover:bg-neutral-700 text-foreground h-9"
                 disabled={isSaving}
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
@@ -143,21 +143,21 @@ export function ClienteDetalhesDrawer({ clienteId, open, onOpenChange, onUpdate 
 
               <div className="space-y-2">
                 {linkedProjects.length === 0 ? (
-                  <div className="text-center p-8 bg-[#0A0A0A] border border-dashed border-[#1A1A1A] rounded-xl">
+                  <div className="text-center p-8 bg-background border border-dashed border-[#1A1A1A] rounded-xl">
                     <p className="text-neutral-600 text-xs">Nenhum projeto associado.</p>
                   </div>
                 ) : (
                   linkedProjects.map((p: any) => (
                     <div 
                       key={p.id}
-                      className="flex items-center justify-between p-3 bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl group hover:border-orange-500/30 transition-all"
+                      className="flex items-center justify-between p-3 bg-background border border-[#1A1A1A] rounded-xl group hover:border-orange-500/30 transition-all"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded bg-neutral-900 flex items-center justify-center text-[10px] font-mono font-bold text-orange-500 border border-neutral-800">
                           {p.codigo}
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-white">{p.nome}</p>
+                          <p className="text-xs font-medium text-foreground">{p.nome}</p>
                           <p className="text-[10px] text-neutral-500 uppercase font-mono tracking-tighter">{p.status}</p>
                         </div>
                       </div>

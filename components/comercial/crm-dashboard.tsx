@@ -170,13 +170,13 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
     <div className="space-y-6">
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
+        <Card className="bg-card border-border hover:border-orange-500/30 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-5 h-5 text-orange-500" />
               <span className="text-[10px] text-green-500 font-mono">+12% vs mes</span>
             </div>
-            <div className="text-2xl font-bold font-mono text-white">
+            <div className="text-2xl font-bold font-mono text-foreground">
               {formatCurrency(metrics.totalPipeline)}
             </div>
             <div className="text-[10px] text-neutral-500">/mes</div>
@@ -184,13 +184,13 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
+        <Card className="bg-card border-border hover:border-orange-500/30 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <TrendingUp className="w-5 h-5 text-green-500" />
               <span className="text-[10px] text-green-500 font-mono">+8% vs mes</span>
             </div>
-            <div className="text-2xl font-bold font-mono text-white">
+            <div className="text-2xl font-bold font-mono text-foreground">
               {formatCurrency(metrics.closedValue)}
             </div>
             <div className="text-[10px] text-neutral-500">/mes</div>
@@ -198,26 +198,26 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
+        <Card className="bg-card border-border hover:border-orange-500/30 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-5 h-5 text-blue-500" />
               <span className="text-[10px] text-orange-500 font-mono">{metrics.priorityDeals} prioritarios</span>
             </div>
-            <div className="text-2xl font-bold font-mono text-white">
+            <div className="text-2xl font-bold font-mono text-foreground">
               {metrics.activeDeals}
             </div>
             <div className="text-xs text-neutral-400 mt-1">Deals Ativos</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors">
+        <Card className="bg-card border-border hover:border-orange-500/30 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Percent className="w-5 h-5 text-purple-500" />
               <span className="text-[10px] text-green-500 font-mono">+3pp vs mes</span>
             </div>
-            <div className="text-2xl font-bold font-mono text-white">
+            <div className="text-2xl font-bold font-mono text-foreground">
               {metrics.conversionRate.toFixed(0)}%
             </div>
             <div className="text-xs text-neutral-400 mt-1">Taxa de Conversao</div>
@@ -228,9 +228,9 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
       {/* Funnel & Assignees */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Funnel */}
-        <Card className="bg-[#141414] border-[#2A2A2A]">
-          <CardHeader className="pb-3 border-b border-[#2A2A2A]">
-            <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3 border-b border-border">
+            <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-orange-500" />
               FUNIL DE VENDAS
             </CardTitle>
@@ -242,9 +242,9 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
                   <span className="text-neutral-400 font-mono uppercase tracking-wider">
                     {stage.status}
                   </span>
-                  <span className="text-white font-mono font-bold">{stage.count}</span>
+                  <span className="text-foreground font-mono font-bold">{stage.count}</span>
                 </div>
-                <div className="h-2 bg-[#0A0A0A] rounded-full overflow-hidden">
+                <div className="h-2 bg-background rounded-full overflow-hidden">
                   <div 
                     className="h-full rounded-full transition-all duration-500"
                     style={{ 
@@ -256,7 +256,7 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
               </div>
             ))}
             
-            <div className="pt-4 border-t border-[#2A2A2A]">
+            <div className="pt-4 border-t border-border">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-neutral-500">Conversao total:</span>
                 <span className="text-orange-500 font-mono font-bold">
@@ -268,9 +268,9 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
         </Card>
 
         {/* Deals by Assignee */}
-        <Card className="bg-[#141414] border-[#2A2A2A]">
-          <CardHeader className="pb-3 border-b border-[#2A2A2A]">
-            <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3 border-b border-border">
+            <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
               <Users className="w-4 h-4 text-orange-500" />
               DEALS POR RESPONSAVEL
             </CardTitle>
@@ -290,7 +290,7 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-white font-medium">{assignee.username}</span>
+                      <span className="text-sm text-foreground font-medium">{assignee.username}</span>
                       <span className="text-xs text-neutral-400 font-mono">{assignee.deals} deals</span>
                     </div>
                     <div className="text-xs text-orange-500 font-mono">
@@ -300,7 +300,7 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
                 </div>
                 <Progress 
                   value={(assignee.pipeline / maxAssigneePipeline) * 100} 
-                  className="h-1.5 bg-[#0A0A0A]"
+                  className="h-1.5 bg-background"
                 />
               </div>
             ))}
@@ -311,9 +311,9 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
       {/* Type Distribution & Stage Timing */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue by Type */}
-        <Card className="bg-[#141414] border-[#2A2A2A]">
-          <CardHeader className="pb-3 border-b border-[#2A2A2A]">
-            <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3 border-b border-border">
+            <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
               <PieChart className="w-4 h-4 text-orange-500" />
               RECEITA POR TIPO DE SERVICO
             </CardTitle>
@@ -325,9 +325,9 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
                 <div key={type.type} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-neutral-400">{type.type}</span>
-                    <span className="text-white font-mono">{type.percentage.toFixed(0)}%</span>
+                    <span className="text-foreground font-mono">{type.percentage.toFixed(0)}%</span>
                   </div>
-                  <div className="h-2 bg-[#0A0A0A] rounded-full overflow-hidden">
+                  <div className="h-2 bg-background rounded-full overflow-hidden">
                     <div 
                       className="h-full rounded-full transition-all duration-500"
                       style={{ 
@@ -343,21 +343,21 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
         </Card>
 
         {/* Average Time per Stage */}
-        <Card className="bg-[#141414] border-[#2A2A2A]">
-          <CardHeader className="pb-3 border-b border-[#2A2A2A]">
-            <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3 border-b border-border">
+            <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
               <Timer className="w-4 h-4 text-orange-500" />
               TEMPO MEDIO POR ETAPA
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 space-y-3">
             {stageTimings.stages.map((stage, index) => (
-              <div key={stage.name} className="flex items-center justify-between py-2 border-b border-[#2A2A2A] last:border-0">
+              <div key={stage.name} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <span className="text-xs text-neutral-400">{stage.name}</span>
-                <span className="text-sm text-white font-mono">{stage.days} dias</span>
+                <span className="text-sm text-foreground font-mono">{stage.days} dias</span>
               </div>
             ))}
-            <div className="pt-2 border-t border-[#2A2A2A]">
+            <div className="pt-2 border-t border-border">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-neutral-500 font-bold">CICLO TOTAL MEDIO:</span>
                 <span className="text-orange-500 font-mono font-bold">{stageTimings.totalDays.toFixed(1)} dias</span>
@@ -369,9 +369,9 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
 
       {/* Alerts */}
       {alertDeals.length > 0 && (
-        <Card className="bg-[#141414] border-[#2A2A2A]">
-          <CardHeader className="pb-3 border-b border-[#2A2A2A]">
-            <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3 border-b border-border">
+            <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-yellow-500" />
               ATENCAO NECESSARIA
             </CardTitle>
@@ -398,7 +398,7 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
                       alertLevel === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
                     }`} />
                     <div>
-                      <span className="text-sm text-white font-medium">
+                      <span className="text-sm text-foreground font-medium">
                         {deal.empresa || deal.name}
                       </span>
                       <span className="text-xs text-neutral-500 ml-2">
@@ -414,7 +414,7 @@ export function CRMDashboard({ deals }: CRMDashboardProps) {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-xs text-neutral-400 hover:text-white"
+                    className="text-xs text-neutral-400 hover:text-foreground"
                     onClick={() => window.open(deal.url, '_blank')}
                   >
                     <Eye className="w-4 h-4 mr-1" />

@@ -62,7 +62,7 @@ const integrations = [
     name: "GitHub",
     description: "Vincule PRs e commits as tasks",
     icon: Github,
-    color: "text-white",
+    color: "text-foreground",
     connected: true,
     lastSync: "2 min atras",
     syncFrequency: "realtime",
@@ -118,7 +118,7 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
         {integrations.map((integration) => (
           <Card
             key={integration.id}
-            className={`bg-[#141414] border-[#2a2a2a] ${
+            className={`bg-card border-[#2a2a2a] ${
               integration.connected ? "border-l-2 border-l-green-500" : ""
             }`}
           >
@@ -129,7 +129,7 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
                     <integration.icon className={`w-6 h-6 ${integration.color}`} />
                   </div>
                   <div>
-                    <h3 className="text-white font-medium">{integration.name}</h3>
+                    <h3 className="text-foreground font-medium">{integration.name}</h3>
                     <p className="text-neutral-500 text-sm">{integration.description}</p>
                   </div>
                 </div>
@@ -156,14 +156,14 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
                   {integration.lastSync && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-neutral-500 font-mono">Ultima sync:</span>
-                      <span className="text-neutral-300">{integration.lastSync}</span>
+                      <span className="text-foreground">{integration.lastSync}</span>
                     </div>
                   )}
                   {integration.syncFrequency && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-neutral-500 font-mono">Frequencia:</span>
                       <Select defaultValue={integration.syncFrequency} onValueChange={onChange}>
-                        <SelectTrigger className="w-32 h-8 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono text-xs">
+                        <SelectTrigger className="w-32 h-8 bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono text-xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -177,7 +177,7 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
                     </div>
                   )}
                   {integration.webhookUrl && (
-                    <div className="p-2 bg-[#0d0d0d] rounded font-mono text-xs text-neutral-400 truncate">
+                    <div className="p-2 bg-secondary rounded font-mono text-xs text-neutral-400 truncate">
                       {integration.webhookUrl}
                     </div>
                   )}
@@ -185,7 +185,7 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono text-xs"
+                      className="flex-1 bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-foreground font-mono text-xs"
                     >
                       <Settings className="w-3 h-3 mr-2" />
                       Configurar
@@ -193,7 +193,7 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono text-xs"
+                      className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-foreground font-mono text-xs"
                     >
                       <RefreshCw className="w-3 h-3" />
                     </Button>
@@ -208,7 +208,7 @@ export function IntegracoesSection({ onChange }: IntegracoesSectionProps) {
                 </div>
               ) : (
                 <Button
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs"
                   onClick={onChange}
                 >
                   Conectar

@@ -108,7 +108,7 @@ export function ContratoTab({ projectId }: ContratoTabProps) {
     <div className="space-y-4">
       {/* Zona de Upload */}
       <div 
-        className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl transition-colors cursor-pointer group ${isUploading ? 'border-orange-500/50 bg-orange-500/5' : 'border-[#2A2A2A] bg-[#141414] hover:border-orange-500 hover:bg-[#1A1A1A]'}`}
+        className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl transition-colors cursor-pointer group ${isUploading ? 'border-orange-500/50 bg-orange-500/5' : 'border-border bg-card hover:border-orange-500 hover:bg-accent/10'}`}
         onClick={() => !isUploading && fileInputRef.current?.click()}
       >
         <input 
@@ -131,7 +131,7 @@ export function ContratoTab({ projectId }: ContratoTabProps) {
             <div className="w-12 h-12 rounded-full bg-[#1A1A1A] group-hover:bg-orange-500/10 flex items-center justify-center transition-colors mb-3">
               <Upload className="w-5 h-5 text-neutral-500 group-hover:text-orange-500 transition-colors" />
             </div>
-            <p className="text-sm font-medium text-white mb-1">Clique para fazer upload</p>
+            <p className="text-sm font-medium text-foreground mb-1">Clique para fazer upload</p>
             <p className="text-xs text-neutral-500">Apenas PDF · Máx. 20 MB</p>
           </>
         )}
@@ -146,7 +146,7 @@ export function ContratoTab({ projectId }: ContratoTabProps) {
             <Loader2 className="w-5 h-5 text-neutral-500 animate-spin" />
           </div>
         ) : files.length === 0 ? (
-          <div className="p-6 border border-dashed border-[#2A2A2A] rounded-xl text-center flex flex-col items-center bg-[#141414]">
+          <div className="p-6 border border-dashed border-border rounded-xl text-center flex flex-col items-center bg-card">
             <FileText className="w-6 h-6 text-neutral-600 mb-2 opacity-50" />
             <p className="text-xs text-neutral-500">Nenhum documento encontrado.</p>
           </div>
@@ -155,7 +155,7 @@ export function ContratoTab({ projectId }: ContratoTabProps) {
             {files.map((file: any) => (
               <div 
                 key={file.name} 
-                className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg group hover:border-[#3A3A3A] transition-colors"
+                className="flex items-center justify-between p-3 bg-[#1A1A1A] border border-border rounded-lg group hover:border-[#3A3A3A] transition-colors"
               >
                 <div 
                   className="flex items-center gap-3 overflow-hidden cursor-pointer flex-1"
@@ -165,7 +165,7 @@ export function ContratoTab({ projectId }: ContratoTabProps) {
                     <FileIcon className="w-4 h-4 text-orange-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate group-hover:text-orange-400 transition-colors">
+                    <p className="text-sm font-medium text-foreground truncate group-hover:text-orange-400 transition-colors">
                       {file.name.replace(/^\d+-/, '')} {/* remove o timestamp do nome se quiser, ou deixa original */}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">

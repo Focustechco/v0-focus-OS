@@ -105,15 +105,15 @@ export default function SystemsPage() {
   const getStatusColor = (status) => {
     switch (status) {
       case "online":
-        return "bg-white/20 text-white"
+        return "bg-white/20 text-foreground"
       case "warning":
         return "bg-orange-500/20 text-orange-500"
       case "maintenance":
-        return "bg-neutral-500/20 text-neutral-300"
+        return "bg-neutral-500/20 text-foreground"
       case "offline":
         return "bg-red-500/20 text-red-500"
       default:
-        return "bg-neutral-500/20 text-neutral-300"
+        return "bg-neutral-500/20 text-foreground"
     }
   }
 
@@ -152,8 +152,8 @@ export default function SystemsPage() {
   }
 
   const getHealthColor = (health) => {
-    if (health >= 95) return "text-white"
-    if (health >= 85) return "text-white"
+    if (health >= 95) return "text-foreground"
+    if (health >= 85) return "text-foreground"
     if (health >= 70) return "text-orange-500"
     return "text-red-500"
   }
@@ -163,12 +163,12 @@ export default function SystemsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-wider">SYSTEMS MONITOR</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-wider">SYSTEMS MONITOR</h1>
           <p className="text-sm text-neutral-400">Infrastructure health and performance monitoring</p>
         </div>
         <div className="flex gap-2">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">System Scan</Button>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">Maintenance Mode</Button>
+          <Button className="bg-orange-500 hover:bg-orange-600 text-foreground">System Scan</Button>
+          <Button className="bg-orange-500 hover:bg-orange-600 text-foreground">Maintenance Mode</Button>
         </div>
       </div>
 
@@ -179,9 +179,9 @@ export default function SystemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-neutral-400 tracking-wider">SYSTEMS ONLINE</p>
-                <p className="text-2xl font-bold text-white font-mono">24/26</p>
+                <p className="text-2xl font-bold text-foreground font-mono">24/26</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-white" />
+              <CheckCircle className="w-8 h-8 text-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -203,9 +203,9 @@ export default function SystemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-neutral-400 tracking-wider">AVG UPTIME</p>
-                <p className="text-2xl font-bold text-white font-mono">99.7%</p>
+                <p className="text-2xl font-bold text-foreground font-mono">99.7%</p>
               </div>
-              <Activity className="w-8 h-8 text-white" />
+              <Activity className="w-8 h-8 text-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -215,9 +215,9 @@ export default function SystemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-neutral-400 tracking-wider">MAINTENANCE</p>
-                <p className="text-2xl font-bold text-neutral-300 font-mono">1</p>
+                <p className="text-2xl font-bold text-foreground font-mono">1</p>
               </div>
-              <Settings className="w-8 h-8 text-neutral-300" />
+              <Settings className="w-8 h-8 text-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -236,7 +236,7 @@ export default function SystemsPage() {
                 <div className="flex items-center gap-3">
                   {getSystemIcon(system.type)}
                   <div>
-                    <CardTitle className="text-sm font-bold text-white tracking-wider">{system.name}</CardTitle>
+                    <CardTitle className="text-sm font-bold text-foreground tracking-wider">{system.name}</CardTitle>
                     <p className="text-xs text-neutral-400">{system.type}</p>
                   </div>
                 </div>
@@ -256,7 +256,7 @@ export default function SystemsPage() {
               <div className="grid grid-cols-3 gap-4 text-xs">
                 <div>
                   <div className="text-neutral-400 mb-1">CPU</div>
-                  <div className="text-white font-mono">{system.cpu}%</div>
+                  <div className="text-foreground font-mono">{system.cpu}%</div>
                   <div className="w-full bg-neutral-800 rounded-full h-1 mt-1">
                     <div
                       className="bg-orange-500 h-1 rounded-full transition-all duration-300"
@@ -266,7 +266,7 @@ export default function SystemsPage() {
                 </div>
                 <div>
                   <div className="text-neutral-400 mb-1">MEMORY</div>
-                  <div className="text-white font-mono">{system.memory}%</div>
+                  <div className="text-foreground font-mono">{system.memory}%</div>
                   <div className="w-full bg-neutral-800 rounded-full h-1 mt-1">
                     <div
                       className="bg-orange-500 h-1 rounded-full transition-all duration-300"
@@ -276,7 +276,7 @@ export default function SystemsPage() {
                 </div>
                 <div>
                   <div className="text-neutral-400 mb-1">STORAGE</div>
-                  <div className="text-white font-mono">{system.storage}%</div>
+                  <div className="text-foreground font-mono">{system.storage}%</div>
                   <div className="w-full bg-neutral-800 rounded-full h-1 mt-1">
                     <div
                       className="bg-orange-500 h-1 rounded-full transition-all duration-300"
@@ -289,11 +289,11 @@ export default function SystemsPage() {
               <div className="space-y-1 text-xs text-neutral-400">
                 <div className="flex justify-between">
                   <span>Uptime:</span>
-                  <span className="text-white font-mono">{system.uptime}</span>
+                  <span className="text-foreground font-mono">{system.uptime}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Location:</span>
-                  <span className="text-white">{system.location}</span>
+                  <span className="text-foreground">{system.location}</span>
                 </div>
               </div>
             </CardContent>
@@ -309,7 +309,7 @@ export default function SystemsPage() {
               <div className="flex items-center gap-3">
                 {getSystemIcon(selectedSystem.type)}
                 <div>
-                  <CardTitle className="text-xl font-bold text-white tracking-wider">{selectedSystem.name}</CardTitle>
+                  <CardTitle className="text-xl font-bold text-foreground tracking-wider">{selectedSystem.name}</CardTitle>
                   <p className="text-sm text-neutral-400">
                     {selectedSystem.id} • {selectedSystem.type}
                   </p>
@@ -318,7 +318,7 @@ export default function SystemsPage() {
               <Button
                 variant="ghost"
                 onClick={() => setSelectedSystem(null)}
-                className="text-neutral-400 hover:text-white"
+                className="text-neutral-400 hover:text-foreground"
               >
                 ✕
               </Button>
@@ -327,7 +327,7 @@ export default function SystemsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">SYSTEM STATUS</h3>
+                    <h3 className="text-sm font-medium text-foreground tracking-wider mb-2">SYSTEM STATUS</h3>
                     <div className="flex items-center gap-2">
                       {getStatusIcon(selectedSystem.status)}
                       <Badge className={getStatusColor(selectedSystem.status)}>
@@ -337,19 +337,19 @@ export default function SystemsPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">SYSTEM INFORMATION</h3>
+                    <h3 className="text-sm font-medium text-foreground tracking-wider mb-2">SYSTEM INFORMATION</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Location:</span>
-                        <span className="text-white">{selectedSystem.location}</span>
+                        <span className="text-foreground">{selectedSystem.location}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Uptime:</span>
-                        <span className="text-white font-mono">{selectedSystem.uptime}</span>
+                        <span className="text-foreground font-mono">{selectedSystem.uptime}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Last Maintenance:</span>
-                        <span className="text-white font-mono">{selectedSystem.lastMaintenance}</span>
+                        <span className="text-foreground font-mono">{selectedSystem.lastMaintenance}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-neutral-400">Health Score:</span>
@@ -363,12 +363,12 @@ export default function SystemsPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-neutral-300 tracking-wider mb-2">RESOURCE USAGE</h3>
+                    <h3 className="text-sm font-medium text-foreground tracking-wider mb-2">RESOURCE USAGE</h3>
                     <div className="space-y-3">
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span className="text-neutral-400">CPU Usage</span>
-                          <span className="text-white font-mono">{selectedSystem.cpu}%</span>
+                          <span className="text-foreground font-mono">{selectedSystem.cpu}%</span>
                         </div>
                         <div className="w-full bg-neutral-800 rounded-full h-2">
                           <div
@@ -381,7 +381,7 @@ export default function SystemsPage() {
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span className="text-neutral-400">Memory Usage</span>
-                          <span className="text-white font-mono">{selectedSystem.memory}%</span>
+                          <span className="text-foreground font-mono">{selectedSystem.memory}%</span>
                         </div>
                         <div className="w-full bg-neutral-800 rounded-full h-2">
                           <div
@@ -394,7 +394,7 @@ export default function SystemsPage() {
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span className="text-neutral-400">Storage Usage</span>
-                          <span className="text-white font-mono">{selectedSystem.storage}%</span>
+                          <span className="text-foreground font-mono">{selectedSystem.storage}%</span>
                         </div>
                         <div className="w-full bg-neutral-800 rounded-full h-2">
                           <div
@@ -409,16 +409,16 @@ export default function SystemsPage() {
               </div>
 
               <div className="flex gap-2 pt-4 border-t border-neutral-700">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white">Restart System</Button>
+                <Button className="bg-orange-500 hover:bg-orange-600 text-foreground">Restart System</Button>
                 <Button
                   variant="outline"
-                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-300 bg-transparent"
+                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:text-foreground bg-transparent"
                 >
                   View Logs
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-300 bg-transparent"
+                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:text-foreground bg-transparent"
                 >
                   Schedule Maintenance
                 </Button>

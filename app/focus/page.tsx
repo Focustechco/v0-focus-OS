@@ -8,7 +8,7 @@ export default function FocusPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   return (
-    <div className="flex h-screen bg-[#0A0A0A] overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />
 
       {/* Full-height content area — no padding, no header, no scroll */}

@@ -118,21 +118,21 @@ function SectorCard({ sector }: { sector: typeof sectors[0] }) {
   const Icon = sector.icon
   
   return (
-    <Card className={`bg-[#141414] border-[#2A2A2A] border-t-4 ${sector.borderColor} hover:border-orange-500/30 transition-colors`}>
+    <Card className={`bg-card border-border border-t-4 ${sector.borderColor} hover:border-orange-500/30 transition-colors`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={`p-2 rounded-lg ${sector.color}`}>
-              <Icon className="w-5 h-5 text-white" />
+              <Icon className="w-5 h-5 text-foreground" />
             </div>
             <div>
-              <CardTitle className="text-sm font-medium text-white tracking-wider">
+              <CardTitle className="text-sm font-medium text-foreground tracking-wider">
                 {sector.name}
               </CardTitle>
               <p className="text-[10px] text-neutral-500">{sector.subtitle}</p>
             </div>
           </div>
-          <Badge className={`${sector.color} text-white text-[10px]`}>
+          <Badge className={`${sector.color} text-foreground text-[10px]`}>
             {sector.stats.load}% carga
           </Badge>
         </div>
@@ -141,8 +141,8 @@ function SectorCard({ sector }: { sector: typeof sectors[0] }) {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2">
           {Object.entries(sector.stats).slice(0, 3).map(([key, value]) => (
-            <div key={key} className="p-2 bg-[#0A0A0A] rounded text-center">
-              <div className="text-lg font-bold text-white font-mono">{value}</div>
+            <div key={key} className="p-2 bg-background rounded text-center">
+              <div className="text-lg font-bold text-foreground font-mono">{value}</div>
               <div className="text-[9px] text-neutral-500 capitalize">{key}</div>
             </div>
           ))}
@@ -167,7 +167,7 @@ function SectorCard({ sector }: { sector: typeof sectors[0] }) {
           </div>
           <div className="space-y-1">
             {sector.team.map((member, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 bg-[#0A0A0A] rounded">
+              <div key={idx} className="flex items-center justify-between p-2 bg-background rounded">
                 <div className="flex items-center gap-2">
                   <div className={`w-1.5 h-1.5 rounded-full ${
                     member.status === "ativo" ? "bg-green-500" :
@@ -175,7 +175,7 @@ function SectorCard({ sector }: { sector: typeof sectors[0] }) {
                     member.status === "em-task" ? "bg-blue-500" :
                     "bg-purple-500"
                   }`} />
-                  <span className="text-xs text-white">{member.name}</span>
+                  <span className="text-xs text-foreground">{member.name}</span>
                 </div>
                 <span className="text-[9px] text-neutral-500">{member.role}</span>
               </div>
@@ -194,7 +194,7 @@ function SectorCard({ sector }: { sector: typeof sectors[0] }) {
               <div key={project.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-orange-500 font-mono">{project.id}</span>
-                  <span className="text-xs text-neutral-300 truncate max-w-[120px]">{project.name}</span>
+                  <span className="text-xs text-foreground truncate max-w-[120px]">{project.name}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Progress value={project.progress} className="w-16 h-1 bg-[#2A2A2A]" />
@@ -224,35 +224,35 @@ export default function SetoresPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-xl font-display font-bold text-white">Setores Tech</h1>
+              <h1 className="text-xl font-display font-bold text-foreground">Setores Tech</h1>
               <p className="text-sm text-neutral-500">Dashboard por setor de tecnologia</p>
             </div>
           </div>
 
           {/* Overview Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <Card className="bg-[#141414] border-[#2A2A2A]">
+            <Card className="bg-card border-border">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
-                  <div className="text-2xl font-bold text-white font-mono">{sectors.length}</div>
+                  <div className="text-2xl font-bold text-foreground font-mono">{sectors.length}</div>
                   <div className="text-xs text-neutral-500">Setores Ativos</div>
                 </div>
                 <Cpu className="w-8 h-8 text-orange-500" />
               </CardContent>
             </Card>
-            <Card className="bg-[#141414] border-[#2A2A2A]">
+            <Card className="bg-card border-border">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
-                  <div className="text-2xl font-bold text-white font-mono">{totalProjects}</div>
+                  <div className="text-2xl font-bold text-foreground font-mono">{totalProjects}</div>
                   <div className="text-xs text-neutral-500">Projetos Total</div>
                 </div>
                 <FolderKanban className="w-8 h-8 text-blue-500" />
               </CardContent>
             </Card>
-            <Card className="bg-[#141414] border-[#2A2A2A]">
+            <Card className="bg-card border-border">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
-                  <div className="text-2xl font-bold text-white font-mono">{totalTeam}</div>
+                  <div className="text-2xl font-bold text-foreground font-mono">{totalTeam}</div>
                   <div className="text-xs text-neutral-500">Membros da Equipe</div>
                 </div>
                 <Users className="w-8 h-8 text-green-500" />

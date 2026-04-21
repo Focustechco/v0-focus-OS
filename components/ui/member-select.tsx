@@ -45,7 +45,7 @@ export function MemberSelect({
 
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className={triggerClassName ?? "bg-[#1A1A1A] border-[#2A2A2A]"}>
+      <SelectTrigger className={triggerClassName ?? "bg-[#1A1A1A] border-border"}>
         <SelectValue placeholder={placeholder}>
           {value && (() => {
             const m = equipe.find((m) => m.id === value)
@@ -61,13 +61,13 @@ export function MemberSelect({
                     {initials(m.nome)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm text-white">{m.nome}</span>
+                <span className="text-sm text-foreground">{m.nome}</span>
               </div>
             )
           })()}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+      <SelectContent className="bg-[#1A1A1A] border-border">
         {members.map((m) => (
           <SelectItem key={m.id} value={m.id} className="focus:bg-[#2A2A2A] cursor-pointer">
             <div className="flex items-center gap-2 py-0.5">
@@ -81,7 +81,7 @@ export function MemberSelect({
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-xs font-medium text-white">{m.nome}</p>
+                <p className="text-xs font-medium text-foreground">{m.nome}</p>
                 <p className="text-[10px] text-neutral-500">{m.cargo ?? m.setor}</p>
               </div>
             </div>

@@ -5,6 +5,7 @@ import "./globals.css"
 import { ModulesProvider } from "@/contexts/modules-context"
 import { PwaProvider } from "@/contexts/pwa-context"
 import { ToastProvider } from "@/components/reports/toast-notification"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const syne = Syne({ 
   subsets: ["latin"],
@@ -108,7 +109,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -120,14 +121,16 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167x167.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
       </head>
-      <body className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans bg-[#0A0A0A] text-white antialiased overscroll-none`}>
-        <ToastProvider>
-          <PwaProvider>
-            <ModulesProvider>
-              {children}
-            </ModulesProvider>
-          </PwaProvider>
-        </ToastProvider>
+      <body className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans antialiased overscroll-none`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <ToastProvider>
+            <PwaProvider>
+              <ModulesProvider>
+                {children}
+              </ModulesProvider>
+            </PwaProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

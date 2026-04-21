@@ -144,7 +144,7 @@ export function FocusHubModule() {
             <AlertTriangle className="w-8 h-8 text-orange-500" />
           </div>
           <div>
-            <h3 className="text-white font-bold text-lg mb-1">Não foi possível conectar</h3>
+            <h3 className="text-foreground font-bold text-lg mb-1">Não foi possível conectar</h3>
             <p className="text-neutral-500 text-sm">
               O Focus Hub não respondeu em tempo hábil. Verifique sua conexão ou tente novamente.
             </p>
@@ -152,7 +152,7 @@ export function FocusHubModule() {
           <div className="flex items-center gap-3">
             <Button
               onClick={handleRetry}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Tentar novamente
@@ -162,7 +162,7 @@ export function FocusHubModule() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white">
+              <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground">
                 <ExternalLink className="w-4 h-4 mr-2" />
                 Abrir em nova aba
               </Button>
@@ -175,10 +175,10 @@ export function FocusHubModule() {
 
   /* ─── Main render ─────────────────────────────────────────────── */
   return (
-    <div className="relative w-full h-full bg-[#0A0A0A]">
+    <div className="relative w-full h-full bg-background">
       {/* Connecting overlay */}
       {!authConfirmed && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#0A0A0A] z-10 transition-opacity">
+        <div className="absolute inset-0 flex items-center justify-center bg-background z-10 transition-opacity">
           <div className="flex flex-col items-center gap-4">
             <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
             <span className="text-neutral-500 font-mono text-xs uppercase tracking-widest animate-pulse">

@@ -146,7 +146,7 @@ function RelatoriosContent() {
     <PageWrapper title="RELATORIOS" breadcrumb="RELATORIOS">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-xl font-display font-bold text-white">Relatorios de Projeto</h1>
+              <h1 className="text-xl font-display font-bold text-foreground">Relatorios de Projeto</h1>
               <p className="text-sm text-neutral-500">Gerencie e exporte relatórios para clientes sincronizado com DB</p>
             </div>
 
@@ -162,7 +162,7 @@ function RelatoriosContent() {
               
               <Button 
                 onClick={() => setNewReportOpen(true)}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Novo Relatório
@@ -178,12 +178,12 @@ function RelatoriosContent() {
             <>
               {/* Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <Card className="bg-[#141414] border-[#2A2A2A]">
+                <Card className="bg-card border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-neutral-500 tracking-wider">TOTAL RELATORIOS</p>
-                        <p className="text-2xl font-bold text-white font-mono">{reports.length}</p>
+                        <p className="text-2xl font-bold text-foreground font-mono">{reports.length}</p>
                         {savedCount > 0 && (
                           <p className="text-xs text-[#818cf8] mt-1 flex items-center gap-1">
                             <Save className="w-3 h-3" />
@@ -195,7 +195,7 @@ function RelatoriosContent() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-[#141414] border-[#2A2A2A]">
+                <Card className="bg-card border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -208,7 +208,7 @@ function RelatoriosContent() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-[#141414] border-[#2A2A2A]">
+                <Card className="bg-card border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -221,12 +221,12 @@ function RelatoriosContent() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-[#141414] border-[#2A2A2A]">
+                <Card className="bg-card border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-neutral-500 tracking-wider">PROJETOS COBERTOS</p>
-                        <p className="text-2xl font-bold text-white font-mono">
+                        <p className="text-2xl font-bold text-foreground font-mono">
                           {new Set(reports.map(r => r.projeto_id)).size}
                         </p>
                       </div>
@@ -238,28 +238,28 @@ function RelatoriosContent() {
 
               {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="flex items-center gap-2 px-3 py-2 bg-[#141414] border border-[#2A2A2A] rounded-lg flex-1 max-w-md">
+                <div className="flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-lg flex-1 max-w-md">
                   <Search className="w-4 h-4 text-neutral-500" />
                   <input
                     type="text"
                     placeholder="Buscar relatorios..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className="bg-transparent text-sm text-neutral-300 placeholder:text-neutral-600 outline-none flex-1"
+                    className="bg-transparent text-sm text-foreground placeholder:text-neutral-600 outline-none flex-1"
                   />
                 </div>
                 <Select value={filterProject} onValueChange={setFilterProject}>
-                  <SelectTrigger className="w-48 bg-[#141414] border-[#2A2A2A] text-neutral-300">
+                  <SelectTrigger className="w-48 bg-card border-border text-foreground">
                     <SelectValue placeholder="Projeto" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
-                    <SelectItem value="all" className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                  <SelectContent className="bg-[#1A1A1A] border-border">
+                    <SelectItem value="all" className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                       Todos os projetos
                     </SelectItem>
                     {Array.from(new Set(reports.map(r => r.projeto_id))).map(pid => {
                       const report = reports.find(r => r.projeto_id === pid)
                       return (
-                        <SelectItem key={pid as string} value={pid as string} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                        <SelectItem key={pid as string} value={pid as string} className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                           {report?.projetos?.name}
                         </SelectItem>
                       )
@@ -267,20 +267,20 @@ function RelatoriosContent() {
                   </SelectContent>
                 </Select>
                 <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="w-40 bg-[#141414] border-[#2A2A2A] text-neutral-300">
+                  <SelectTrigger className="w-40 bg-card border-border text-foreground">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
-                    <SelectItem value="all" className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                  <SelectContent className="bg-[#1A1A1A] border-border">
+                    <SelectItem value="all" className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                       Todos
                     </SelectItem>
-                    <SelectItem value="rascunho" className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                    <SelectItem value="rascunho" className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                       Rascunho
                     </SelectItem>
-                    <SelectItem value="salvo" className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                    <SelectItem value="salvo" className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                       Salvo
                     </SelectItem>
-                    <SelectItem value="exportado" className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                    <SelectItem value="exportado" className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                       Exportado
                     </SelectItem>
                   </SelectContent>
@@ -288,8 +288,8 @@ function RelatoriosContent() {
               </div>
 
               {/* Reports List */}
-              <Card className="bg-[#141414] border-[#2A2A2A]">
-                <CardHeader className="border-b border-[#2A2A2A]">
+              <Card className="bg-card border-border">
+                <CardHeader className="border-b border-border">
                   <CardTitle className="text-sm font-medium text-neutral-400 tracking-wider">
                     RELATORIOS DE PROJETO
                   </CardTitle>
@@ -299,7 +299,7 @@ function RelatoriosContent() {
                     {filteredReports.map(report => (
                       <div
                         key={report.id}
-                        className="p-4 hover:bg-[#1A1A1A] transition-colors cursor-pointer group"
+                        className="p-4 hover:bg-accent/10 transition-colors cursor-pointer group"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex items-start gap-3">
@@ -328,7 +328,7 @@ function RelatoriosContent() {
                             </div>
                             <div>
                               <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-sm font-medium text-white group-hover:text-orange-500 transition-colors">
+                                <h3 className="text-sm font-medium text-foreground group-hover:text-orange-500 transition-colors">
                                   {report.titulo}
                                 </h3>
                                 <Badge className="text-[9px] bg-[#2A2A2A] text-neutral-400">
@@ -376,7 +376,7 @@ function RelatoriosContent() {
                                   e.stopPropagation()
                                   setEditorReportId(report.id)
                                 }}
-                                className="h-8 text-neutral-400 hover:text-white"
+                                className="h-8 text-neutral-400 hover:text-foreground"
                               >
                                 <Edit2 className="w-4 h-4 mr-1" />
                                 Editar Relatório
@@ -390,7 +390,7 @@ function RelatoriosContent() {
                                   e.stopPropagation()
                                   setActiveDropdown(activeDropdown === report.id ? null : report.id)
                                 }}
-                                className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-white transition-colors"
+                                className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-foreground transition-colors"
                               >
                                 <MoreVertical className="w-4 h-4" />
                               </button>
@@ -401,13 +401,13 @@ function RelatoriosContent() {
                                     className="fixed inset-0 z-40"
                                     onClick={() => setActiveDropdown(null)}
                                   />
-                                  <div className="absolute right-0 top-full mt-1 z-50 bg-[#1e1e1e] border border-[#333] rounded-[10px] shadow-lg py-1 min-w-[180px]">
+                                  <div className="absolute right-0 top-full mt-1 z-50 bg-[#1e1e1e] border border-border rounded-[10px] shadow-lg py-1 min-w-[180px]">
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation()
                                         setEditorReportId(report.id)
                                       }}
-                                      className="w-full px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#252525] flex items-center gap-2 transition-colors"
+                                      className="w-full px-3 py-2 text-left text-xs text-foreground hover:bg-[#252525] flex items-center gap-2 transition-colors"
                                     >
                                       <Edit2 className="w-4 h-4" />
                                       Editar Relatório
@@ -449,7 +449,7 @@ export default function RelatoriosPage() {
   return (
     <ToastProvider>
       <Suspense fallback={
-        <div className="flex items-center justify-center h-screen bg-[#0A0A0A]">
+        <div className="flex items-center justify-center h-screen bg-background">
           <div className="text-orange-500 font-mono tracking-widest text-sm animate-pulse">
             CARREGANDO MÓDULO DE RELATÓRIOS...
           </div>

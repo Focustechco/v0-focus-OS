@@ -156,7 +156,7 @@ export function LogsSection() {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -164,7 +164,7 @@ export function LogsSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Sucesso</p>
-                <p className="text-xl font-mono text-white">
+                <p className="text-xl font-mono text-foreground">
                   {mockLogs.filter((l) => l.status === "success").length}
                 </p>
               </div>
@@ -172,7 +172,7 @@ export function LogsSection() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
@@ -180,7 +180,7 @@ export function LogsSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Alertas</p>
-                <p className="text-xl font-mono text-white">
+                <p className="text-xl font-mono text-foreground">
                   {mockLogs.filter((l) => l.status === "warning").length}
                 </p>
               </div>
@@ -188,7 +188,7 @@ export function LogsSection() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
@@ -196,7 +196,7 @@ export function LogsSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Erros</p>
-                <p className="text-xl font-mono text-white">
+                <p className="text-xl font-mono text-foreground">
                   {mockLogs.filter((l) => l.status === "error").length}
                 </p>
               </div>
@@ -204,7 +204,7 @@ export function LogsSection() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -212,7 +212,7 @@ export function LogsSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Info</p>
-                <p className="text-xl font-mono text-white">
+                <p className="text-xl font-mono text-foreground">
                   {mockLogs.filter((l) => l.status === "info").length}
                 </p>
               </div>
@@ -222,7 +222,7 @@ export function LogsSection() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
+      <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[200px]">
@@ -231,16 +231,16 @@ export function LogsSection() {
                 placeholder="Buscar nos logs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-[#0A0A0A] border-[#2A2A2A] text-white"
+                className="pl-10 bg-background border-border text-foreground"
               />
             </div>
 
             <Select value={filterModule} onValueChange={setFilterModule}>
-              <SelectTrigger className="w-[180px] bg-[#0A0A0A] border-[#2A2A2A] text-white">
+              <SelectTrigger className="w-[180px] bg-background border-border text-foreground">
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Modulo" />
               </SelectTrigger>
-              <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+              <SelectContent className="bg-[#1A1A1A] border-border">
                 <SelectItem value="all">Todos Modulos</SelectItem>
                 {modules.map((module) => (
                   <SelectItem key={module} value={module}>
@@ -251,11 +251,11 @@ export function LogsSection() {
             </Select>
 
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-[150px] bg-[#0A0A0A] border-[#2A2A2A] text-white">
+              <SelectTrigger className="w-[150px] bg-background border-border text-foreground">
                 <Activity className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+              <SelectContent className="bg-[#1A1A1A] border-border">
                 <SelectItem value="all">Todos Status</SelectItem>
                 <SelectItem value="success">Sucesso</SelectItem>
                 <SelectItem value="warning">Alerta</SelectItem>
@@ -264,12 +264,12 @@ export function LogsSection() {
               </SelectContent>
             </Select>
 
-            <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white">
+            <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground">
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
 
-            <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white">
+            <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground">
               <Download className="w-4 h-4 mr-2" />
               Exportar
             </Button>
@@ -278,16 +278,16 @@ export function LogsSection() {
       </Card>
 
       {/* Logs Table */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-white font-mono text-sm tracking-wider">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-foreground font-mono text-sm tracking-wider">
             REGISTRO DE ATIVIDADES
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="border-[#2A2A2A] hover:bg-transparent">
+              <TableRow className="border-border hover:bg-transparent">
                 <TableHead className="text-neutral-500 font-mono text-xs">TIMESTAMP</TableHead>
                 <TableHead className="text-neutral-500 font-mono text-xs">USUARIO</TableHead>
                 <TableHead className="text-neutral-500 font-mono text-xs">ACAO</TableHead>
@@ -303,7 +303,7 @@ export function LogsSection() {
                 return (
                   <TableRow
                     key={log.id}
-                    className="border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors"
+                    className="border-border hover:bg-accent/10 transition-colors"
                   >
                     <TableCell className="font-mono text-xs text-neutral-400">
                       <div className="flex items-center gap-2">
@@ -314,7 +314,7 @@ export function LogsSection() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <User className="w-3 h-3 text-neutral-500" />
-                        <span className="text-white text-sm">{log.user}</span>
+                        <span className="text-foreground text-sm">{log.user}</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -326,7 +326,7 @@ export function LogsSection() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-neutral-400 text-sm">{log.module}</TableCell>
-                    <TableCell className="text-neutral-300 text-sm max-w-[200px] truncate">
+                    <TableCell className="text-foreground text-sm max-w-[200px] truncate">
                       {log.details}
                     </TableCell>
                     <TableCell className="font-mono text-xs text-neutral-500">{log.ip}</TableCell>

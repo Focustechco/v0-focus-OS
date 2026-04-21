@@ -132,7 +132,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
   const StatusIcon = (statusIcons as any)[profile?.status_cor || 'cinza'] || Clock
 
   return (
-    <Card className="bg-[#111111] border-[#2A2A2A] overflow-hidden">
+    <Card className="bg-background border-border overflow-hidden">
       {/* Banner */}
       <div 
         className="h-[140px] bg-[#1A1A1A] relative cursor-pointer group"
@@ -144,7 +144,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
           <div className="w-full h-full bg-gradient-to-r from-orange-500/10 to-transparent" />
         )}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <Camera className="w-6 h-6 text-white" />
+          <Camera className="w-6 h-6 text-foreground" />
         </div>
       </div>
 
@@ -162,14 +162,14 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
             </div>
           )}
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Camera className="w-5 h-5 text-white" />
+            <Camera className="w-5 h-5 text-foreground" />
           </div>
         </div>
 
         {/* Info */}
         <div className="space-y-4">
           <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">{profile?.nome_completo}</h2>
+            <h2 className="text-xl font-bold text-foreground tracking-tight">{profile?.nome_completo}</h2>
             <p className="text-orange-500 text-xs font-mono tracking-widest uppercase mt-1">
               {profile?.cargo || "Sem cargo definido"}
             </p>
@@ -191,12 +191,12 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
 
           <div className="flex items-center justify-center gap-4 pt-2">
             {profile?.linkedin && (
-              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-colors">
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-foreground transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
             )}
             {profile?.github && (
-              <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-white transition-colors">
+              <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-foreground transition-colors">
                 <Github className="w-5 h-5" />
               </a>
             )}
@@ -205,14 +205,14 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
           <div className="pt-4 border-t border-white/5 space-y-3">
             <div className="flex flex-wrap justify-center gap-1.5">
               {profile?.tecnologias?.map((tech: string, i: number) => (
-                <span key={i} className="px-2 py-0.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-[9px] font-mono text-neutral-500 hover:text-orange-500 transition-colors">
+                <span key={i} className="px-2 py-0.5 bg-[#1A1A1A] border border-border rounded text-[9px] font-mono text-neutral-500 hover:text-orange-500 transition-colors">
                   {tech}
                 </span>
               ))}
             </div>
           </div>
 
-          <Button variant="outline" className="w-full mt-4 bg-[#1A1A1A] border-[#2A2A2A] text-neutral-400 hover:text-white hover:bg-[#202020] text-xs font-mono tracking-widest uppercase">
+          <Button variant="outline" className="w-full mt-4 bg-[#1A1A1A] border-border text-neutral-400 hover:text-foreground hover:bg-[#202020] text-xs font-mono tracking-widest uppercase">
             Visualizar como outros veem
           </Button>
         </div>
@@ -220,7 +220,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
 
       {/* Modal Foto de Perfil */}
       <Dialog open={isPhotoModalOpen} onOpenChange={setIsPhotoModalOpen}>
-        <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-orange-500 font-mono text-sm tracking-widest uppercase">
               Atualizar Foto de Perfil
@@ -228,7 +228,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div 
-              className="border-2 border-dashed border-[#2A2A2A] rounded-xl p-8 text-center cursor-pointer hover:border-orange-500/50 transition-colors"
+              className="border-2 border-dashed border-border rounded-xl p-8 text-center cursor-pointer hover:border-orange-500/50 transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
               {preview ? (
@@ -253,7 +253,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
             <Button 
                 onClick={() => uploadImage('avatar')} 
                 disabled={!selectedFile || uploading}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs uppercase"
             >
               {uploading ? "Enviando..." : "Salvar Foto"}
             </Button>
@@ -263,7 +263,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
 
       {/* Modal Banner */}
       <Dialog open={isBannerModalOpen} onOpenChange={setIsBannerModalOpen}>
-        <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-orange-500 font-mono text-sm tracking-widest uppercase">
               Atualizar Capa
@@ -271,7 +271,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div 
-              className="border-2 border-dashed border-[#2A2A2A] rounded-xl p-8 text-center cursor-pointer hover:border-orange-500/50 transition-colors"
+              className="border-2 border-dashed border-border rounded-xl p-8 text-center cursor-pointer hover:border-orange-500/50 transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
               {preview ? (
@@ -296,7 +296,7 @@ export function ProfileIdentityCard({ profile, onUpdate }: ProfileIdentityCardPr
             <Button 
                 onClick={() => uploadImage('banner')} 
                 disabled={!selectedFile || uploading}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs uppercase"
             >
               {uploading ? "Enviando..." : "Salvar Capa"}
             </Button>

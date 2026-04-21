@@ -100,22 +100,22 @@ export function NotificationsPanel() {
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "text-neutral-400 hover:text-orange-500 hover:bg-[#1A1A1A] relative transition-colors",
+          "text-neutral-400 hover:text-orange-500 hover:bg-accent/10 relative transition-colors",
           isOpen && "text-orange-500 bg-[#1A1A1A]"
         )}
       >
         <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
-          <Badge className="absolute -top-1 -right-1 w-4 h-4 p-0 flex items-center justify-center text-[9px] bg-orange-500 text-white border-0 animate-in zoom-in duration-300">
+          <Badge className="absolute -top-1 -right-1 w-4 h-4 p-0 flex items-center justify-center text-[9px] bg-orange-500 text-foreground border-0 animate-in zoom-in duration-300">
             {unreadCount > 9 ? "9+" : unreadCount}
           </Badge>
         )}
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-[380px] bg-[#0F0F0F] border border-[#2A2A2A] rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="p-4 border-b border-[#2A2A2A] flex items-center justify-between bg-[#141414]">
-            <h3 className="text-xs font-mono font-bold tracking-widest text-neutral-300">NOTIFICAÇÕES</h3>
+        <div className="absolute right-0 mt-2 w-[380px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-4 border-b border-border flex items-center justify-between bg-card">
+            <h3 className="text-xs font-mono font-bold tracking-widest text-foreground">NOTIFICAÇÕES</h3>
             <Button 
               variant="ghost" 
               size="sm" 
@@ -144,7 +144,7 @@ export function NotificationsPanel() {
                     key={notif.id}
                     onClick={() => handleNotificationClick(notif)}
                     className={cn(
-                      "p-4 flex gap-3 cursor-pointer transition-all hover:bg-[#1A1A1A] active:bg-[#202020] group",
+                      "p-4 flex gap-3 cursor-pointer transition-all hover:bg-accent/10 active:bg-[#202020] group",
                       !notif.lida && "bg-orange-500/[0.03]"
                     )}
                   >
@@ -157,7 +157,7 @@ export function NotificationsPanel() {
                     <div className="flex-1 min-w-0">
                       <p className={cn(
                         "text-xs leading-tight mb-1",
-                        notif.lida ? "text-neutral-400" : "text-white font-medium"
+                        notif.lida ? "text-neutral-400" : "text-foreground font-medium"
                       )}>
                         {notif.titulo}
                       </p>
@@ -177,7 +177,7 @@ export function NotificationsPanel() {
             )}
           </div>
           
-          <div className="p-3 border-t border-[#2A2A2A] bg-[#141414] text-center">
+          <div className="p-3 border-t border-border bg-card text-center">
              <Link href="/configuracoes/notificacoes" className="text-[9px] text-neutral-600 font-mono hover:text-neutral-400 transition-colors uppercase tracking-widest">
                 Gerenciar Preferências
              </Link>

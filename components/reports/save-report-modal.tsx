@@ -39,13 +39,13 @@ export function SaveReportModal({ open, onOpenChange, reportName, onSave }: Save
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative bg-[#141414] border border-[#2a2a2a] rounded-xl w-full max-w-[440px] mx-4 shadow-2xl">
+      <div className="relative bg-card border border-[#2a2a2a] rounded-xl w-full max-w-[440px] mx-4 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
-          <h2 className="text-lg font-semibold text-white">Salvar Relatorio</h2>
+          <h2 className="text-lg font-semibold text-foreground">Salvar Relatorio</h2>
           <button
             onClick={() => onOpenChange(false)}
-            className="text-neutral-500 hover:text-white transition-colors"
+            className="text-neutral-500 hover:text-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -60,7 +60,7 @@ export function SaveReportModal({ open, onOpenChange, reportName, onSave }: Save
             <Input
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              className="bg-[#1a1a1a] border-[#2a2a2a] text-white"
+              className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground"
             />
           </div>
 
@@ -71,7 +71,7 @@ export function SaveReportModal({ open, onOpenChange, reportName, onSave }: Save
             <Input
               value={version}
               onChange={(e) => setVersion(e.target.value)}
-              className="bg-[#1a1a1a] border-[#2a2a2a] text-white w-24"
+              className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground w-24"
             />
           </div>
 
@@ -83,7 +83,7 @@ export function SaveReportModal({ open, onOpenChange, reportName, onSave }: Save
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Adicione observacoes internas..."
-              className="bg-[#1a1a1a] border-[#2a2a2a] text-white placeholder:text-neutral-600 min-h-[80px]"
+              className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground placeholder:text-neutral-600 min-h-[80px]"
             />
           </div>
 
@@ -99,7 +99,7 @@ export function SaveReportModal({ open, onOpenChange, reportName, onSave }: Save
                   className={`
                     flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all duration-150
                     ${visibility === v 
-                      ? "bg-[#ff6b00] text-white" 
+                      ? "bg-[#ff6b00] text-foreground" 
                       : "bg-[#1a1a1a] text-neutral-400 border border-[#2a2a2a] hover:border-[#ff6b00]/50"
                     }
                   `}
@@ -116,13 +116,13 @@ export function SaveReportModal({ open, onOpenChange, reportName, onSave }: Save
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
-            className="text-neutral-400 hover:text-white"
+            className="text-neutral-400 hover:text-foreground"
           >
             Cancelar
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white"
+            className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground"
           >
             <Save className="w-4 h-4 mr-2" />
             Salvar

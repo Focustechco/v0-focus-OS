@@ -16,7 +16,7 @@ function SubmitButton({ label }: { label: string }) {
     <Button
       type="submit"
       disabled={pending}
-      className="w-full bg-orange-500 text-white hover:bg-orange-600"
+      className="w-full bg-orange-500 text-foreground hover:bg-orange-600"
     >
       {pending ? "Processando..." : label}
     </Button>
@@ -35,15 +35,15 @@ export function LoginForm() {
   const action = mode === "signin" ? signInAction : signUpAction
 
   return (
-    <div className="rounded-lg border border-[#2A2A2A] bg-[#0F0F0F] p-6 shadow-xl">
-      <div className="mb-5 flex border-b border-[#2A2A2A]">
+    <div className="rounded-lg border border-border bg-background p-6 shadow-xl">
+      <div className="mb-5 flex border-b border-border">
         <button
           type="button"
           onClick={() => setMode("signin")}
           className={`flex-1 pb-2 text-xs font-medium tracking-wider transition-colors ${
             mode === "signin"
               ? "border-b-2 border-orange-500 text-orange-500"
-              : "text-neutral-500 hover:text-neutral-300"
+              : "text-neutral-500 hover:text-foreground"
           }`}
         >
           ENTRAR
@@ -54,7 +54,7 @@ export function LoginForm() {
           className={`flex-1 pb-2 text-xs font-medium tracking-wider transition-colors ${
             mode === "signup"
               ? "border-b-2 border-orange-500 text-orange-500"
-              : "text-neutral-500 hover:text-neutral-300"
+              : "text-neutral-500 hover:text-foreground"
           }`}
         >
           CADASTRAR
@@ -75,7 +75,7 @@ export function LoginForm() {
               type="text"
               required
               placeholder="Seu nome"
-              className="border-[#2A2A2A] bg-[#141414] text-white"
+              className="border-border bg-card text-foreground"
             />
           </div>
         )}
@@ -90,7 +90,7 @@ export function LoginForm() {
             type="email"
             required
             placeholder="voce@focustecnologias.com.br"
-            className="border-[#2A2A2A] bg-[#141414] text-white"
+            className="border-border bg-card text-foreground"
           />
         </div>
 
@@ -105,7 +105,7 @@ export function LoginForm() {
             required
             minLength={6}
             placeholder="••••••••"
-            className="border-[#2A2A2A] bg-[#141414] text-white"
+            className="border-border bg-card text-foreground"
           />
         </div>
 

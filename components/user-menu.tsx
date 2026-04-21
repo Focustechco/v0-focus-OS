@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { LogOut, User as UserIcon, Cog } from "lucide-react"
+import { LogOut, User as UserIcon, Cog, Sun, Moon } from "lucide-react"
+import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,6 +17,13 @@ import { signOut } from "@/app/login/actions"
 
 export function UserMenu() {
   const [profile, setProfile] = useState<any>(null)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure theme is only toggled on client to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const load = async () => {
@@ -74,7 +82,7 @@ export function UserMenu() {
         >
           {/* Circular Wrapper for Image/Initials */}
           <div 
-            className="avatar-circle border border-[#2A2A2A] bg-[#141414] transition-colors group-hover:border-orange-500/50"
+            className="avatar-circle border border-border bg-card transition-colors group-hover:border-primary/50"
             style={{ width: '36px', height: '36px' }}
           >
             {profile?.avatar_url ? (
@@ -83,21 +91,21 @@ export function UserMenu() {
                 alt={profile.nome_completo} 
               />
             ) : (
-              <span className="text-xs font-mono font-bold text-orange-500 group-hover:text-orange-400">
+              <span className="text-xs font-mono font-bold text-primary group-hover:text-primary/80">
                 {initials}
               </span>
             )}
           </div>
           {/* Status Dot - Outside the overflow:hidden wrapper */}
           <span 
-            className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#111111] ${statusColors[profile?.status_cor || "verde"]}`} 
+            className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-background ${statusColors[profile?.status_cor || "verde"]}`} 
             style={{ borderRadius: '50%', zIndex: 10 }}
           />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-64 border-[#2A2A2A] bg-[#0F0F0F] text-neutral-300 p-2"
+        className="w-64 border-border bg-popover text-popover-foreground p-2"
       >
         <DropdownMenuLabel className="font-normal p-3">
           <div className="flex items-center gap-3">
@@ -109,10 +117,10 @@ export function UserMenu() {
                   {initials}
                 </div>
                )}
-               <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#0F0F0F] ${statusColors[profile?.status_cor || "verde"]}`} />
+               <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-popover ${statusColors[profile?.status_cor || "verde"]}`} />
             </div>
             <div className="flex flex-col space-y-0.5 min-w-0">
-              <p className="text-sm font-bold text-white truncate">
+              <p className="text-sm font-bold text-foreground truncate">
                 {profile?.nome_completo || "Carregando..."}
               </p>
               <p className="text-[10px] text-neutral-500 truncate font-mono">
@@ -124,13 +132,13 @@ export function UserMenu() {
             </div>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-[#2A2A2A] my-1" />
+        <DropdownMenuSeparator className="bg-border my-1" />
         <DropdownMenuItem
           asChild
-          className="cursor-pointer text-neutral-300 focus:bg-[#1A1A1A] focus:text-white rounded-md py-2 px-3"
+          className="cursor-pointer text-foreground focus:bg-accent/10 focus:text-accent rounded-md py-2 px-3"
         >
           <a href="/perfil" className="flex items-center">
-            <UserIcon className="mr-3 h-4 w-4 text-orange-500" />
+            <UserIcon className="mr-3 h-4 w-4 text-primary" />
             <div className="flex flex-col text-left">
               <span className="text-xs font-bold tracking-tight">MEU PERFIL</span>
               <span className="text-[9px] text-neutral-500 font-mono tracking-wider">IDENTIDADE & PERSONALIZAÇÃO</span>
@@ -138,15 +146,37 @@ export function UserMenu() {
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem
+          className="cursor-pointer text-foreground focus:bg-accent/10 focus:text-accent rounded-md py-2 px-3"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {mounted && (theme === "dark" ? (
+            <>
+              <Sun className="mr-3 h-4 w-4 text-orange-500" />
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold tracking-tight">MODO CLARO</span>
+                <span className="text-[9px] text-neutral-500 font-mono tracking-wider">VISUAL CLARO & LIMPO</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <Moon className="mr-3 h-4 w-4 text-orange-500" />
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold tracking-tight">MODO ESCURO</span>
+                <span className="text-[9px] text-neutral-500 font-mono tracking-wider">VISUAL DARK & FOCO</span>
+              </div>
+            </>
+          ))}
+        </DropdownMenuItem>
+        <DropdownMenuItem
           asChild
-          className="cursor-pointer text-neutral-300 focus:bg-[#1A1A1A] focus:text-white rounded-md py-2 px-3"
+          className="cursor-pointer text-foreground focus:bg-accent/10 focus:text-accent rounded-md py-2 px-3"
         >
           <a href="/configuracoes" className="flex items-center">
             <Cog className="mr-3 h-4 w-4" />
             <span className="text-xs font-medium">Configurações do Sistema</span>
           </a>
         </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-[#2A2A2A] my-1" />
+        <DropdownMenuSeparator className="bg-border my-1" />
         <form action={signOut}>
           <button
             type="submit"

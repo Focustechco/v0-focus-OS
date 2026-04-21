@@ -29,7 +29,7 @@ export const statusConfig: Record<string, { label: string; color: string; icon: 
 
 export const priorityConfig: Record<string, { label: string; color: string; bar: string }> = {
   baixa: { label: "BAIXA", color: "border-neutral-500 text-neutral-400", bar: "bg-neutral-700" },
-  media: { label: "MÉDIA", color: "border-yellow-500/50 text-yellow-500", bar: "bg-[#e05c00]" }, // amber escuro
+  media: { label: "MÉDIA", color: "border-yellow-500/50 text-yellow-500", bar: "bg-primary" }, // amber escuro
   alta: { label: "ALTA", color: "border-red-500/50 text-red-500", bar: "bg-red-800" },
 }
 
@@ -139,7 +139,7 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
   return (
     <Card 
       onClick={onClick}
-      className={`bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-colors cursor-pointer relative overflow-hidden flex flex-col`}
+      className={`bg-card border-border hover:border-orange-500/30 transition-colors cursor-pointer relative overflow-hidden flex flex-col`}
     >
       {/* Zona 1: Barra de acento */}
       <div className={`absolute top-0 left-0 right-0 h-[2px] ${accentBarColor}`} />
@@ -151,7 +151,7 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
           <div className="flex items-center gap-2 flex-1 min-w-0 pr-2">
             <button 
               onClick={handleToggleCircle}
-              className="text-neutral-500 hover:text-white transition-colors flex-shrink-0"
+              className="text-neutral-500 hover:text-foreground transition-colors flex-shrink-0"
             >
               {isCompleted ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className="w-5 h-5" />}
             </button>
@@ -173,14 +173,14 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
             )}
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-white" onClick={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-foreground" onClick={(e) => e.stopPropagation()}>
               <MoreVertical className="w-4 h-4" />
             </Button>
           </div>
         </div>
         
         <div>
-          <h3 className={`text-sm font-medium line-clamp-2 ${isCompleted ? 'text-neutral-500 line-through' : 'text-white'}`}>
+          <h3 className={`text-sm font-medium line-clamp-2 ${isCompleted ? 'text-neutral-500 line-through' : 'text-foreground'}`}>
             {optimisticTask.titulo}
           </h3>
           <p className="text-[10px] text-neutral-500 line-clamp-1 mt-1">
@@ -244,7 +244,7 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
                   onClick={(e) => handleChecklistItem(e as any, item.id, item.is_done)}
                   className="mt-0.5"
                 />
-                <span className={`text-xs flex-1 ${item.is_done ? 'text-neutral-600 line-through' : 'text-neutral-300'}`}>
+                <span className={`text-xs flex-1 ${item.is_done ? 'text-neutral-600 line-through' : 'text-foreground'}`}>
                   {item.title}
                 </span>
                 <span className="text-[9px] font-mono text-neutral-600 ml-2 group-hover:text-neutral-400">
@@ -256,8 +256,8 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
         </div>
 
         {/* Zona 6: Rodapé */}
-        <div className="flex justify-between items-center pt-3 border-t border-[#2A2A2A] mt-auto">
-          <Badge className={`text-[9px] uppercase ${isCompleted ? 'bg-transparent border border-neutral-700 text-neutral-500' : 'bg-transparent border border-neutral-700 text-neutral-400 hover:text-white'}`}>
+        <div className="flex justify-between items-center pt-3 border-t border-border mt-auto">
+          <Badge className={`text-[9px] uppercase ${isCompleted ? 'bg-transparent border border-neutral-700 text-neutral-500' : 'bg-transparent border border-neutral-700 text-neutral-400 hover:text-foreground'}`}>
             {status.label}
           </Badge>
           <div className="flex items-center gap-2">

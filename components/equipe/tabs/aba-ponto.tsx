@@ -232,14 +232,14 @@ export function AbaRegistroPonto() {
         </div>
       ) : (
         <>
-          <Card className="bg-[#141414] border-[#2A2A2A] relative overflow-hidden">
+          <Card className="bg-card border-border relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Clock className="w-32 h-32" />
             </div>
             <CardContent className="p-8 text-center space-y-6">
               <div className="space-y-1">
                 <p className="text-sm font-mono text-neutral-500 uppercase tracking-widest">Horário Atual</p>
-                <h2 className="text-5xl font-display font-bold text-white tracking-tighter">
+                <h2 className="text-5xl font-display font-bold text-foreground tracking-tighter">
                   {now.toLocaleTimeString('pt-BR')}
                 </h2>
                 <p className="text-xs text-neutral-400 font-mono uppercase">
@@ -247,7 +247,7 @@ export function AbaRegistroPonto() {
                 </p>
               </div>
 
-              <div className="inline-flex items-center gap-4 bg-[#0A0A0A] border border-[#2A2A2A] p-4 rounded-2xl">
+              <div className="inline-flex items-center gap-4 bg-background border border-border p-4 rounded-2xl">
                 <div className="text-left space-y-1">
                   <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">Status do Dia</p>
                   <div className="flex items-center gap-2">
@@ -257,9 +257,9 @@ export function AbaRegistroPonto() {
                   </div>
                 </div>
                 {status === "trabalhando" && (
-                  <div className="pl-4 border-l border-[#2A2A2A] text-left">
+                  <div className="pl-4 border-l border-border text-left">
                     <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">Tempo Decorrido</p>
-                    <p className="text-xl font-mono text-white font-bold">{timer}</p>
+                    <p className="text-xl font-mono text-foreground font-bold">{timer}</p>
                   </div>
                 )}
               </div>
@@ -268,7 +268,7 @@ export function AbaRegistroPonto() {
                 <Button 
                   onClick={handleBaterPonto}
                   disabled={status === "encerrado" && lastPonto?.tipo === "saida"}
-                  className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-sm tracking-widest uppercase px-12 py-6 h-auto rounded-full shadow-2xl shadow-orange-500/20 group"
+                  className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-sm tracking-widest uppercase px-12 py-6 h-auto rounded-full shadow-2xl shadow-orange-500/20 group"
                 >
                   <Camera className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform" />
                   Bater Ponto
@@ -278,12 +278,12 @@ export function AbaRegistroPonto() {
           </Card>
 
           {/* Histórico */}
-          <Card className="bg-[#141414] border-[#2A2A2A]">
+          <Card className="bg-card border-border">
             <CardContent className="p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-widest">Linha do Tempo - Hoje</h3>
                 <div className="text-[10px] font-mono text-neutral-500">
-                    Total: <span className="text-white font-bold">{totalHours()}</span>
+                    Total: <span className="text-foreground font-bold">{totalHours()}</span>
                 </div>
               </div>
 
@@ -292,13 +292,13 @@ export function AbaRegistroPonto() {
                   <p className="text-center py-8 text-sm text-neutral-600 italic">Nenhum registro hoje.</p>
                 ) : (
                   history.map((record, i) => (
-                    <div key={record.id} className="flex items-start gap-4 p-4 bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl group hover:border-orange-500/30 transition-all">
-                      <div className="h-10 w-10 overflow-hidden rounded-lg border border-[#2A2A2A] flex-shrink-0">
+                    <div key={record.id} className="flex items-start gap-4 p-4 bg-background border border-border rounded-xl group hover:border-orange-500/30 transition-all">
+                      <div className="h-10 w-10 overflow-hidden rounded-lg border border-border flex-shrink-0">
                         <img src={record.foto_url} alt="Ponto" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-bold text-white uppercase tracking-tight">
+                          <p className="text-xs font-bold text-foreground uppercase tracking-tight">
                             {record.tipo === 'entrada' ? 'Registro de Entrada' : 'Registro de Saída'}
                           </p>
                           <span className="text-[10px] font-mono text-neutral-500">
@@ -331,14 +331,14 @@ export function AbaRegistroPonto() {
 
       {/* Modal Câmera */}
       <Dialog open={isModalOpen} onOpenChange={(open) => { if(!open) stopCamera(); setIsModalOpen(open); }}>
-        <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white sm:max-w-[425px]">
+        <DialogContent className="bg-background border-border text-foreground sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="text-orange-500 font-mono text-sm tracking-widest uppercase">
               {pontoType === 'entrada' ? 'Registro de Entrada' : 'Registro de Saída'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="relative aspect-video bg-black rounded-xl overflow-hidden border border-[#2A2A2A]">
+            <div className="relative aspect-video bg-black rounded-xl overflow-hidden border border-border">
               {!photoBlob ? (
                 <video 
                   ref={videoRef} 
@@ -352,7 +352,7 @@ export function AbaRegistroPonto() {
             </div>
 
             {!photoBlob ? (
-                <Button onClick={capturePhoto} className="w-full bg-white/10 hover:bg-white/20 text-white font-mono text-xs uppercase py-6 h-auto">
+                <Button onClick={capturePhoto} className="w-full bg-white/10 hover:bg-white/20 text-foreground font-mono text-xs uppercase py-6 h-auto">
                     <Camera className="w-4 h-4 mr-2" />
                     Capturar Foto
                 </Button>
@@ -362,7 +362,7 @@ export function AbaRegistroPonto() {
                       placeholder="Observação opcional..."
                       value={observacao}
                       onChange={(e) => setObservacao(e.target.value)}
-                      className="bg-[#0A0A0A] border-[#2A2A2A] placeholder:text-neutral-700 h-20 text-xs"
+                      className="bg-background border-border placeholder:text-neutral-700 h-20 text-xs"
                     />
                     <div className="flex gap-2">
                         <Button variant="ghost" onClick={() => { setPhotoBlob(null); startCamera(); }} className="flex-1 font-mono text-xs uppercase h-auto py-3">
@@ -372,7 +372,7 @@ export function AbaRegistroPonto() {
                         <Button 
                             onClick={confirmRegistro} 
                             disabled={uploading}
-                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs uppercase h-auto py-3"
+                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs uppercase h-auto py-3"
                         >
                             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-3 h-3 mr-2" /> Confirmar</>}
                         </Button>

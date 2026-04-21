@@ -87,14 +87,14 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="border-b border-[#2A2A2A] pb-4">
+      <DialogContent className="bg-card border-border text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="border-b border-border pb-4">
           <div className="flex items-center gap-3 mb-2">
-            <Badge className={`${status.color} text-white text-[10px]`}>{status.label}</Badge>
+            <Badge className={`${status.color} text-foreground text-[10px]`}>{status.label}</Badge>
             <Badge variant="outline" className={`${priority.color} text-[10px]`}>{priority.label}</Badge>
             <span className="text-xs text-neutral-500 font-mono">#{task.id.substring(0, 8)}</span>
           </div>
-          <DialogTitle className="text-xl font-display font-bold text-white flex items-center gap-2">
+          <DialogTitle className="text-xl font-display font-bold text-foreground flex items-center gap-2">
             <StatusIcon className="w-5 h-5 text-orange-500" />
             {task.titulo}
           </DialogTitle>
@@ -105,7 +105,7 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
           <div className="md:col-span-2 space-y-6">
             <div>
               <h4 className="text-[10px] font-mono uppercase text-neutral-500 mb-2 tracking-widest">Descrição</h4>
-              <p className="text-sm text-neutral-300 bg-[#0A0A0A] p-4 rounded-lg border border-[#2A2A2A] min-h-[100px]">
+              <p className="text-sm text-foreground bg-background p-4 rounded-lg border border-border min-h-[100px]">
                 {task.descricao || "Nenhuma descrição fornecida."}
               </p>
             </div>
@@ -118,7 +118,7 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
                 </span>
               </div>
               
-              <div className="space-y-2 bg-[#0A0A0A] p-2 rounded-lg border border-[#2A2A2A]">
+              <div className="space-y-2 bg-background p-2 rounded-lg border border-border">
                 {isLoading ? (
                   <div className="flex items-center justify-center p-8">
                     <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
@@ -133,7 +133,7 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
                         id={item.id} 
                         checked={item.is_done}
                         onCheckedChange={(checked) => toggleItem(item.id, checked as boolean)}
-                        className="mt-0.5 border-[#2A2A2A] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                        className="mt-0.5 border-border data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                       />
                       <div className="flex-1 space-y-1">
                         <label 
@@ -155,7 +155,7 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
                     </div>
                   ))
                 ) : (
-                  <div className="p-8 text-center border border-dashed border-[#2A2A2A] rounded-md">
+                  <div className="p-8 text-center border border-dashed border-border rounded-md">
                     <ListTodo className="w-8 h-8 text-neutral-700 mx-auto mb-2 opacity-30" />
                     <p className="text-[10px] text-neutral-600 uppercase tracking-widest font-mono">Nenhum item vinculado</p>
                   </div>
@@ -168,29 +168,29 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A]">
+                <div className="p-2 rounded-lg bg-background border border-border">
                   <User className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
                   <p className="text-[9px] text-neutral-500 uppercase font-mono tracking-tighter">Atribuída para</p>
-                  <p className="text-xs text-white">
+                  <p className="text-xs text-foreground">
                     {equipe.find(m => m.id === task.responsavel_id)?.nome || "Não atribuída"}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A]">
+                <div className="p-2 rounded-lg bg-background border border-border">
                   <Calendar className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
                   <p className="text-[9px] text-neutral-500 uppercase font-mono tracking-tighter">Prazo</p>
-                  <p className="text-xs text-white font-mono">{task.prazo || "Sem prazo"}</p>
+                  <p className="text-xs text-foreground font-mono">{task.prazo || "Sem prazo"}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A]">
+                <div className="p-2 rounded-lg bg-background border border-border">
                   <MessageSquare className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
@@ -200,10 +200,10 @@ export function TaskDetailsModal({ task, open, onOpenChange, onUpdate }: TaskDet
               </div>
             </div>
             
-            <div className="pt-6 border-t border-[#2A2A2A]">
+            <div className="pt-6 border-t border-border">
               <Button 
                 variant="outline" 
-                className="w-full border-[#2A2A2A] text-neutral-400 hover:text-white"
+                className="w-full border-border text-neutral-400 hover:text-foreground"
                 onClick={() => onOpenChange(false)}
               >
                 Fechar Detalhes

@@ -11,12 +11,12 @@ export function SprintCard({ sprint, onView, onDelete }: { sprint: any, onView?:
   const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
   return (
-    <Card className={`bg-[#141414] border-[#2A2A2A] ${sprint.status === "ativa" ? "border-l-4 border-l-orange-500" : ""} hover:border-orange-500/30 transition-colors`}>
+    <Card className={`bg-card border-border ${sprint.status === "ativa" ? "border-l-4 border-l-orange-500" : ""} hover:border-orange-500/30 transition-colors`}>
       <CardContent className="p-3 sm:p-4">
         <div className="flex items-start justify-between mb-4 gap-2">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="text-base sm:text-lg font-bold text-white font-mono">{sprint.nome?.toUpperCase()}</span>
+              <span className="text-base sm:text-lg font-bold text-foreground font-mono">{sprint.nome?.toUpperCase()}</span>
               <Badge className={sprint.status === "ativa" ? "bg-orange-500" : "bg-neutral-600"}>
                 {sprint.status.toUpperCase()}
               </Badge>
@@ -25,7 +25,7 @@ export function SprintCard({ sprint, onView, onDelete }: { sprint: any, onView?:
           </div>
           <div className="text-right flex-shrink-0">
             <div className="text-xs text-neutral-500">Período</div>
-            <div className="text-[10px] sm:text-xs text-neutral-300 font-mono">
+            <div className="text-[10px] sm:text-xs text-foreground font-mono">
               {new Date(sprint.data_inicio).toLocaleDateString("pt-BR")} - {new Date(sprint.data_fim).toLocaleDateString("pt-BR")}
             </div>
             {daysLeft > 0 && sprint.status === "ativa" && (
@@ -36,8 +36,8 @@ export function SprintCard({ sprint, onView, onDelete }: { sprint: any, onView?:
           </div>
         </div>
         <div className="space-y-3">
-          <div className="text-sm text-neutral-400 border-t border-[#2A2A2A] pt-3 line-clamp-2">
-            Objetivo: <span className="text-white">{sprint.objetivo || "N/A"}</span>
+          <div className="text-sm text-neutral-400 border-t border-border pt-3 line-clamp-2">
+            Objetivo: <span className="text-foreground">{sprint.objetivo || "N/A"}</span>
           </div>
           {(onView || onDelete) && (
             <div className="flex items-center justify-end pt-2 gap-2">
@@ -45,7 +45,7 @@ export function SprintCard({ sprint, onView, onDelete }: { sprint: any, onView?:
                 <Button 
                   size="sm" 
                   variant="outline" 
-                  className="h-7 w-7 p-0 bg-transparent border-[#2A2A2A] text-red-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all outline-none flex-shrink-0" 
+                  className="h-7 w-7 p-0 bg-transparent border-border text-red-500 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 transition-all outline-none flex-shrink-0" 
                   onClick={(e) => { e.stopPropagation(); onDelete(sprint.id); }}
                   title="Excluir Sprint"
                 >

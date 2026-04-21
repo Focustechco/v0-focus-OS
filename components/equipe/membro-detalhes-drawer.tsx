@@ -112,12 +112,12 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-[#141414] border-[#2A2A2A] text-white sm:max-w-[520px] p-0 flex flex-col">
+      <SheetContent className="bg-card border-border text-foreground sm:max-w-[520px] p-0 flex flex-col">
         {/* Header */}
-        <SheetHeader className="p-6 border-b border-[#2A2A2A]">
+        <SheetHeader className="p-6 border-b border-border">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <Avatar className="w-16 h-16 border-2 border-[#2A2A2A]">
+              <Avatar className="w-16 h-16 border-2 border-border">
                 <AvatarImage src={membro.foto_url} />
                 <AvatarFallback
                   className="text-xl font-bold"
@@ -129,7 +129,7 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
               <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#141414] ${membro.status === "ativo" ? "bg-green-500" : "bg-neutral-600"}`} />
             </div>
             <div className="flex-1">
-              <SheetTitle className="text-white font-display text-xl">{membro.nome}</SheetTitle>
+              <SheetTitle className="text-foreground font-display text-xl">{membro.nome}</SheetTitle>
               <p className="text-neutral-500 text-sm">{membro.cargo}</p>
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant="outline" className={`text-[10px] ${tipoInfo.color}`}>
@@ -159,7 +159,7 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
                 ].map(({ icon: Icon, label }) => label ? (
                   <div key={label} className="flex items-center gap-3 text-sm">
                     <Icon className="w-4 h-4 text-neutral-600 flex-shrink-0" />
-                    <span className="text-neutral-300">{label}</span>
+                    <span className="text-foreground">{label}</span>
                   </div>
                 ) : null)}
               </div>
@@ -172,7 +172,7 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
                 )}
                 {membro.github && (
                   <a href={membro.github} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition-colors">
+                    className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-foreground transition-colors">
                     <Github className="w-3.5 h-3.5" /> GitHub
                   </a>
                 )}
@@ -183,7 +183,7 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
             {membro.bio && (
               <div className="space-y-2">
                 <h3 className="text-[10px] font-mono uppercase text-neutral-500 tracking-[0.2em]">Bio</h3>
-                <p className="text-sm text-neutral-300 leading-relaxed">{membro.bio}</p>
+                <p className="text-sm text-foreground leading-relaxed">{membro.bio}</p>
               </div>
             )}
 
@@ -231,10 +231,10 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
                   href={membro.contrato_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg hover:border-orange-500/30 transition-all group"
+                  className="flex items-center gap-3 p-3 bg-background border border-[#1A1A1A] rounded-lg hover:border-orange-500/30 transition-all group"
                 >
                   <FileText className="w-5 h-5 text-orange-500" />
-                  <span className="text-sm text-neutral-300 flex-1 truncate">
+                  <span className="text-sm text-foreground flex-1 truncate">
                     {decodeURIComponent(membro.contrato_url.split('/').pop() || 'contrato')}
                   </span>
                   <Download className="w-4 h-4 text-neutral-600 group-hover:text-orange-500 transition-colors" />
@@ -243,10 +243,10 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
                 <button
                   onClick={() => contractInputRef.current?.click()}
                   disabled={uploadingContract}
-                  className="w-full flex flex-col items-center justify-center gap-2 p-6 border border-dashed border-[#2A2A2A] rounded-lg hover:border-orange-500/40 hover:bg-orange-500/5 transition-all group disabled:opacity-50"
+                  className="w-full flex flex-col items-center justify-center gap-2 p-6 border border-dashed border-border rounded-lg hover:border-orange-500/40 hover:bg-orange-500/5 transition-all group disabled:opacity-50"
                 >
                   <FileText className="w-6 h-6 text-neutral-600 group-hover:text-orange-500 transition-colors" />
-                  <span className="text-xs text-neutral-500 group-hover:text-neutral-300 transition-colors">Nenhum contrato. Clique para enviar.</span>
+                  <span className="text-xs text-neutral-500 group-hover:text-foreground transition-colors">Nenhum contrato. Clique para enviar.</span>
                   <span className="text-[9px] font-mono text-neutral-600 uppercase">PDF, DOC ou DOCX · Máx 20 MB</span>
                 </button>
               )}
@@ -269,14 +269,14 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
                   linkedProjects.map((p: any) => (
                     <div
                       key={p.id}
-                      className="flex items-center justify-between p-3 bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg hover:border-orange-500/30 transition-all"
+                      className="flex items-center justify-between p-3 bg-background border border-[#1A1A1A] rounded-lg hover:border-orange-500/30 transition-all"
                     >
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded bg-neutral-900 border border-neutral-800 flex items-center justify-center">
                           <span className="text-[9px] font-mono font-bold text-orange-500">{p.codigo}</span>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-white">{p.nome}</p>
+                          <p className="text-xs font-medium text-foreground">{p.nome}</p>
                           <p className="text-[10px] text-neutral-500 uppercase">{p.status}</p>
                         </div>
                       </div>
@@ -290,16 +290,16 @@ export function MembroDetalhesDrawer({ memberId, open, onOpenChange }: MembroDet
         </ScrollArea>
 
         {/* Footer actions */}
-        <div className="p-4 border-t border-[#2A2A2A] flex gap-3">
+        <div className="p-4 border-t border-border flex gap-3">
           <Button
             variant="outline"
-            className="flex-1 border-[#2A2A2A] text-neutral-400 hover:text-white"
+            className="flex-1 border-border text-neutral-400 hover:text-foreground"
             onClick={handleToggleStatus}
           >
             {membro.status === "ativo" ? "Desativar" : "Ativar"}
           </Button>
           <Button 
-            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+            className="flex-1 bg-orange-500 hover:bg-orange-600 text-foreground"
             onClick={() => setEditModalOpen(true)}
           >
             Editar Perfil

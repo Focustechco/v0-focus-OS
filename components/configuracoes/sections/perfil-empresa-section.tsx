@@ -32,7 +32,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
         </p>
       </div>
 
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6 space-y-6">
           {/* Logo Upload */}
           <div className="space-y-2">
@@ -57,7 +57,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
               <Input
                 defaultValue="Focus Tecnologia Ltda"
                 onChange={onChange}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
               />
             </div>
             <div className="space-y-2">
@@ -65,7 +65,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
               <Input
                 defaultValue="12.345.678/0001-90"
                 onChange={onChange}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
               />
             </div>
           </div>
@@ -74,7 +74,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
             <div className="space-y-2">
               <Label className="text-neutral-400 font-mono text-xs uppercase">Segmento</Label>
               <Select defaultValue="tecnologia" onValueChange={onChange}>
-                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -91,7 +91,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
               <Input
                 defaultValue="https://focus.com.br"
                 onChange={onChange}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
               />
             </div>
           </div>
@@ -103,7 +103,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
                 defaultValue="contato@focus.com.br"
                 type="email"
                 onChange={onChange}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
               />
             </div>
             <div className="space-y-2">
@@ -111,7 +111,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
               <Input
                 defaultValue="+55 11 99999-9999"
                 onChange={onChange}
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
               />
             </div>
           </div>
@@ -121,7 +121,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
             <Button
               variant="ghost"
               onClick={() => setExpandAddress(!expandAddress)}
-              className="w-full justify-between text-neutral-400 hover:text-white font-mono text-xs uppercase p-0 h-auto"
+              className="w-full justify-between text-neutral-400 hover:text-foreground font-mono text-xs uppercase p-0 h-auto"
             >
               <span>Endereco</span>
               {expandAddress ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -134,7 +134,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
                     <Input
                       defaultValue="01310-100"
                       onChange={onChange}
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
                     />
                   </div>
                   <div className="col-span-2 space-y-2">
@@ -142,7 +142,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
                     <Input
                       defaultValue="Av. Paulista"
                       onChange={onChange}
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
                     />
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
                     <Input
                       defaultValue="1000"
                       onChange={onChange}
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
                     />
                   </div>
                   <div className="space-y-2">
@@ -160,13 +160,13 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
                     <Input
                       defaultValue="Sao Paulo"
                       onChange={onChange}
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono focus:ring-orange-500"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono focus:ring-orange-500"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-neutral-400 font-mono text-xs uppercase">Estado</Label>
                     <Select defaultValue="sp" onValueChange={onChange}>
-                      <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+                      <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -187,7 +187,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
             <div className="space-y-2">
               <Label className="text-neutral-400 font-mono text-xs uppercase">Fuso Horario</Label>
               <Select defaultValue="america-sao_paulo" onValueChange={onChange}>
-                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -200,7 +200,7 @@ export function PerfilEmpresaSection({ onChange }: PerfilEmpresaSectionProps) {
             <div className="space-y-2">
               <Label className="text-neutral-400 font-mono text-xs uppercase">Idioma</Label>
               <Select defaultValue="pt-br" onValueChange={onChange}>
-                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">

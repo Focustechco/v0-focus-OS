@@ -211,8 +211,8 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-3xl p-0">
-        <DialogHeader className="p-6 border-b border-[#2A2A2A]">
+      <DialogContent className="bg-card border-border text-foreground max-w-3xl p-0">
+        <DialogHeader className="p-6 border-b border-border">
           <DialogTitle className="font-display text-xl">
             {member ? "Editar Perfil do Membro" : "Novo Membro da Equipe"}
           </DialogTitle>
@@ -223,7 +223,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
               {/* === COLUNA ESQUERDA === */}
               <div className="space-y-5">
-                <p className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase border-b border-[#2A2A2A] pb-2">
+                <p className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase border-b border-border pb-2">
                   Dados Pessoais
                 </p>
 
@@ -232,7 +232,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                   <button
                     type="button"
                     onClick={() => avatarInputRef.current?.click()}
-                    className="relative w-20 h-20 rounded-full border-2 border-dashed border-[#2A2A2A] hover:border-orange-500/50 transition-colors group overflow-hidden"
+                    className="relative w-20 h-20 rounded-full border-2 border-dashed border-border hover:border-orange-500/50 transition-colors group overflow-hidden"
                   >
                     {avatarPreview ? (
                       <img src={avatarPreview} className="w-full h-full object-cover" alt="Avatar preview" />
@@ -262,7 +262,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     value={form.nome}
                     onChange={(e) => setForm({ ...form, nome: e.target.value })}
                     placeholder="Ex: Adriano Pereira"
-                    className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                    className="bg-[#1A1A1A] border-border focus:border-orange-500"
                     required
                   />
                 </div>
@@ -277,7 +277,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="nome@focus.com.br"
-                    className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                    className="bg-[#1A1A1A] border-border focus:border-orange-500"
                     required
                   />
                 </div>
@@ -291,7 +291,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     value={form.telefone}
                     onChange={(e) => setForm({ ...form, telefone: e.target.value })}
                     placeholder="(11) 99999-9999"
-                    className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                    className="bg-[#1A1A1A] border-border focus:border-orange-500"
                   />
                 </div>
 
@@ -305,7 +305,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                       type="date"
                       value={form.data_nascimento}
                       onChange={(e) => setForm({ ...form, data_nascimento: e.target.value })}
-                      className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]"
+                      className="bg-[#1A1A1A] border-border [color-scheme:dark]"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -316,7 +316,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                       type="date"
                       value={form.data_admissao}
                       onChange={(e) => setForm({ ...form, data_admissao: e.target.value })}
-                      className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]"
+                      className="bg-[#1A1A1A] border-border [color-scheme:dark]"
                     />
                   </div>
                 </div>
@@ -324,7 +324,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
 
               {/* === COLUNA DIREITA === */}
               <div className="space-y-5">
-                <p className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase border-b border-[#2A2A2A] pb-2">
+                <p className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase border-b border-border pb-2">
                   Cargo & Permissões
                 </p>
 
@@ -337,7 +337,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     value={form.cargo}
                     onChange={(e) => setForm({ ...form, cargo: e.target.value })}
                     placeholder="Ex: Tech Lead, Designer, SDR"
-                    className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500"
+                    className="bg-[#1A1A1A] border-border focus:border-orange-500"
                   />
                 </div>
 
@@ -347,10 +347,10 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     <Building2 className="w-3 h-3" /> Setor
                   </Label>
                   <Select value={form.setor} onValueChange={(v) => setForm({ ...form, setor: v })}>
-                    <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]">
+                    <SelectTrigger className="bg-[#1A1A1A] border-border">
                       <SelectValue placeholder="Selecione o setor..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                    <SelectContent className="bg-[#1A1A1A] border-border">
                       {SETORES.map((s) => (
                         <SelectItem key={s} value={s.toLowerCase()} className="focus:bg-[#2A2A2A]">
                           {s}
@@ -375,10 +375,10 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                           "p-2 rounded-lg border text-left transition-all",
                           form.tipo === t.value
                             ? "border-orange-500 bg-orange-500/10"
-                            : "border-[#2A2A2A] bg-[#1A1A1A] hover:border-neutral-600"
+                            : "border-border bg-[#1A1A1A] hover:border-neutral-600"
                         )}
                       >
-                        <p className={cn("text-xs font-bold", form.tipo === t.value ? "text-orange-500" : "text-white")}>
+                        <p className={cn("text-xs font-bold", form.tipo === t.value ? "text-orange-500" : "text-foreground")}>
                           {t.label}
                         </p>
                         <p className="text-[10px] text-neutral-500 mt-0.5">{t.desc}</p>
@@ -388,9 +388,9 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                 </div>
 
                 {/* Status */}
-                <div className="flex items-center justify-between p-3 bg-[#1A1A1A] rounded-lg border border-[#2A2A2A]">
+                <div className="flex items-center justify-between p-3 bg-[#1A1A1A] rounded-lg border border-border">
                   <div>
-                    <p className="text-xs font-medium text-white">Status</p>
+                    <p className="text-xs font-medium text-foreground">Status</p>
                     <p className="text-[10px] text-neutral-500">
                       {form.status === "ativo" ? "Membro ativo" : "Membro inativo"}
                     </p>
@@ -411,7 +411,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                       value={form.linkedin}
                       onChange={(e) => setForm({ ...form, linkedin: e.target.value })}
                       placeholder="URL do perfil"
-                      className="bg-[#1A1A1A] border-[#2A2A2A] text-xs"
+                      className="bg-[#1A1A1A] border-border text-xs"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -422,7 +422,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                       value={form.github}
                       onChange={(e) => setForm({ ...form, github: e.target.value })}
                       placeholder="URL do perfil"
-                      className="bg-[#1A1A1A] border-[#2A2A2A] text-xs"
+                      className="bg-[#1A1A1A] border-border text-xs"
                     />
                   </div>
                 </div>
@@ -436,7 +436,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     value={form.bio}
                     onChange={(e) => setForm({ ...form, bio: e.target.value.substring(0, 160) })}
                     placeholder="Breve descrição do profissional..."
-                    className="bg-[#1A1A1A] border-[#2A2A2A] min-h-[60px] text-sm resize-none"
+                    className="bg-[#1A1A1A] border-border min-h-[60px] text-sm resize-none"
                     maxLength={160}
                   />
                   <p className="text-[10px] text-right text-neutral-600">{form.bio.length}/160</p>
@@ -458,9 +458,9 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                         }
                       }}
                       placeholder="Ex: React, Node.js... Enter para adicionar"
-                      className="bg-[#1A1A1A] border-[#2A2A2A] text-xs flex-1"
+                      className="bg-[#1A1A1A] border-border text-xs flex-1"
                     />
-                    <Button type="button" onClick={addTag} size="icon" variant="outline" className="border-[#2A2A2A]">
+                    <Button type="button" onClick={addTag} size="icon" variant="outline" className="border-border">
                       <Plus className="w-3 h-3" />
                     </Button>
                   </div>
@@ -483,7 +483,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
 
               {/* === SEÇÃO CONTRATO (full width) === */}
               <div className="md:col-span-2 space-y-3">
-                <p className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase border-b border-[#2A2A2A] pb-2">
+                <p className="text-[10px] font-mono text-neutral-500 tracking-[0.2em] uppercase border-b border-border pb-2">
                   Contrato
                 </p>
                 <div
@@ -491,7 +491,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                     "border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer",
                     isDragging
                       ? "border-orange-500 bg-orange-500/5"
-                      : "border-[#2A2A2A] hover:border-neutral-600"
+                      : "border-border hover:border-neutral-600"
                   )}
                   onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
                   onDragLeave={() => setIsDragging(false)}
@@ -506,7 +506,7 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
                   {contratoFile ? (
                     <div className="flex items-center justify-center gap-3">
                       <FileText className="w-5 h-5 text-orange-500" />
-                      <span className="text-sm text-white">{contratoFile.name}</span>
+                      <span className="text-sm text-foreground">{contratoFile.name}</span>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setContratoFile(null) }}
@@ -545,19 +545,19 @@ export function NovoMembroModal({ open, onOpenChange, onSuccess, member }: NovoM
           </ScrollArea>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 p-6 border-t border-[#2A2A2A]">
+          <div className="flex justify-end gap-3 p-6 border-t border-border">
             <Button
               type="button"
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="text-neutral-400 hover:text-white"
+              className="text-neutral-400 hover:text-foreground"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-orange-500 hover:bg-orange-600 text-white min-w-[180px]"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground min-w-[180px]"
             >
               {isSubmitting ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {member ? "Salvando..." : "Cadastrando..."}</>

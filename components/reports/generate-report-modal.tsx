@@ -218,9 +218,9 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-[700px] p-0 overflow-hidden">
+      <DialogContent className="bg-card border-border text-foreground max-w-[700px] p-0 overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b border-[#2A2A2A] flex items-center justify-between bg-[#1A1A1A]">
+        <div className="p-6 border-b border-border flex items-center justify-between bg-[#1A1A1A]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-orange-500" />
@@ -232,7 +232,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
               <p className="text-xs text-neutral-500">Configure os parâmetros para geração inteligente</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-neutral-500 hover:text-white">
+          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-neutral-500 hover:text-foreground">
             <X className="w-4 h-4" />
           </Button>
         </div>
@@ -245,7 +245,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
               placeholder="Ex: Relatório Mensal de Progresso — Julho"
-              className="bg-[#1A1A1A] border-[#2A2A2A] focus:border-orange-500 text-white"
+              className="bg-[#1A1A1A] border-border focus:border-orange-500 text-foreground"
             />
           </div>
 
@@ -262,14 +262,14 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                   onClick={() => setTipo(id as any)}
                   className={cn(
                     "flex items-start gap-4 p-4 rounded-xl border-2 transition-all text-left group",
-                    tipo === id ? "bg-orange-500/10 border-orange-500" : "bg-[#1A1A1A] border-[#2A2A2A] hover:border-neutral-500"
+                    tipo === id ? "bg-orange-500/10 border-orange-500" : "bg-[#1A1A1A] border-border hover:border-neutral-500"
                   )}
                 >
-                  <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", tipo === id ? "bg-orange-500 text-white" : "bg-[#2A2A2A] text-neutral-500 group-hover:text-white")}>
+                  <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", tipo === id ? "bg-orange-500 text-foreground" : "bg-[#2A2A2A] text-neutral-500 group-hover:text-foreground")}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className={cn("text-sm font-bold mb-1", tipo === id ? "text-orange-500" : "text-white")}>{label}</p>
+                    <p className={cn("text-sm font-bold mb-1", tipo === id ? "text-orange-500" : "text-foreground")}>{label}</p>
                     <p className="text-xs text-neutral-500 leading-relaxed">{desc}</p>
                   </div>
                 </button>
@@ -288,14 +288,14 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                   onChange={(e) => { setSearchTerm(e.target.value); setShowDropdown(true); if (!e.target.value) { setProjetoId(""); setProjectPreview(null) } }}
                   onFocus={() => setShowDropdown(true)}
                   placeholder="Buscar projeto por nome ou código..."
-                  className="w-full pl-9 pr-10 py-2.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded-md text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-orange-500 transition-colors"
+                  className="w-full pl-9 pr-10 py-2.5 bg-[#1A1A1A] border border-border rounded-md text-sm text-foreground placeholder:text-neutral-600 focus:outline-none focus:border-orange-500 transition-colors"
                 />
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600 pointer-events-none" />
               </div>
 
               {/* Dropdown */}
               {showDropdown && (
-                <div className="absolute z-50 w-full mt-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg shadow-2xl overflow-hidden max-h-56 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-1 bg-[#1A1A1A] border border-border rounded-lg shadow-2xl overflow-hidden max-h-56 overflow-y-auto">
                   {filteredProjects.length === 0 ? (
                     <div className="p-4 text-center text-xs text-neutral-600">
                       Nenhum projeto ativo encontrado
@@ -307,7 +307,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                         onClick={() => selectProject(p)}
                         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#2A2A2A] transition-colors text-left"
                       >
-                        <div className="w-8 h-8 rounded bg-[#0A0A0A] border border-[#2A2A2A] flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center flex-shrink-0">
                           <FolderKanban className="w-3.5 h-3.5 text-orange-500" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -315,7 +315,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                             {p.codigo && (
                               <span className="text-[10px] font-mono font-bold text-orange-500">{p.codigo}</span>
                             )}
-                            <span className="text-sm text-white truncate">{p.nome}</span>
+                            <span className="text-sm text-foreground truncate">{p.nome}</span>
                           </div>
                         </div>
                         <Badge
@@ -339,7 +339,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
               <div className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-lg border text-xs transition-all",
                 projectPreview.loading
-                  ? "border-[#2A2A2A] bg-[#0A0A0A] text-neutral-600"
+                  ? "border-border bg-background text-neutral-600"
                   : "border-orange-500/20 bg-orange-500/5 text-neutral-400"
               )}>
                 {projectPreview.loading ? (
@@ -350,9 +350,9 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                     <span>tarefas ·</span>
                     <span className="text-orange-500 font-mono font-bold">{projectPreview.sprints}</span>
                     <span>sprints · Tech Lead:</span>
-                    <span className="text-white font-medium">{projectPreview.techLead}</span>
+                    <span className="text-foreground font-medium">{projectPreview.techLead}</span>
                     <span>· Cliente:</span>
-                    <span className="text-white font-medium">{projectPreview.cliente}</span>
+                    <span className="text-foreground font-medium">{projectPreview.cliente}</span>
                   </>
                 )}
               </div>
@@ -370,8 +370,8 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                   className={cn(
                     "px-3 py-2 rounded-lg text-xs font-medium border transition-all truncate",
                     periodoId === option.id
-                      ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20"
-                      : "bg-[#1A1A1A] border-[#2A2A2A] text-neutral-500 hover:border-neutral-500"
+                      ? "bg-orange-500 border-orange-500 text-foreground shadow-lg shadow-orange-500/20"
+                      : "bg-[#1A1A1A] border-border text-neutral-500 hover:border-neutral-500"
                   )}
                 >
                   {option.label}
@@ -387,7 +387,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                     type="date"
                     value={dataInicio}
                     onChange={(e) => setDataInicio(e.target.value)}
-                    className="bg-[#1A1A1A] border-[#2A2A2A] text-xs h-9 [color-scheme:dark]"
+                    className="bg-[#1A1A1A] border-border text-xs h-9 [color-scheme:dark]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -396,7 +396,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                     type="date"
                     value={dataFim}
                     onChange={(e) => setDataFim(e.target.value)}
-                    className="bg-[#1A1A1A] border-[#2A2A2A] text-xs h-9 [color-scheme:dark]"
+                    className="bg-[#1A1A1A] border-border text-xs h-9 [color-scheme:dark]"
                   />
                 </div>
               </div>
@@ -415,7 +415,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
             <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
               <Label className="text-xs text-neutral-400 tracking-wider">LOGO DO CLIENTE (OPCIONAL)</Label>
               {!clientLogo ? (
-                <div className="relative border-2 border-dashed border-[#2A2A2A] rounded-xl p-6 hover:border-orange-500/50 transition-colors bg-[#1A1A1A]/50 group cursor-pointer">
+                <div className="relative border-2 border-dashed border-border rounded-xl p-6 hover:border-orange-500/50 transition-colors bg-[#1A1A1A]/50 group cursor-pointer">
                   <input
                     type="file"
                     accept="image/*"
@@ -430,7 +430,7 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
                   </div>
                 </div>
               ) : (
-                <div className="relative bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4 flex items-center justify-between">
+                <div className="relative bg-[#1A1A1A] border border-border rounded-xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-10 rounded bg-white p-1.5 flex items-center justify-center overflow-hidden">
                       <img src={clientLogo} alt="Logo" className="max-w-full max-h-full object-contain" />
@@ -449,11 +449,11 @@ export function GenerateReportModal({ open, onOpenChange, onSuccess }: GenerateR
         </div>
 
         {/* Footer */}
-        <div className="p-6 bg-[#1A1A1A] border-t border-[#2A2A2A]">
+        <div className="p-6 bg-[#1A1A1A] border-t border-border">
           <Button
             onClick={handleGenerate}
             disabled={!canGenerate}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white font-bold h-12 text-sm tracking-wide"
+            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-foreground font-bold h-12 text-sm tracking-wide"
           >
             {isGenerating ? (
               <>

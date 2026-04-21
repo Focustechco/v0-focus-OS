@@ -116,7 +116,7 @@ export function SistemaSection() {
     <div className="space-y-6">
       {/* System Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
@@ -126,14 +126,14 @@ export function SistemaSection() {
                 <p className="text-xs text-neutral-500 mb-1">CPU</p>
                 <div className="flex items-center gap-2">
                   <Progress value={34} className="h-2 flex-1" />
-                  <span className="text-sm font-mono text-white">34%</span>
+                  <span className="text-sm font-mono text-foreground">34%</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -143,14 +143,14 @@ export function SistemaSection() {
                 <p className="text-xs text-neutral-500 mb-1">Memoria</p>
                 <div className="flex items-center gap-2">
                   <Progress value={62} className="h-2 flex-1" />
-                  <span className="text-sm font-mono text-white">62%</span>
+                  <span className="text-sm font-mono text-foreground">62%</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -160,14 +160,14 @@ export function SistemaSection() {
                 <p className="text-xs text-neutral-500 mb-1">Disco</p>
                 <div className="flex items-center gap-2">
                   <Progress value={45} className="h-2 flex-1" />
-                  <span className="text-sm font-mono text-white">45%</span>
+                  <span className="text-sm font-mono text-foreground">45%</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -175,7 +175,7 @@ export function SistemaSection() {
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Uptime</p>
-                <p className="text-xl font-mono text-white">15d 8h</p>
+                <p className="text-xl font-mono text-foreground">15d 8h</p>
               </div>
             </div>
           </CardContent>
@@ -183,9 +183,9 @@ export function SistemaSection() {
       </div>
 
       {/* Services Status */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A] flex flex-row items-center justify-between">
-          <CardTitle className="text-white font-mono text-sm tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border flex flex-row items-center justify-between">
+          <CardTitle className="text-foreground font-mono text-sm tracking-wider flex items-center gap-2">
             <Server className="w-4 h-4 text-orange-500" />
             STATUS DOS SERVICOS
           </CardTitle>
@@ -193,7 +193,7 @@ export function SistemaSection() {
             variant="ghost"
             size="sm"
             onClick={handleRefresh}
-            className="text-neutral-400 hover:text-white"
+            className="text-neutral-400 hover:text-foreground"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
             Atualizar
@@ -202,7 +202,7 @@ export function SistemaSection() {
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="border-[#2A2A2A] hover:bg-transparent">
+              <TableRow className="border-border hover:bg-transparent">
                 <TableHead className="text-neutral-500 font-mono text-xs">SERVICO</TableHead>
                 <TableHead className="text-neutral-500 font-mono text-xs">STATUS</TableHead>
                 <TableHead className="text-neutral-500 font-mono text-xs">UPTIME</TableHead>
@@ -211,8 +211,8 @@ export function SistemaSection() {
             </TableHeader>
             <TableBody>
               {systemServices.map((service, index) => (
-                <TableRow key={index} className="border-[#2A2A2A] hover:bg-[#1A1A1A]">
-                  <TableCell className="font-medium text-white flex items-center gap-2">
+                <TableRow key={index} className="border-border hover:bg-accent/10">
+                  <TableCell className="font-medium text-foreground flex items-center gap-2">
                     {service.name === "API Principal" && <Globe className="w-4 h-4 text-orange-500" />}
                     {service.name === "Database" && <Database className="w-4 h-4 text-blue-500" />}
                     {service.name === "ClickUp Sync" && <RefreshCw className="w-4 h-4 text-green-500" />}
@@ -243,9 +243,9 @@ export function SistemaSection() {
       </Card>
 
       {/* Recent Logs */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-white font-mono text-sm tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-foreground font-mono text-sm tracking-wider flex items-center gap-2">
             <Activity className="w-4 h-4 text-orange-500" />
             LOGS RECENTES
           </CardTitle>
@@ -253,7 +253,7 @@ export function SistemaSection() {
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="border-[#2A2A2A] hover:bg-transparent">
+              <TableRow className="border-border hover:bg-transparent">
                 <TableHead className="text-neutral-500 font-mono text-xs">HORA</TableHead>
                 <TableHead className="text-neutral-500 font-mono text-xs">USUARIO</TableHead>
                 <TableHead className="text-neutral-500 font-mono text-xs">ACAO</TableHead>
@@ -266,7 +266,7 @@ export function SistemaSection() {
               {recentLogs.map((log) => {
                 const StatusIcon = statusConfig[log.status].icon
                 return (
-                  <TableRow key={log.id} className="border-[#2A2A2A] hover:bg-[#1A1A1A]">
+                  <TableRow key={log.id} className="border-border hover:bg-accent/10">
                     <TableCell className="font-mono text-xs text-neutral-400">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
@@ -276,7 +276,7 @@ export function SistemaSection() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <User className="w-3 h-3 text-neutral-500" />
-                        <span className="text-white text-sm">{log.user}</span>
+                        <span className="text-foreground text-sm">{log.user}</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -285,7 +285,7 @@ export function SistemaSection() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-neutral-400 text-sm">{log.module}</TableCell>
-                    <TableCell className="text-neutral-300 text-sm">{log.details}</TableCell>
+                    <TableCell className="text-foreground text-sm">{log.details}</TableCell>
                     <TableCell>
                       <div className={`flex items-center gap-1 ${statusConfig[log.status].color}`}>
                         <StatusIcon className="w-4 h-4" />
@@ -300,9 +300,9 @@ export function SistemaSection() {
       </Card>
 
       {/* System Info */}
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-white font-mono text-sm tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-foreground font-mono text-sm tracking-wider flex items-center gap-2">
             <Monitor className="w-4 h-4 text-orange-500" />
             INFORMACOES DO SISTEMA
           </CardTitle>
@@ -311,11 +311,11 @@ export function SistemaSection() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-neutral-500 text-xs mb-1">Versao</p>
-              <p className="text-white font-mono">v2.4.1</p>
+              <p className="text-foreground font-mono">v2.4.1</p>
             </div>
             <div>
               <p className="text-neutral-500 text-xs mb-1">Build</p>
-              <p className="text-white font-mono">2026.03.15</p>
+              <p className="text-foreground font-mono">2026.03.15</p>
             </div>
             <div>
               <p className="text-neutral-500 text-xs mb-1">Ambiente</p>
@@ -325,7 +325,7 @@ export function SistemaSection() {
             </div>
             <div>
               <p className="text-neutral-500 text-xs mb-1">Ultima Atualizacao</p>
-              <p className="text-white font-mono">15/01/2026</p>
+              <p className="text-foreground font-mono">15/01/2026</p>
             </div>
           </div>
         </CardContent>

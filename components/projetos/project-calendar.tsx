@@ -127,19 +127,19 @@ export function ProjectCalendar() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#141414] p-4 rounded-lg border border-[#2A2A2A]">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-card p-4 rounded-lg border border-border">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-display font-bold text-white capitalize">
+          <h2 className="text-lg font-display font-bold text-foreground capitalize">
             {format(currentDate, "MMMM yyyy", { locale: ptBR })}
           </h2>
-          <div className="flex items-center gap-1 bg-[#0A0A0A] rounded p-1 border border-[#2A2A2A]">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-white" onClick={prevMonth}>
+          <div className="flex items-center gap-1 bg-background rounded p-1 border border-border">
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-foreground" onClick={prevMonth}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="h-7 px-3 text-[10px] font-mono text-neutral-400 hover:text-white" onClick={goToToday}>
+            <Button variant="ghost" size="sm" className="h-7 px-3 text-[10px] font-mono text-neutral-400 hover:text-foreground" onClick={goToToday}>
               HOJE
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-white" onClick={nextMonth}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-foreground" onClick={nextMonth}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
@@ -148,10 +148,10 @@ export function ProjectCalendar() {
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Select value={selectedProjectId || "all"} onValueChange={(val) => setSelectedProjectId(val === "all" ? null : val)}>
-              <SelectTrigger className="h-9 bg-[#0A0A0A] border-[#2A2A2A] text-xs font-mono uppercase text-neutral-400">
+              <SelectTrigger className="h-9 bg-background border-border text-xs font-mono uppercase text-neutral-400">
                 <SelectValue placeholder="BUSCAR PROJETO..." />
               </SelectTrigger>
-              <SelectContent className="bg-[#0F0F0F] border-[#2A2A2A]">
+              <SelectContent className="bg-background border-border">
                 <SelectItem value="all" className="text-xs font-mono">TODOS OS PROJETOS</SelectItem>
                 {projectsWithDates.map(p => (
                   <SelectItem key={p.id} value={p.id} className="text-xs font-mono">{p.nome}</SelectItem>
@@ -162,8 +162,8 @@ export function ProjectCalendar() {
         </div>
       </div>
 
-      <div className="bg-[#141414] border border-[#2A2A2A] rounded-lg overflow-hidden">
-        <div className="grid grid-cols-7 border-b border-[#2A2A2A] bg-[#0F0F0F]">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
+        <div className="grid grid-cols-7 border-b border-border bg-background">
           {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => (
             <div key={day} className="py-2 text-center text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-widest">
               {day}
@@ -187,9 +187,9 @@ export function ProjectCalendar() {
               <div 
                 key={day.toString()} 
                 className={cn(
-                  "relative min-h-[120px] p-2 border-r border-b border-[#2A2A2A] transition-colors group",
+                  "relative min-h-[120px] p-2 border-r border-b border-border transition-colors group",
                   dayIdx % 7 === 6 && "border-r-0",
-                  !isCurrentMonth ? "bg-[#0d0d0d]/50" : "hover:bg-[#1a1a1a]/50 cursor-pointer"
+                  !isCurrentMonth ? "bg-secondary/50" : "hover:bg-[#1a1a1a]/50 cursor-pointer"
                 )}
               >
                 <span className={cn(
@@ -228,18 +228,18 @@ export function ProjectCalendar() {
       </div>
 
       {selectedProject && (
-        <section className="bg-[#141414] p-6 rounded-lg border border-orange-500/20 animate-in fade-in">
+        <section className="bg-card p-6 rounded-lg border border-orange-500/20 animate-in fade-in">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded bg-orange-500/10 flex items-center justify-center">
                 <FolderKanban className="w-5 h-5 text-orange-500" />
               </div>
               <div>
-                <h3 className="text-white font-bold">{selectedProject.nome}</h3>
+                <h3 className="text-foreground font-bold">{selectedProject.nome}</h3>
                 <p className="text-xs text-neutral-500 font-mono uppercase tracking-widest">{selectedProject.clientes?.nome || "Sem Cliente"}</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm" className="h-8 text-neutral-500 hover:text-white" onClick={() => setSelectedProjectId(null)}>
+            <Button variant="ghost" size="sm" className="h-8 text-neutral-500 hover:text-foreground" onClick={() => setSelectedProjectId(null)}>
               FECHAR DETALHES ×
             </Button>
           </div>
@@ -268,7 +268,7 @@ export function ProjectCalendar() {
 
       {/* Modal Novo Projeto */}
       <Dialog open={isNewProjectModalOpen} onOpenChange={setIsNewProjectModalOpen}>
-        <DialogContent className="bg-[#0F0F0F] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-sm font-mono tracking-widest uppercase">Novo Projeto</DialogTitle>
           </DialogHeader>
@@ -280,7 +280,7 @@ export function ProjectCalendar() {
                 placeholder="Projeto X" 
                 value={newProjectForm.nome}
                 onChange={(e) => setNewProjectForm({...newProjectForm, nome: e.target.value})}
-                className="col-span-3 bg-[#141414] border-[#2A2A2A]" 
+                className="col-span-3 bg-card border-border" 
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -289,7 +289,7 @@ export function ProjectCalendar() {
                 type="date" 
                 value={newProjectForm.data_inicio}
                 onChange={(e) => setNewProjectForm({...newProjectForm, data_inicio: e.target.value})}
-                className="col-span-3 bg-[#141414] border-[#2A2A2A] [color-scheme:dark]" 
+                className="col-span-3 bg-card border-border [color-scheme:dark]" 
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -298,7 +298,7 @@ export function ProjectCalendar() {
                 type="date" 
                 value={newProjectForm.prazo}
                 onChange={(e) => setNewProjectForm({...newProjectForm, prazo: e.target.value})}
-                className="col-span-3 bg-[#141414] border-[#2A2A2A] [color-scheme:dark]" 
+                className="col-span-3 bg-card border-border [color-scheme:dark]" 
               />
             </div>
           </div>
@@ -311,7 +311,7 @@ export function ProjectCalendar() {
 
       {/* Modal Editar Datas */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="bg-[#0F0F0F] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-sm font-mono tracking-widest uppercase">Editar Cronograma</DialogTitle>
           </DialogHeader>
@@ -322,7 +322,7 @@ export function ProjectCalendar() {
                 type="date" 
                 value={editForm.data_inicio}
                 onChange={(e) => setEditForm({...editForm, data_inicio: e.target.value})}
-                className="col-span-3 bg-[#141414] border-[#2A2A2A] [color-scheme:dark]" 
+                className="col-span-3 bg-card border-border [color-scheme:dark]" 
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -331,7 +331,7 @@ export function ProjectCalendar() {
                 type="date" 
                 value={editForm.prazo}
                 onChange={(e) => setEditForm({...editForm, prazo: e.target.value})}
-                className="col-span-3 bg-[#141414] border-[#2A2A2A] [color-scheme:dark]" 
+                className="col-span-3 bg-card border-border [color-scheme:dark]" 
               />
             </div>
           </div>
@@ -362,13 +362,13 @@ function ProjectBar({ project, currentDay, onClick, isDimmed, onEditDates }: any
           )}
         >
           {isStartDay && (
-            <span className="text-[9px] font-bold text-white truncate drop-shadow-sm">
+            <span className="text-[9px] font-bold text-foreground truncate drop-shadow-sm">
               {project.nome}
             </span>
           )}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-80 bg-[#0F0F0F] border-[#2A2A2A] p-0 shadow-2xl overflow-hidden z-50">
+      <PopoverContent className="w-80 bg-background border-border p-0 shadow-2xl overflow-hidden z-50">
         <div className={cn("h-1", STATUS_COLORS[project.status] || "bg-neutral-600")} />
         <div className="p-4 space-y-4">
            <div>
@@ -378,13 +378,13 @@ function ProjectBar({ project, currentDay, onClick, isDimmed, onEditDates }: any
                  {project.status}
                </Badge>
              </div>
-             <h4 className="text-lg font-bold text-white leading-tight">{project.nome}</h4>
+             <h4 className="text-lg font-bold text-foreground leading-tight">{project.nome}</h4>
              <p className="text-xs text-neutral-500">{project.clientes?.nome || "Sem Cliente"}</p>
            </div>
-           <div className="grid grid-cols-2 gap-4 py-3 border-y border-[#2A2A2A]">
+           <div className="grid grid-cols-2 gap-4 py-3 border-y border-border">
               <div className="space-y-1">
                 <span className="text-[10px] text-neutral-500 font-mono uppercase">Cronograma</span>
-                <div className="flex items-center gap-2 text-[11px] text-neutral-300">
+                <div className="flex items-center gap-2 text-[11px] text-foreground">
                   <Clock className="w-3 h-3 text-neutral-500" />
                   {project.data_inicio ? format(parseISO(project.data_inicio), "dd/MM") : ""} → {project.prazo ? format(parseISO(project.prazo), "dd/MM") : ""}
                 </div>
@@ -393,7 +393,7 @@ function ProjectBar({ project, currentDay, onClick, isDimmed, onEditDates }: any
            <div className="space-y-2">
               <div className="flex items-center justify-between">
                  <span className="text-[10px] text-neutral-500 font-mono uppercase">Progresso</span>
-                 <span className="text-[10px] text-white font-mono">{project.progresso}%</span>
+                 <span className="text-[10px] text-foreground font-mono">{project.progresso}%</span>
               </div>
               <Progress value={project.progresso} className="h-1.5 bg-[#1A1A1A]" />
            </div>

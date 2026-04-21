@@ -181,7 +181,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
   // Loading skeleton
   if (loading && deals.length === 0) {
     return (
-      <div className="bg-[#141414] border border-[#2A2A2A] rounded-lg p-6">
+      <div className="bg-card border border-border rounded-lg p-6">
         <div className="space-y-4">
           <Skeleton className="h-10 w-full bg-[#1A1A1A]" />
           {[1, 2, 3, 4, 5].map(i => (
@@ -195,7 +195,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
   return (
     <div className="space-y-4">
       {/* Header & Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#141414] p-4 rounded-lg border border-[#2A2A2A]">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-card p-4 rounded-lg border border-border">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
@@ -203,15 +203,15 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
               placeholder="Buscar por empresa, contato, email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-[#0A0A0A] border-[#2A2A2A]"
+              className="pl-9 bg-background border-border"
             />
           </div>
 
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-40 bg-[#0A0A0A] border-[#2A2A2A]">
+            <SelectTrigger className="w-40 bg-background border-border">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+            <SelectContent className="bg-card border-border">
               <SelectItem value="all">Todos Status</SelectItem>
               {uniqueStatuses.map(status => (
                 <SelectItem key={status.status} value={status.status}>
@@ -228,10 +228,10 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
           </Select>
 
           <Select value={filterAssignee} onValueChange={setFilterAssignee}>
-            <SelectTrigger className="w-40 bg-[#0A0A0A] border-[#2A2A2A]">
+            <SelectTrigger className="w-40 bg-background border-border">
               <SelectValue placeholder="Responsavel" />
             </SelectTrigger>
-            <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+            <SelectContent className="bg-card border-border">
               <SelectItem value="all">Todos</SelectItem>
               {uniqueAssignees.map(assignee => (
                 <SelectItem key={assignee} value={assignee}>{assignee}</SelectItem>
@@ -241,11 +241,11 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="border-[#2A2A2A]" onClick={handleExport}>
+          <Button variant="outline" className="border-border" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
             Exportar
           </Button>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-foreground">
             <Plus className="w-4 h-4 mr-2" />
             Novo Deal
           </Button>
@@ -253,13 +253,13 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
       </div>
 
       {/* Table */}
-      <div className="table-responsive bg-[#141414] border border-[#2A2A2A] rounded-lg">
+      <div className="table-responsive bg-card border border-border rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow className="border-[#2A2A2A] hover:bg-transparent">
+            <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-neutral-500 font-mono text-xs hidden md:table-cell">ID</TableHead>
               <TableHead 
-                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
+                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-foreground"
                 onClick={() => handleSort('empresa')}
               >
                 <div className="flex items-center gap-1">
@@ -269,7 +269,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
               </TableHead>
               <TableHead className="text-neutral-500 font-mono text-xs hidden lg:table-cell">CONTATO</TableHead>
               <TableHead 
-                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
+                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-foreground"
                 onClick={() => handleSort('status')}
               >
                 <div className="flex items-center gap-1">
@@ -278,7 +278,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 </div>
               </TableHead>
               <TableHead 
-                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
+                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-foreground"
                 onClick={() => handleSort('valor')}
               >
                 <div className="flex items-center gap-1">
@@ -287,7 +287,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 </div>
               </TableHead>
               <TableHead 
-                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white"
+                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-foreground"
                 onClick={() => handleSort('assignee')}
               >
                 <div className="flex items-center gap-1">
@@ -296,7 +296,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 </div>
               </TableHead>
               <TableHead 
-                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-white hidden sm:table-cell"
+                className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-foreground hidden sm:table-cell"
                 onClick={() => handleSort('dueDate')}
               >
                 <div className="flex items-center gap-1">
@@ -324,14 +324,14 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 return (
                   <TableRow 
                     key={deal.id} 
-                    className="border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors"
+                    className="border-border hover:bg-accent/10 transition-colors"
                   >
                     <TableCell className="font-mono text-xs text-neutral-400 hidden md:table-cell">
                       {deal.customId || `CL-${deal.id.slice(-4).toUpperCase()}`}
                     </TableCell>
                     <TableCell>
                       <div>
-                        <span className="text-sm font-medium text-white">
+                        <span className="text-sm font-medium text-foreground">
                           {deal.empresa || deal.name}
                         </span>
                         {deal.tipo && (
@@ -389,13 +389,13 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-white">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-foreground">
                           <Eye className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-neutral-400 hover:text-white"
+                          className="h-8 w-8 text-neutral-400 hover:text-foreground"
                           onClick={() => window.open(deal.url, '_blank')}
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -422,7 +422,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-[#2A2A2A]">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
             <span className="text-xs text-neutral-500">
               Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredDeals.length)} de {filteredDeals.length}
             </span>
@@ -432,7 +432,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 size="sm"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="border-[#2A2A2A]"
+                className="border-border"
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
@@ -444,7 +444,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                 size="sm"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="border-[#2A2A2A]"
+                className="border-border"
               >
                 <ChevronRight className="w-4 h-4" />
               </Button>

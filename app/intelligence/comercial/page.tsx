@@ -52,7 +52,7 @@ export default function SetorComercialPage() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-display font-bold text-white tracking-wider">Dashboard Comercial</h1>
+            <h1 className="text-xl font-display font-bold text-foreground tracking-wider">Dashboard Comercial</h1>
             <p className="text-sm text-neutral-500">Operação em tempo real conectada ao ClickUp</p>
           </div>
           <div className="flex items-center gap-4 text-[10px] font-mono text-neutral-500">
@@ -73,11 +73,11 @@ export default function SetorComercialPage() {
             {/* Top KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {kpis.map((kpi, idx) => (
-                <Card key={idx} className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/20 transition-all">
+                <Card key={idx} className="bg-card border-border hover:border-orange-500/20 transition-all">
                   <CardContent className="p-4 flex items-center justify-between">
                     <div>
                       <p className="text-[10px] text-neutral-500 tracking-widest mb-1 uppercase">{kpi.label}</p>
-                      <div className="text-xl font-bold text-white font-mono">{kpi.value}</div>
+                      <div className="text-xl font-bold text-foreground font-mono">{kpi.value}</div>
                     </div>
                     <div className={cn("p-2 rounded-lg bg-white/5", kpi.color)}>
                       <kpi.icon className="w-5 h-5" />
@@ -91,14 +91,14 @@ export default function SetorComercialPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* SDR Card */}
-              <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-blue-500">
+              <Card className="bg-card border-border border-l-4 border-l-blue-500">
                 <CardHeader className="pb-3 flex-row items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-blue-500 rounded-lg">
-                      <Phone className="w-4 h-4 text-white" />
+                      <Phone className="w-4 h-4 text-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="text-sm font-bold text-white tracking-wider">SDR (PROSPECÇÃO)</CardTitle>
+                      <CardTitle className="text-sm font-bold text-foreground tracking-wider">SDR (PROSPECÇÃO)</CardTitle>
                       <p className="text-[10px] text-neutral-500">Geração de pipeline e agendamento</p>
                     </div>
                   </div>
@@ -106,16 +106,16 @@ export default function SetorComercialPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="p-2 bg-[#0A0A0A] rounded text-center">
-                      <div className="text-lg font-bold text-white font-mono">{metrics?.sdr?.leadsGerados}</div>
+                    <div className="p-2 bg-background rounded text-center">
+                      <div className="text-lg font-bold text-foreground font-mono">{metrics?.sdr?.leadsGerados}</div>
                       <div className="text-[9px] text-neutral-500 uppercase">Leads</div>
                     </div>
-                    <div className="p-2 bg-[#0A0A0A] rounded text-center">
-                      <div className="text-lg font-bold text-white font-mono">{metrics?.sdr?.contatosRealizados}</div>
+                    <div className="p-2 bg-background rounded text-center">
+                      <div className="text-lg font-bold text-foreground font-mono">{metrics?.sdr?.contatosRealizados}</div>
                       <div className="text-[9px] text-neutral-500 uppercase">Contatos</div>
                     </div>
-                    <div className="p-2 bg-[#0A0A0A] rounded text-center">
-                      <div className="text-lg font-bold text-white font-mono">{metrics?.sdr?.reunioesAgendadas}</div>
+                    <div className="p-2 bg-background rounded text-center">
+                      <div className="text-lg font-bold text-foreground font-mono">{metrics?.sdr?.reunioesAgendadas}</div>
                       <div className="text-[9px] text-neutral-500 uppercase">Reuniões</div>
                     </div>
                   </div>
@@ -131,8 +131,8 @@ export default function SetorComercialPage() {
                       <Users className="w-3 h-3" /> Equipe SDR
                     </p>
                     {metrics?.equipe?.filter((m: any) => m.setor === 'sdr').map((member: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-2 bg-[#0A0A0A] rounded">
-                        <span className="text-xs text-white">{member.nome}</span>
+                      <div key={idx} className="flex items-center justify-between p-2 bg-background rounded">
+                        <span className="text-xs text-foreground">{member.nome}</span>
                         <span className="text-[9px] text-neutral-500 uppercase">{member.cargo || 'SDR'}</span>
                       </div>
                     ))}
@@ -144,14 +144,14 @@ export default function SetorComercialPage() {
               </Card>
 
               {/* Closer Card */}
-              <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-orange-500">
+              <Card className="bg-card border-border border-l-4 border-l-orange-500">
                 <CardHeader className="pb-3 flex-row items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-orange-500 rounded-lg">
-                      <Zap className="w-4 h-4 text-white" />
+                      <Zap className="w-4 h-4 text-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="text-sm font-bold text-white tracking-wider">CLOSER (FECHAMENTO)</CardTitle>
+                      <CardTitle className="text-sm font-bold text-foreground tracking-wider">CLOSER (FECHAMENTO)</CardTitle>
                       <p className="text-[10px] text-neutral-500">Propostas e assinatura de contrato</p>
                     </div>
                   </div>
@@ -159,16 +159,16 @@ export default function SetorComercialPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="p-2 bg-[#0A0A0A] rounded text-center">
-                      <div className="text-lg font-bold text-white font-mono">{metrics?.closer?.propostasEnviadas}</div>
+                    <div className="p-2 bg-background rounded text-center">
+                      <div className="text-lg font-bold text-foreground font-mono">{metrics?.closer?.propostasEnviadas}</div>
                       <div className="text-[9px] text-neutral-500 uppercase">Propostas</div>
                     </div>
-                    <div className="p-2 bg-[#0A0A0A] rounded text-center">
-                      <div className="text-lg font-bold text-white font-mono">{metrics?.closer?.emNegociacao}</div>
+                    <div className="p-2 bg-background rounded text-center">
+                      <div className="text-lg font-bold text-foreground font-mono">{metrics?.closer?.emNegociacao}</div>
                       <div className="text-[9px] text-neutral-500 uppercase">Negociações</div>
                     </div>
-                    <div className="p-2 bg-[#0A0A0A] rounded text-center">
-                      <div className="text-lg font-bold text-white font-mono">{metrics?.closer?.fechadosMes}</div>
+                    <div className="p-2 bg-background rounded text-center">
+                      <div className="text-lg font-bold text-foreground font-mono">{metrics?.closer?.fechadosMes}</div>
                       <div className="text-[9px] text-neutral-500 uppercase">Ganhos</div>
                     </div>
                   </div>
@@ -184,8 +184,8 @@ export default function SetorComercialPage() {
                       <Users className="w-3 h-3" /> Closers
                     </p>
                     {metrics?.equipe?.filter((m: any) => m.setor === 'closer').map((member: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-2 bg-[#0A0A0A] rounded">
-                        <span className="text-xs text-white">{member.nome}</span>
+                      <div key={idx} className="flex items-center justify-between p-2 bg-background rounded">
+                        <span className="text-xs text-foreground">{member.nome}</span>
                         <span className="text-[9px] text-neutral-500 uppercase">{member.cargo || 'Closer'}</span>
                       </div>
                     ))}
@@ -197,25 +197,25 @@ export default function SetorComercialPage() {
               </Card>
 
               {/* Pipeline Card */}
-              <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-purple-500">
+              <Card className="bg-card border-border border-l-4 border-l-purple-500">
                 <CardHeader className="pb-3 flex-row items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-purple-500 rounded-lg">
-                      <PieChart className="w-4 h-4 text-white" />
+                      <PieChart className="w-4 h-4 text-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="text-sm font-bold text-white tracking-wider">PIPELINE (OPORTUNIDADES)</CardTitle>
+                      <CardTitle className="text-sm font-bold text-foreground tracking-wider">PIPELINE (OPORTUNIDADES)</CardTitle>
                       <p className="text-[10px] text-neutral-500">Visão geral do funil de vendas</p>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="p-3 bg-[#0A0A0A] rounded">
+                    <div className="p-3 bg-background rounded">
                       <div className="text-xs text-neutral-500 mb-1 uppercase tracking-tight">Total no Funil</div>
-                      <div className="text-xl font-bold text-white font-mono">{metrics?.kpis?.oportunidadesAtivas}</div>
+                      <div className="text-xl font-bold text-foreground font-mono">{metrics?.kpis?.oportunidadesAtivas}</div>
                     </div>
-                    <div className="p-3 bg-[#0A0A0A] rounded">
+                    <div className="p-3 bg-background rounded">
                       <div className="text-xs text-neutral-500 mb-1 uppercase tracking-tight">Valor Pipeline</div>
                       <div className="text-lg font-bold text-purple-500 font-mono">{formatBRL(metrics?.kpis?.mrrTotal * 3)}</div>
                     </div>
@@ -227,7 +227,7 @@ export default function SetorComercialPage() {
                       <div key={etapa} className="space-y-1">
                         <div className="flex justify-between text-[10px]">
                           <span className="text-neutral-400 capitalize">{etapa.replace('_', ' ')}</span>
-                          <span className="text-white font-mono">{metrics?.pipeline?.[etapa] || 0}</span>
+                          <span className="text-foreground font-mono">{metrics?.pipeline?.[etapa] || 0}</span>
                         </div>
                         <Progress value={((metrics?.pipeline?.[etapa] || 0) / metrics?.kpis?.oportunidadesAtivas) * 100} className="h-1 bg-[#2A2A2A] [&>div]:bg-purple-500" />
                       </div>
@@ -241,24 +241,24 @@ export default function SetorComercialPage() {
               </Card>
 
               {/* Estratégia Card */}
-              <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-green-500">
+              <Card className="bg-card border-border border-l-4 border-l-green-500">
                 <CardHeader className="pb-3 flex-row items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-green-500 rounded-lg">
-                      <Target className="w-4 h-4 text-white" />
+                      <Target className="w-4 h-4 text-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="text-sm font-bold text-white tracking-wider">ESTRATÉGIA & METAS</CardTitle>
+                      <CardTitle className="text-sm font-bold text-foreground tracking-wider">ESTRATÉGIA & METAS</CardTitle>
                       <p className="text-[10px] text-neutral-500">Objetivos mensais e taxas reais</p>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                   <div className="p-4 bg-[#0A0A0A] rounded-lg border border-white/5">
+                   <div className="p-4 bg-background rounded-lg border border-white/5">
                       <div className="flex justify-between items-end mb-2">
                         <div>
                           <p className="text-[10px] text-neutral-500 uppercase">Receita Realizada</p>
-                          <div className="text-xl font-bold text-white font-mono">{formatBRL(metrics?.kpis?.mrrTotal)}</div>
+                          <div className="text-xl font-bold text-foreground font-mono">{formatBRL(metrics?.kpis?.mrrTotal)}</div>
                         </div>
                         <div className="text-right">
                           <p className="text-[10px] text-neutral-500 uppercase">Meta (R$ 100k)</p>
@@ -282,20 +282,20 @@ export default function SetorComercialPage() {
                       <div className="space-y-1">
                         <p className="text-[10px] text-neutral-500 uppercase">Conversão</p>
                         <div className="flex items-center gap-2">
-                           <span className="text-lg font-bold text-white font-mono">{Math.round(metrics?.kpis?.conversionRate)}%</span>
+                           <span className="text-lg font-bold text-foreground font-mono">{Math.round(metrics?.kpis?.conversionRate)}%</span>
                            <TrendingUp className="w-3 h-3 text-green-500" />
                         </div>
                       </div>
                       <div className="space-y-1">
                         <p className="text-[10px] text-neutral-500 uppercase">Ticket Médio</p>
                         <div className="flex items-center gap-2">
-                           <span className="text-lg font-bold text-white font-mono">{formatBRL(metrics?.kpis?.ticketMedio / 1000)}k</span>
+                           <span className="text-lg font-bold text-foreground font-mono">{formatBRL(metrics?.kpis?.ticketMedio / 1000)}k</span>
                         </div>
                       </div>
                    </div>
 
                   <div className="pt-2">
-                    <Button variant="outline" className="w-full border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white text-[10px] font-bold h-9">
+                    <Button variant="outline" className="w-full border-green-500/30 text-green-500 hover:bg-green-500 hover:text-foreground text-[10px] font-bold h-9">
                       RELATÓRIO COMERCIAL <ArrowRight className="w-3.5 h-3.5 ml-2" />
                     </Button>
                   </div>

@@ -30,23 +30,23 @@ export function EquipeModule() {
     <div className="space-y-6">
       <Tabs defaultValue="minha-equipe" className="w-full">
         <TabsList className="
-          w-full bg-[#141414] border border-[#2A2A2A] p-1 h-auto
+          w-full bg-card border border-border p-1 h-auto
           flex overflow-x-auto scrollbar-hide flex-nowrap gap-1
           justify-start md:justify-center
         ">
-          <TabsTrigger value="minha-equipe" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+          <TabsTrigger value="minha-equipe" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-foreground font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
             <Users className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
             Minha Equipe
           </TabsTrigger>
-          <TabsTrigger value="ponto" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+          <TabsTrigger value="ponto" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-foreground font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
             <Clock className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
             Ponto
           </TabsTrigger>
-          <TabsTrigger value="conteudos" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+          <TabsTrigger value="conteudos" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-foreground font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
             <BookOpen className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
             Conteúdos
           </TabsTrigger>
-          <TabsTrigger value="acessos" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+          <TabsTrigger value="acessos" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-foreground font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
             <Link className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
             Acessos
           </TabsTrigger>

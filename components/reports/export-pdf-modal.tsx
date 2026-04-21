@@ -114,11 +114,11 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={() => !isExporting && onOpenChange(false)}
       />
-      <div className="relative bg-[#141414] border border-[#2a2a2a] rounded-xl w-full max-w-[520px] mx-4 shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="relative bg-card border border-[#2a2a2a] rounded-xl w-full max-w-[520px] mx-4 shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#2a2a2a] flex-shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-foreground">
               {step === 1 ? "Exportar Relatorio — Tema Focus OS" : "Preview do PDF"}
             </h2>
             <div className="flex items-center gap-2 mt-2">
@@ -130,7 +130,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
           {!isExporting && (
             <button
               onClick={() => onOpenChange(false)}
-              className="text-neutral-500 hover:text-white transition-colors"
+              className="text-neutral-500 hover:text-foreground transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -153,7 +153,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-sm text-white">Usar tema Focus OS</span>
+                    <span className="text-sm text-foreground">Usar tema Focus OS</span>
                     <Switch
                       checked={useFocusTheme}
                       onCheckedChange={setUseFocusTheme}
@@ -173,7 +173,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                     >
                       <span 
                         className={`text-[10px] font-mono ${
-                          useFocusTheme ? "text-white" : "text-gray-900"
+                          useFocusTheme ? "text-foreground" : "text-gray-900"
                         }`}
                       >
                         FOCUS<span style={{ color: accentColor }}>OS</span>
@@ -183,10 +183,10 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                       className="h-2" 
                       style={{ backgroundColor: accentColor }} 
                     />
-                    <div className={`p-3 ${useFocusTheme ? "bg-[#111]" : "bg-gray-50"}`}>
+                    <div className={`p-3 ${useFocusTheme ? "bg-background" : "bg-gray-50"}`}>
                       <div 
                         className={`text-[8px] ${
-                          useFocusTheme ? "text-white" : "text-gray-900"
+                          useFocusTheme ? "text-foreground" : "text-gray-900"
                         }`}
                       >
                         {report.projectName}
@@ -195,7 +195,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                   </div>
 
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-sm text-white">Incluir logo da Focus OS</span>
+                    <span className="text-sm text-foreground">Incluir logo da Focus OS</span>
                     <Switch
                       checked={includeFocusLogo}
                       onCheckedChange={setIncludeFocusLogo}
@@ -204,7 +204,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
 
                   <div className="flex items-center justify-between py-2">
                     <div>
-                      <span className="text-sm text-white">Incluir logo do cliente</span>
+                      <span className="text-sm text-foreground">Incluir logo do cliente</span>
                       {!clientLogo && (
                         <p className="text-xs text-neutral-500 mt-0.5">
                           Nenhuma logo do cliente adicionada
@@ -219,7 +219,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                   </div>
 
                   <div className="py-2">
-                    <span className="text-sm text-white block mb-2">Cor de destaque</span>
+                    <span className="text-sm text-foreground block mb-2">Cor de destaque</span>
                     <div className="flex gap-2">
                       {accentColors.map(color => (
                         <button
@@ -267,7 +267,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                         }
                       `}>
                         {selectedSections.includes(section.id) && (
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-3 h-3 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                           </svg>
                         )}
@@ -287,13 +287,13 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                   <div>
                     <label className="text-xs text-neutral-400 block mb-1.5">Tamanho da pagina</label>
                     <Select value={pageSize} onValueChange={setPageSize}>
-                      <SelectTrigger className="w-32 bg-[#1a1a1a] border-[#2a2a2a] text-white">
+                      <SelectTrigger className="w-32 bg-[#1a1a1a] border-[#2a2a2a] text-foreground">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
-                        <SelectItem value="a4" className="text-neutral-300 focus:bg-[#2a2a2a] focus:text-white">A4</SelectItem>
-                        <SelectItem value="letter" className="text-neutral-300 focus:bg-[#2a2a2a] focus:text-white">Letter</SelectItem>
-                        <SelectItem value="a3" className="text-neutral-300 focus:bg-[#2a2a2a] focus:text-white">A3</SelectItem>
+                        <SelectItem value="a4" className="text-foreground focus:bg-[#2a2a2a] focus:text-foreground">A4</SelectItem>
+                        <SelectItem value="letter" className="text-foreground focus:bg-[#2a2a2a] focus:text-foreground">Letter</SelectItem>
+                        <SelectItem value="a3" className="text-foreground focus:bg-[#2a2a2a] focus:text-foreground">A3</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -308,7 +308,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                           className={`
                             px-4 py-2 rounded-lg text-xs font-medium transition-all duration-150
                             ${orientation === o
-                              ? "bg-[#ff6b00] text-white"
+                              ? "bg-[#ff6b00] text-foreground"
                               : "bg-[#1a1a1a] text-neutral-400 border border-[#2a2a2a] hover:border-[#ff6b00]/50"
                             }
                           `}
@@ -329,7 +329,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                           className={`
                             px-4 py-2 rounded-lg text-xs font-medium transition-all duration-150
                             ${quality === q
-                              ? "bg-[#ff6b00] text-white"
+                              ? "bg-[#ff6b00] text-foreground"
                               : "bg-[#1a1a1a] text-neutral-400 border border-[#2a2a2a] hover:border-[#ff6b00]/50"
                             }
                           `}
@@ -365,7 +365,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                     {includeFocusLogo && (
                       <span 
                         className={`text-xs font-mono ${
-                          useFocusTheme ? "text-white" : "text-gray-900"
+                          useFocusTheme ? "text-foreground" : "text-gray-900"
                         }`}
                       >
                         FOCUS<span style={{ color: accentColor }}>OS</span>
@@ -384,8 +384,8 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
 
                   {/* Cover Section */}
                   {selectedSections.includes("cover") && (
-                    <div className={`p-6 ${useFocusTheme ? "bg-[#111]" : "bg-gray-50"}`}>
-                      <h1 className={`text-lg font-bold ${useFocusTheme ? "text-white" : "text-gray-900"}`}>
+                    <div className={`p-6 ${useFocusTheme ? "bg-background" : "bg-gray-50"}`}>
+                      <h1 className={`text-lg font-bold ${useFocusTheme ? "text-foreground" : "text-gray-900"}`}>
                         {report.projectName}
                       </h1>
                       <p className="text-sm font-mono mt-1" style={{ color: accentColor }}>
@@ -406,7 +406,7 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                       <div className="mb-4">
                         <div 
                           className={`px-3 py-1.5 rounded-t text-[10px] font-medium ${
-                            useFocusTheme ? "bg-[#1a1a1a] text-white" : "bg-gray-100 text-gray-900"
+                            useFocusTheme ? "bg-[#1a1a1a] text-foreground" : "bg-gray-100 text-gray-900"
                           }`}
                           style={{ borderLeft: `3px solid ${accentColor}` }}
                         >
@@ -494,13 +494,13 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                 <Button
                   variant="ghost"
                   onClick={() => onOpenChange(false)}
-                  className="text-neutral-400 hover:text-white"
+                  className="text-neutral-400 hover:text-foreground"
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={() => setStep(2)}
-                  className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white"
+                  className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground"
                 >
                   Proximo
                   <ChevronRight className="w-4 h-4 ml-1" />
@@ -511,14 +511,14 @@ export function ExportPdfModal({ open, onOpenChange, report, clientLogo, onExpor
                 <Button
                   variant="ghost"
                   onClick={() => setStep(1)}
-                  className="text-neutral-400 hover:text-white"
+                  className="text-neutral-400 hover:text-foreground"
                 >
                   <ChevronLeft className="w-4 h-4 mr-1" />
                   Voltar
                 </Button>
                 <Button
                   onClick={handleExport}
-                  className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white flex-1 ml-4"
+                  className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground flex-1 ml-4"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Baixar PDF

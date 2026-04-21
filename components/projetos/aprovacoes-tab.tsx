@@ -58,7 +58,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
   const progressPct = checklistTotal > 0 ? Math.round((checklistDone / checklistTotal) * 100) : 0
 
   return (
-    <Card className={`bg-[#141414] border-[#2A2A2A] ${approval.priority === "urgent" ? "border-l-4 border-l-red-500" : ""} hover:border-orange-500/30 transition-colors`}>
+    <Card className={`bg-card border-border ${approval.priority === "urgent" ? "border-l-4 border-l-red-500" : ""} hover:border-orange-500/30 transition-colors`}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
             ) : (
               <Clock className="w-4 h-4 text-yellow-500" />
             )}
-            <Badge className={`text-[9px] ${type.color} text-white`}>
+            <Badge className={`text-[9px] ${type.color} text-foreground`}>
               {type.label}
             </Badge>
             <span className="text-xs text-orange-500 font-mono uppercase">{approval.projetos?.nome}</span>
@@ -77,7 +77,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
           </Badge>
         </div>
 
-        <h3 className="text-sm font-medium text-white mb-1">{approval.titulo}</h3>
+        <h3 className="text-sm font-medium text-foreground mb-1">{approval.titulo}</h3>
         <p className="text-[10px] text-neutral-500 mb-3">{approval.descricao}</p>
 
         {/* Progresso agregado das subtarefas */}
@@ -85,7 +85,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
           <div className="mb-3 space-y-1.5">
             <div className="flex items-center justify-between text-[10px]">
               <span className="text-neutral-500 font-mono">
-                <span className={checklistDone === checklistTotal ? "text-green-400" : "text-white"}>{checklistDone}</span>/{checklistTotal} subtarefas concluídas
+                <span className={checklistDone === checklistTotal ? "text-green-400" : "text-foreground"}>{checklistDone}</span>/{checklistTotal} subtarefas concluídas
               </span>
               <span className="text-neutral-500 font-mono">{progressPct}%</span>
             </div>
@@ -104,17 +104,17 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
           </div>
         </div>
 
-        <div className="flex items-center gap-2 pt-3 border-t border-[#2A2A2A]">
+        <div className="flex items-center gap-2 pt-3 border-t border-border">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" variant="outline" className="flex-1 h-8 text-xs border-[#2A2A2A] text-neutral-400 hover:text-white">
+              <Button size="sm" variant="outline" className="flex-1 h-8 text-xs border-border text-neutral-400 hover:text-foreground">
                 <Eye className="w-3 h-3 mr-1" />
                 Ver Subtarefas
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white max-w-xl">
+            <DialogContent className="bg-card border-border text-foreground max-w-xl">
               <DialogHeader>
-                <DialogTitle className="text-lg font-display text-white flex items-center gap-2">
+                <DialogTitle className="text-lg font-display text-foreground flex items-center gap-2">
                   <FileText className="w-5 h-5 text-orange-500" />
                   {approval.titulo}
                 </DialogTitle>
@@ -122,14 +122,14 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
               <div className="space-y-4 pt-2">
                 {/* Info da tarefa */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Badge className={`${type.color} text-white`}>{type.label}</Badge>
+                  <Badge className={`${type.color} text-foreground`}>{type.label}</Badge>
                   <Badge variant="outline" className={`${priority.bg} ${priority.color} text-[9px]`}>{priority.label}</Badge>
                   <span className="text-xs text-neutral-400">{approval.projetos?.nome}</span>
                 </div>
 
                 {/* Progresso */}
                 {checklistTotal > 0 && (
-                  <div className="p-3 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A] space-y-2">
+                  <div className="p-3 bg-background rounded-lg border border-border space-y-2">
                     <div className="flex items-center justify-between text-[10px] text-neutral-400">
                       <span className="flex items-center gap-1 font-mono uppercase tracking-wider">
                         <ListChecks className="w-3 h-3" /> Subtarefas de Entrega
@@ -139,12 +139,12 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
                     <Progress value={progressPct} className="h-2 bg-[#1A1A1A]" />
                     <div className="space-y-1.5 pt-1">
                       {checklist.map((ci: any) => (
-                        <div key={ci.id} className="flex items-center gap-2.5 py-1.5 px-2 rounded-md bg-[#141414]">
+                        <div key={ci.id} className="flex items-center gap-2.5 py-1.5 px-2 rounded-md bg-card">
                           {ci.is_done
                             ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
                             : <XCircle className="w-3.5 h-3.5 text-red-500/50 flex-shrink-0" />
                           }
-                          <span className={`text-xs flex-1 ${ci.is_done ? "text-neutral-400 line-through" : "text-white"}`}>
+                          <span className={`text-xs flex-1 ${ci.is_done ? "text-neutral-400 line-through" : "text-foreground"}`}>
                             {ci.title}
                           </span>
                           {ci.prazo && (
@@ -172,7 +172,7 @@ function ApprovalCard({ approval, onAction }: { approval: Aprovacao & { tarefa?:
                 <div className="space-y-2">
                   <label className="text-xs text-neutral-400">Comentário de retorno (obrigatório para rejeitar)</label>
                   <Textarea
-                    className="bg-[#0A0A0A] border-[#2A2A2A] text-white resize-none"
+                    className="bg-background border-border text-foreground resize-none"
                     placeholder="Descreva o motivo da rejeição ou feedback para o dev..."
                     rows={3}
                     value={rejectComment}
@@ -234,7 +234,7 @@ export function AprovacoesTab() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-display font-bold text-white">Aprovações</h1>
+          <h1 className="text-xl font-display font-bold text-foreground">Aprovações</h1>
           <p className="text-sm text-neutral-500">Fila de aprovações reais do sistema</p>
         </div>
         <div className="flex items-center gap-4">
@@ -251,25 +251,25 @@ export function AprovacoesTab() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-white font-mono">{pendingApprovals.length}</div>
+              <div className="text-2xl font-bold text-foreground font-mono">{pendingApprovals.length}</div>
               <div className="text-xs text-neutral-500">Total Pendentes</div>
             </div>
             <Clock className="w-8 h-8 text-orange-500" />
           </CardContent>
         </Card>
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-white font-mono">{aprovacoes.filter((a: any) => a.status === "aprovado").length}</div>
+              <div className="text-2xl font-bold text-foreground font-mono">{aprovacoes.filter((a: any) => a.status === "aprovado").length}</div>
               <div className="text-xs text-neutral-500">Aprovadas (Total)</div>
             </div>
             <CheckCircle2 className="w-8 h-8 text-green-500" />
           </CardContent>
         </Card>
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold text-red-500 font-mono">{aprovacoes.filter((a: any) => a.status === "reprovado").length}</div>
@@ -278,7 +278,7 @@ export function AprovacoesTab() {
             <XCircle className="w-8 h-8 text-red-500" />
           </CardContent>
         </Card>
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold text-red-500 font-mono">{urgentCount}</div>
@@ -296,7 +296,7 @@ export function AprovacoesTab() {
             <ApprovalCard key={approval.id} approval={approval} onAction={(status) => updateStatus(approval.id, status)} />
           ))
         ) : (
-          <div className="p-20 text-center border-2 border-dashed border-[#2A2A2A] rounded-xl">
+          <div className="p-20 text-center border-2 border-dashed border-border rounded-xl">
              <CheckCircle2 className="w-12 h-12 text-green-500/20 mx-auto mb-4" />
              <p className="text-neutral-500 text-sm">Nenhuma aprovação pendente no momento.</p>
           </div>

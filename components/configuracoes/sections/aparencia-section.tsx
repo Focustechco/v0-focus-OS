@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Moon, Sun, Check } from "lucide-react"
+import { useTheme } from "next-themes"
 
 interface AparenciaSectionProps {
   onChange: () => void
@@ -27,7 +28,7 @@ const accentColors = [
 ]
 
 export function AparenciaSection({ onChange }: AparenciaSectionProps) {
-  const [theme, setTheme] = useState<"dark" | "light">("dark")
+  const { theme, setTheme } = useTheme()
   const [accentColor, setAccentColor] = useState("#FF6B00")
   const [density, setDensity] = useState<"compacta" | "normal" | "confortavel">("normal")
   const [sidebarMode, setSidebarMode] = useState<"expandida" | "mini">("expandida")
@@ -44,7 +45,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
       </div>
 
       {/* Theme */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Tema</Label>
           <div className="flex gap-4">
@@ -58,10 +59,10 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
             >
               <div className="flex items-center justify-center gap-3">
                 <Moon className={`w-5 h-5 ${theme === "dark" ? "text-orange-500" : "text-neutral-400"}`} />
-                <span className={`font-mono text-sm ${theme === "dark" ? "text-white" : "text-neutral-400"}`}>DARK</span>
+                <span className={`font-mono text-sm ${theme === "dark" ? "text-foreground" : "text-neutral-400"}`}>DARK</span>
                 {theme === "dark" && <Check className="w-4 h-4 text-orange-500" />}
               </div>
-              <div className="mt-3 h-16 rounded bg-[#0d0d0d] border border-[#2a2a2a] flex items-center justify-center">
+              <div className="mt-3 h-16 rounded bg-secondary border border-[#2a2a2a] flex items-center justify-center">
                 <div className="w-8 h-2 bg-orange-500 rounded" />
               </div>
             </button>
@@ -87,7 +88,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
       </Card>
 
       {/* Accent Color */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Cor de Destaque</Label>
           <div className="flex items-center gap-3">
@@ -101,7 +102,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
                 style={{ backgroundColor: color.hex }}
                 title={color.name}
               >
-                {accentColor === color.hex && <Check className="w-5 h-5 text-white" />}
+                {accentColor === color.hex && <Check className="w-5 h-5 text-foreground" />}
               </button>
             ))}
             <div className="flex items-center gap-2 ml-4">
@@ -109,7 +110,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
               <Input
                 value={accentColor.replace("#", "")}
                 onChange={(e) => { setAccentColor(`#${e.target.value}`); onChange() }}
-                className="w-24 bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono text-sm uppercase"
+                className="w-24 bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono text-sm uppercase"
                 maxLength={6}
               />
             </div>
@@ -118,7 +119,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
       </Card>
 
       {/* Density */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Densidade da Interface</Label>
           <div className="grid grid-cols-3 gap-4">
@@ -151,11 +152,11 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
       </Card>
 
       {/* Font */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Fonte do Sistema</Label>
           <Select defaultValue="jetbrains" onValueChange={onChange}>
-            <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+            <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -169,7 +170,7 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
       </Card>
 
       {/* Sidebar Mode */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Sidebar</Label>
           <div className="grid grid-cols-2 gap-4">
@@ -210,18 +211,18 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
       </Card>
 
       {/* Toggles */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white text-sm font-medium">Animacoes</p>
+              <p className="text-foreground text-sm font-medium">Animacoes</p>
               <p className="text-neutral-500 text-xs">Ativar micro-animacoes e transicoes</p>
             </div>
             <Switch defaultChecked onCheckedChange={onChange} />
           </div>
           <div className="flex items-center justify-between pt-4 border-t border-[#2a2a2a]">
             <div>
-              <p className="text-white text-sm font-medium">Timestamps Relativos</p>
+              <p className="text-foreground text-sm font-medium">Timestamps Relativos</p>
               <p className="text-neutral-500 text-xs">Exibir horarios relativos (ex: ha 2 horas)</p>
             </div>
             <Switch defaultChecked onCheckedChange={onChange} />

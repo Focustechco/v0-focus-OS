@@ -186,23 +186,23 @@ export function PipelineKanban({ deals, statuses, loading }: PipelineKanbanProps
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-[#141414] p-3 rounded-lg border border-[#2A2A2A]">
+      <div className="flex flex-wrap items-center gap-3 bg-card p-3 rounded-lg border border-border">
         <div className="flex-1 min-w-48 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <Input
             placeholder="Buscar cliente..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-[#0A0A0A] border-[#2A2A2A] text-sm"
+            className="pl-9 bg-background border-border text-sm"
           />
         </div>
         
         <Select value={filterAssignee} onValueChange={setFilterAssignee}>
-          <SelectTrigger className="w-40 bg-[#0A0A0A] border-[#2A2A2A]">
+          <SelectTrigger className="w-40 bg-background border-border">
             <User className="w-4 h-4 mr-2 text-neutral-500" />
             <SelectValue placeholder="Responsavel" />
           </SelectTrigger>
-          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+          <SelectContent className="bg-card border-border">
             <SelectItem value="all">Todos</SelectItem>
             {uniqueAssignees.map(assignee => (
               <SelectItem key={assignee} value={assignee}>{assignee}</SelectItem>
@@ -211,11 +211,11 @@ export function PipelineKanban({ deals, statuses, loading }: PipelineKanbanProps
         </Select>
 
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-44 bg-[#0A0A0A] border-[#2A2A2A]">
+          <SelectTrigger className="w-44 bg-background border-border">
             <Tag className="w-4 h-4 mr-2 text-neutral-500" />
             <SelectValue placeholder="Tipo de Servico" />
           </SelectTrigger>
-          <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+          <SelectContent className="bg-card border-border">
             <SelectItem value="all">Todos</SelectItem>
             {uniqueTypes.map(type => (
               <SelectItem key={type} value={type}>{type}</SelectItem>
@@ -223,7 +223,7 @@ export function PipelineKanban({ deals, statuses, loading }: PipelineKanbanProps
           </SelectContent>
         </Select>
 
-        <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+        <Button className="bg-orange-500 hover:bg-orange-600 text-foreground">
           <Plus className="w-4 h-4 mr-2" />
           Novo Deal
         </Button>
@@ -255,7 +255,7 @@ export function PipelineKanban({ deals, statuses, loading }: PipelineKanbanProps
                     {statusDeals.length} deals
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[10px] font-mono bg-[#141414] border-[#2A2A2A]">
+                <Badge variant="outline" className="text-[10px] font-mono bg-card border-border">
                   {formatMRR(totalValue).replace('/mes', '')}
                 </Badge>
               </div>
@@ -319,7 +319,7 @@ function DealCard({ deal, status, isUpdating, isDragging, onDragStart, onClick, 
 
   return (
     <Card
-      className={`bg-[#141414] border-[#2A2A2A] cursor-pointer transition-all duration-150 hover:border-orange-500/50 hover:bg-[#1A1A1A] hover:-translate-y-0.5 ${
+      className={`bg-card border-border cursor-pointer transition-all duration-150 hover:border-orange-500/50 hover:bg-accent/10 hover:-translate-y-0.5 ${
         isDragging ? 'opacity-50' : ''
       } ${isUpdating ? 'animate-pulse' : ''}`}
       style={{ borderLeftColor: status.color, borderLeftWidth: 3 }}
@@ -358,7 +358,7 @@ function DealCard({ deal, status, isUpdating, isDragging, onDragStart, onClick, 
 
         {/* Company Name */}
         <div>
-          <h4 className="text-sm font-display font-bold text-white line-clamp-1">
+          <h4 className="text-sm font-display font-bold text-foreground line-clamp-1">
             {deal.empresa || deal.name}
           </h4>
           {deal.contato && (
@@ -418,11 +418,11 @@ function DealCard({ deal, status, isUpdating, isDragging, onDragStart, onClick, 
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-2 border-t border-[#2A2A2A]">
+        <div className="flex items-center gap-2 pt-2 border-t border-border">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-7 px-2 text-[10px] text-neutral-400 hover:text-white"
+            className="h-7 px-2 text-[10px] text-neutral-400 hover:text-foreground"
             onClick={(e) => {
               e.stopPropagation()
               window.open(deal.url, '_blank')
@@ -434,7 +434,7 @@ function DealCard({ deal, status, isUpdating, isDragging, onDragStart, onClick, 
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-7 px-2 text-[10px] text-neutral-400 hover:text-white"
+            className="h-7 px-2 text-[10px] text-neutral-400 hover:text-foreground"
           >
             <MessageSquare className="w-3 h-3 mr-1" />
             {/* TODO: fetch comment count */}
@@ -496,9 +496,9 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
 
   return (
     <Sheet open={Boolean(deal)} onOpenChange={() => onClose()}>
-      <SheetContent className="w-full sm:w-[540px] bg-[#0F0F0F] border-[#2A2A2A] overflow-y-auto">
-        <SheetHeader className="border-b border-[#2A2A2A] pb-4">
-          <SheetTitle className="text-white font-display text-xl">
+      <SheetContent className="w-full sm:w-[540px] bg-background border-border overflow-y-auto">
+        <SheetHeader className="border-b border-border pb-4">
+          <SheetTitle className="text-foreground font-display text-xl">
             {deal.empresa || deal.name}
           </SheetTitle>
         </SheetHeader>
@@ -512,7 +512,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               onValueChange={onStatusChange}
               disabled={isUpdating}
             >
-              <SelectTrigger className="bg-[#141414] border-[#2A2A2A]">
+              <SelectTrigger className="bg-card border-border">
                 <div className="flex items-center gap-2">
                   <div 
                     className="w-2 h-2 rounded-full" 
@@ -521,7 +521,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
                   <SelectValue />
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+              <SelectContent className="bg-card border-border">
                 {statuses.map(status => (
                   <SelectItem key={status.id} value={status.status}>
                     <div className="flex items-center gap-2">
@@ -543,11 +543,11 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               <User className="w-4 h-4 text-orange-500" />
               Informacoes
             </h3>
-            <div className="grid gap-3 bg-[#141414] p-4 rounded-lg border border-[#2A2A2A]">
+            <div className="grid gap-3 bg-card p-4 rounded-lg border border-border">
               {deal.contato && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-neutral-500">Contato</span>
-                  <span className="text-sm text-white">{deal.contato}</span>
+                  <span className="text-sm text-foreground">{deal.contato}</span>
                 </div>
               )}
               {deal.email && (
@@ -571,7 +571,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               {deal.origem && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-neutral-500">Origem</span>
-                  <span className="text-sm text-white">{deal.origem}</span>
+                  <span className="text-sm text-foreground">{deal.origem}</span>
                 </div>
               )}
             </div>
@@ -583,7 +583,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               <DollarSign className="w-4 h-4 text-orange-500" />
               Financeiro
             </h3>
-            <div className="grid gap-3 bg-[#141414] p-4 rounded-lg border border-[#2A2A2A]">
+            <div className="grid gap-3 bg-card p-4 rounded-lg border border-border">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-neutral-500">Valor</span>
                 <span className="text-lg font-mono text-orange-500 font-bold">
@@ -593,7 +593,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               {deal.tipo && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-neutral-500">Tipo</span>
-                  <span className="text-sm text-white">{deal.tipo}</span>
+                  <span className="text-sm text-foreground">{deal.tipo}</span>
                 </div>
               )}
             </div>
@@ -605,19 +605,19 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               <Calendar className="w-4 h-4 text-orange-500" />
               Datas
             </h3>
-            <div className="grid gap-3 bg-[#141414] p-4 rounded-lg border border-[#2A2A2A]">
+            <div className="grid gap-3 bg-card p-4 rounded-lg border border-border">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-neutral-500">Criado</span>
-                <span className="text-sm text-white">{formatDate(deal.dateCreated)}</span>
+                <span className="text-sm text-foreground">{formatDate(deal.dateCreated)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-neutral-500">Atualizado</span>
-                <span className="text-sm text-white">{formatRelativeDate(deal.dateUpdated)}</span>
+                <span className="text-sm text-foreground">{formatRelativeDate(deal.dateUpdated)}</span>
               </div>
               {deal.dueDate && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-neutral-500">Prazo</span>
-                  <span className="text-sm text-white">{formatDate(deal.dueDate)}</span>
+                  <span className="text-sm text-foreground">{formatDate(deal.dueDate)}</span>
                 </div>
               )}
             </div>
@@ -630,7 +630,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
                 <User className="w-4 h-4 text-orange-500" />
                 Responsavel
               </h3>
-              <div className="flex items-center gap-3 bg-[#141414] p-4 rounded-lg border border-[#2A2A2A]">
+              <div className="flex items-center gap-3 bg-card p-4 rounded-lg border border-border">
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={deal.assignees[0].profilePicture || undefined} />
                   <AvatarFallback style={{ backgroundColor: deal.assignees[0].color }}>
@@ -638,7 +638,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="text-sm text-white font-medium">{deal.assignees[0].username}</div>
+                  <div className="text-sm text-foreground font-medium">{deal.assignees[0].username}</div>
                   <div className="text-xs text-neutral-500">Comercial</div>
                 </div>
               </div>
@@ -664,7 +664,7 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
               <MessageSquare className="w-4 h-4 text-orange-500" />
               Comentarios
             </h3>
-            <div className="bg-[#141414] border border-[#2A2A2A] rounded-lg p-4 space-y-4">
+            <div className="bg-card border border-border rounded-lg p-4 space-y-4">
               {commentsLoading ? (
                 <div className="flex items-center justify-center py-4">
                   <Loader2 className="w-5 h-5 animate-spin text-orange-500" />
@@ -680,19 +680,19 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
                         <span>·</span>
                         <span>{new Date(parseInt(comment.date)).toLocaleString('pt-BR')}</span>
                       </div>
-                      <p className="text-xs text-neutral-300 mt-1">{comment.comment_text}</p>
+                      <p className="text-xs text-foreground mt-1">{comment.comment_text}</p>
                     </div>
                   ))}
                 </div>
               )}
               
               {/* Add Comment */}
-              <div className="flex gap-2 pt-3 border-t border-[#2A2A2A]">
+              <div className="flex gap-2 pt-3 border-t border-border">
                 <Input
                   placeholder="Adicionar comentario..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="bg-[#0A0A0A] border-[#2A2A2A] text-sm"
+                  className="bg-background border-border text-sm"
                   onKeyDown={(e) => e.key === 'Enter' && handlePostComment()}
                 />
                 <Button 
@@ -712,10 +712,10 @@ function DealDrawer({ deal, statuses, onClose, onStatusChange, isUpdating }: Dea
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-[#2A2A2A]">
+          <div className="flex gap-3 pt-4 border-t border-border">
             <Button 
               variant="outline" 
-              className="flex-1 border-[#2A2A2A] hover:border-orange-500"
+              className="flex-1 border-border hover:border-orange-500"
               onClick={() => window.open(deal.url, '_blank')}
             >
               <ExternalLink className="w-4 h-4 mr-2" />

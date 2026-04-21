@@ -78,7 +78,7 @@ export function PrazosTab() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-display font-bold text-white">Prazos & Entregas</h1>
+          <h1 className="text-xl font-display font-bold text-foreground">Prazos & Entregas</h1>
           <p className="text-sm text-neutral-500">Timeline e deadlines dos projetos reais</p>
         </div>
       </div>
@@ -112,10 +112,10 @@ export function PrazosTab() {
             <CheckCircle2 className="w-8 h-8 text-green-500" />
           </CardContent>
         </Card>
-        <Card className="bg-[#141414] border-[#2A2A2A]">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-white font-mono">{entregues}</div>
+              <div className="text-2xl font-bold text-foreground font-mono">{entregues}</div>
               <div className="text-xs text-neutral-400">Entregues</div>
             </div>
             <FolderKanban className="w-8 h-8 text-orange-500" />
@@ -138,17 +138,17 @@ export function PrazosTab() {
 
 function DeliveryCard({ delivery }: { delivery: any }) {
   return (
-    <Card className={`bg-[#141414] border-[#2A2A2A] ${delivery.status === "atrasado" ? "border-l-4 border-l-red-500" : delivery.status === "risco" ? "border-l-4 border-l-yellow-500" : ""} hover:border-orange-500/30 transition-colors`}>
+    <Card className={`bg-card border-border ${delivery.status === "atrasado" ? "border-l-4 border-l-red-500" : delivery.status === "risco" ? "border-l-4 border-l-yellow-500" : ""} hover:border-orange-500/30 transition-colors`}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs text-orange-500 font-mono">{delivery.id}</span>
-              <Badge className={`text-[9px] ${delivery.statusBg} text-white`}>
+              <Badge className={`text-[9px] ${delivery.statusBg} text-foreground`}>
                 {delivery.statusLabel}
               </Badge>
             </div>
-            <h3 className="text-sm font-medium text-white">{delivery.name}</h3>
+            <h3 className="text-sm font-medium text-foreground">{delivery.name}</h3>
             <p className="text-[10px] text-neutral-500">{delivery.client}</p>
           </div>
           {delivery.status === "atrasado" ? (
@@ -162,20 +162,20 @@ function DeliveryCard({ delivery }: { delivery: any }) {
           )}
         </div>
 
-        <div className="p-3 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A] mb-3">
+        <div className="p-3 bg-background rounded-lg border border-border mb-3">
           <div className="text-xs text-neutral-400 mb-1">Fase Atual:</div>
-          <div className="text-sm text-white uppercase">{delivery.delivery}</div>
+          <div className="text-sm text-foreground uppercase">{delivery.delivery}</div>
         </div>
 
         <div className="space-y-2 mb-3">
           <div className="flex justify-between text-[10px]">
             <span className="text-neutral-500">Progresso</span>
-            <span className="text-white font-mono">{delivery.progress}%</span>
+            <span className="text-foreground font-mono">{delivery.progress}%</span>
           </div>
           <Progress value={delivery.progress} className="h-1.5 bg-[#2A2A2A]" />
         </div>
 
-        <div className="flex items-center justify-between text-[10px] pt-3 border-t border-[#2A2A2A]">
+        <div className="flex items-center justify-between text-[10px] pt-3 border-t border-border">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-neutral-400">
               <User className="w-3 h-3" />

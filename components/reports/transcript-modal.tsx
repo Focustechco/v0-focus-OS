@@ -345,7 +345,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-semibold text-white">Ler Transcricao de Reuniao</h2>
+        <h2 className="text-lg font-semibold text-foreground">Ler Transcricao de Reuniao</h2>
         <p className="text-sm text-neutral-500">Faca upload da transcricao em PDF ou cole o texto abaixo</p>
       </div>
 
@@ -373,7 +373,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
           <div className="flex items-center justify-center gap-3">
             <FileText className="w-8 h-8 text-green-500" />
             <div className="text-left">
-              <p className="text-sm text-white font-medium">{uploadedFile.name}</p>
+              <p className="text-sm text-foreground font-medium">{uploadedFile.name}</p>
               <p className="text-xs text-neutral-500">{formatFileSize(uploadedFile.size)}</p>
             </div>
             <Button
@@ -408,7 +408,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
           value={transcriptText}
           onChange={e => setTranscriptText(e.target.value)}
           placeholder="Cole aqui o conteudo da reuniao..."
-          className="min-h-[150px] bg-[#1A1A1A] border-[#2A2A2A] text-white placeholder:text-neutral-600 focus:border-[#ff6b00] resize-none"
+          className="min-h-[150px] bg-[#1A1A1A] border-border text-foreground placeholder:text-neutral-600 focus:border-[#ff6b00] resize-none"
         />
       </div>
     </div>
@@ -417,7 +417,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-semibold text-white">Dados do Projeto</h2>
+        <h2 className="text-lg font-semibold text-foreground">Dados do Projeto</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -431,12 +431,12 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
               setProjectCode(p.codigo || "")
             }
           }}>
-            <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]">
+            <SelectTrigger className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]">
               <SelectValue placeholder="Selecione um projeto..." />
             </SelectTrigger>
-            <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+            <SelectContent className="bg-[#1A1A1A] border-border">
               {projects?.map((p: any) => (
-                <SelectItem key={p.id} value={p.id} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                <SelectItem key={p.id} value={p.id} className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                   {p.name}
                 </SelectItem>
               ))}
@@ -449,7 +449,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             value={clientName}
             onChange={e => setClientName(e.target.value)}
             placeholder="Empresa XYZ"
-            className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]"
+            className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]"
           />
         </div>
       </div>
@@ -461,18 +461,18 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             value={projectCode}
             onChange={e => setProjectCode(e.target.value)}
             placeholder="Ex: PRJ-043"
-            className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]"
+            className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]"
           />
         </div>
         <div className="space-y-2">
           <Label className="text-xs text-neutral-400">Tipo de Relatorio *</Label>
           <Select value={reportType} onValueChange={setReportType}>
-            <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]">
+            <SelectTrigger className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]">
               <SelectValue placeholder="Selecionar..." />
             </SelectTrigger>
-            <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+            <SelectContent className="bg-[#1A1A1A] border-border">
               {REPORT_TYPES.map(type => (
-                <SelectItem key={type.id} value={type.id} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                <SelectItem key={type.id} value={type.id} className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                   {type.label}
                 </SelectItem>
               ))}
@@ -488,7 +488,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             type="date"
             value={meetingDate}
             onChange={e => setMeetingDate(e.target.value)}
-            className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]"
+            className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]"
           />
         </div>
         <div className="space-y-2">
@@ -497,7 +497,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             value={responsible}
             onChange={e => setResponsible(e.target.value)}
             placeholder="Nome completo"
-            className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]"
+            className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]"
           />
         </div>
       </div>
@@ -507,7 +507,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
   const renderStep3 = () => (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-semibold text-white">Equipe & Configuracoes do Relatorio</h2>
+        <h2 className="text-lg font-semibold text-foreground">Equipe & Configuracoes do Relatorio</h2>
       </div>
 
       {/* Recipients */}
@@ -521,8 +521,8 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
                 selectedRecipients.includes(recipient.id)
-                  ? "bg-[#ff6b00] text-white"
-                  : "bg-[#1A1A1A] text-neutral-400 border border-[#2A2A2A] hover:border-[#ff6b00]"
+                  ? "bg-[#ff6b00] text-foreground"
+                  : "bg-[#1A1A1A] text-neutral-400 border border-border hover:border-[#ff6b00]"
               )}
             >
               {recipient.label}
@@ -540,7 +540,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             onChange={e => setDeveloperInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Digite o nome e pressione Enter"
-            className="bg-[#1A1A1A] border-[#2A2A2A] text-white focus:border-[#ff6b00]"
+            className="bg-[#1A1A1A] border-border text-foreground focus:border-[#ff6b00]"
           />
           <Button
             onClick={addDeveloper}
@@ -558,7 +558,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
                 className="bg-[#ff6b00]/20 text-[#ff6b00] border-0 flex items-center gap-1"
               >
                 {dev}
-                <button onClick={() => removeDeveloper(dev)} className="hover:text-white">
+                <button onClick={() => removeDeveloper(dev)} className="hover:text-foreground">
                   <X className="w-3 h-3" />
                 </button>
               </Badge>
@@ -579,7 +579,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
                 "w-full flex items-center gap-3 p-3 rounded-lg border transition-colors text-left",
                 deliveryFormat === format.id
                   ? "bg-[#ff6b00]/10 border-[#ff6b00]"
-                  : "bg-[#1A1A1A] border-[#2A2A2A] hover:border-neutral-500"
+                  : "bg-[#1A1A1A] border-border hover:border-neutral-500"
               )}
             >
               <div className={cn(
@@ -588,7 +588,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
               )}>
                 {deliveryFormat === format.id && <div className="w-2 h-2 rounded-full bg-[#ff6b00]" />}
               </div>
-              <span className={cn("text-sm", deliveryFormat === format.id ? "text-[#ff6b00]" : "text-neutral-300")}>
+              <span className={cn("text-sm", deliveryFormat === format.id ? "text-[#ff6b00]" : "text-foreground")}>
                 {format.label}
               </span>
             </button>
@@ -597,16 +597,16 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
         {/* Sprint options */}
         {deliveryFormat === "sprints" && (
-          <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-[#1A1A1A] rounded-lg border border-[#2A2A2A]">
+          <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-[#1A1A1A] rounded-lg border border-border">
             <div className="space-y-2">
               <Label className="text-xs text-neutral-400">Duracao de cada Sprint</Label>
               <Select value={sprintDuration} onValueChange={setSprintDuration}>
-                <SelectTrigger className="bg-[#141414] border-[#2A2A2A] text-white">
+                <SelectTrigger className="bg-card border-border text-foreground">
                   <SelectValue placeholder="Selecionar..." />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                <SelectContent className="bg-[#1A1A1A] border-border">
                   {SPRINT_DURATIONS.map(d => (
-                    <SelectItem key={d.id} value={d.id} className="text-neutral-300 focus:bg-[#2A2A2A] focus:text-white">
+                    <SelectItem key={d.id} value={d.id} className="text-foreground focus:bg-[#2A2A2A] focus:text-foreground">
                       {d.label}
                     </SelectItem>
                   ))}
@@ -620,7 +620,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
                 value={sprintCount}
                 onChange={e => setSprintCount(e.target.value)}
                 placeholder="Ex: 6"
-                className="bg-[#141414] border-[#2A2A2A] text-white"
+                className="bg-card border-border text-foreground"
               />
             </div>
           </div>
@@ -628,7 +628,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
         {/* Phases options */}
         {deliveryFormat === "fases" && (
-          <div className="mt-4 p-4 bg-[#1A1A1A] rounded-lg border border-[#2A2A2A]">
+          <div className="mt-4 p-4 bg-[#1A1A1A] rounded-lg border border-border">
             <div className="space-y-2">
               <Label className="text-xs text-neutral-400">Numero de Fases</Label>
               <Input
@@ -636,7 +636,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
                 value={phaseCount}
                 onChange={e => setPhaseCount(e.target.value)}
                 placeholder="Ex: 4"
-                className="bg-[#141414] border-[#2A2A2A] text-white w-32"
+                className="bg-card border-border text-foreground w-32"
               />
             </div>
           </div>
@@ -655,10 +655,10 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
                 "p-4 rounded-lg border text-center transition-colors",
                 detailLevel === level.id
                   ? "bg-[#ff6b00]/10 border-[#ff6b00]"
-                  : "bg-[#1A1A1A] border-[#2A2A2A] hover:border-neutral-500"
+                  : "bg-[#1A1A1A] border-border hover:border-neutral-500"
               )}
             >
-              <p className={cn("text-sm font-medium", detailLevel === level.id ? "text-[#ff6b00]" : "text-neutral-300")}>
+              <p className={cn("text-sm font-medium", detailLevel === level.id ? "text-[#ff6b00]" : "text-foreground")}>
                 {level.label}
               </p>
               <p className="text-xs text-neutral-500 mt-1">{level.description}</p>
@@ -680,10 +680,10 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
           </div>
 
           {/* Generated report */}
-          <div className="max-h-[400px] overflow-y-auto space-y-6 p-4 bg-[#1A1A1A] rounded-lg border border-[#2A2A2A]">
+          <div className="max-h-[400px] overflow-y-auto space-y-6 p-4 bg-[#1A1A1A] rounded-lg border border-border">
             {/* Resumo Executivo */}
             <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
                 <ClipboardList className="w-4 h-4 text-[#ff6b00]" />
                 Resumo Executivo
               </h3>
@@ -692,7 +692,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
             {/* Objetivos */}
             <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
                 <Target className="w-4 h-4 text-[#ff6b00]" />
                 Objetivos do Projeto
               </h3>
@@ -708,15 +708,15 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
             {/* Equipe */}
             <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
                 <Users className="w-4 h-4 text-[#ff6b00]" />
                 Equipe & Responsabilidades
               </h3>
               <div className="space-y-2">
                 {MOCK_REPORT.equipe.map((member, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 bg-[#141414] rounded">
+                  <div key={i} className="flex items-center justify-between p-2 bg-card rounded">
                     <div>
-                      <span className="text-sm text-white">{member.nome}</span>
+                      <span className="text-sm text-foreground">{member.nome}</span>
                       <span className="text-xs text-neutral-500 ml-2">({member.papel})</span>
                     </div>
                     <span className="text-xs text-neutral-400">{member.responsabilidade}</span>
@@ -727,13 +727,13 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
             {/* Sprints */}
             <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
                 <Calendar className="w-4 h-4 text-[#ff6b00]" />
                 Sprints / Etapas
               </h3>
               <div className="space-y-3">
                 {MOCK_REPORT.sprints.map((sprint, i) => (
-                  <div key={i} className="p-3 bg-[#141414] rounded-lg border border-[#2A2A2A]">
+                  <div key={i} className="p-3 bg-card rounded-lg border border-border">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-[#ff6b00]">Sprint {sprint.numero}: {sprint.nome}</span>
                       <Badge className="bg-[#2A2A2A] text-neutral-400 text-xs">{sprint.duracao}</Badge>
@@ -754,7 +754,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
             {/* Riscos */}
             <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
                 <AlertTriangle className="w-4 h-4 text-yellow-500" />
                 Riscos Identificados
               </h3>
@@ -770,7 +770,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
             {/* Proximos Passos */}
             <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
                 Proximos Passos
               </h3>
@@ -799,13 +799,13 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
               onClick={handleManualSave}
               disabled={isSaving}
               variant="outline"
-              className="flex-1 border-[#2A2A2A] text-neutral-400 hover:text-white hover:border-neutral-500"
+              className="flex-1 border-border text-neutral-400 hover:text-foreground hover:border-neutral-500"
             >
               {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               Salvar Report
             </Button>
             <Button
-              className="flex-1 bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white"
+              className="flex-1 bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground"
             >
               <Send className="w-4 h-4 mr-2" />
               Enviar para Equipe
@@ -825,7 +825,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
     return (
       <div className="space-y-6">
         <div className="text-center mb-6">
-          <h2 className="text-lg font-semibold text-white">Revisar e Gerar Relatorio</h2>
+          <h2 className="text-lg font-semibold text-foreground">Revisar e Gerar Relatorio</h2>
         </div>
 
         {/* Summary card */}
@@ -835,11 +835,11 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <span className="text-neutral-500">Projeto:</span>
-              <span className="text-white ml-2">{projectName}</span>
+              <span className="text-foreground ml-2">{projectName}</span>
             </div>
             <div>
               <span className="text-neutral-500">Cliente:</span>
-              <span className="text-white ml-2">{clientName}</span>
+              <span className="text-foreground ml-2">{clientName}</span>
             </div>
             <div>
               <span className="text-neutral-500">Codigo:</span>
@@ -847,38 +847,38 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             </div>
             <div>
               <span className="text-neutral-500">Tipo:</span>
-              <span className="text-white ml-2">{REPORT_TYPES.find(t => t.id === reportType)?.label}</span>
+              <span className="text-foreground ml-2">{REPORT_TYPES.find(t => t.id === reportType)?.label}</span>
             </div>
             <div>
               <span className="text-neutral-500">Data:</span>
-              <span className="text-white ml-2">{meetingDate}</span>
+              <span className="text-foreground ml-2">{meetingDate}</span>
             </div>
             <div>
               <span className="text-neutral-500">Responsavel:</span>
-              <span className="text-white ml-2">{responsible}</span>
+              <span className="text-foreground ml-2">{responsible}</span>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#2A2A2A]">
+          <div className="pt-3 border-t border-border">
             <div className="text-sm mb-2">
               <span className="text-neutral-500">Destinatarios:</span>
-              <span className="text-white ml-2">
+              <span className="text-foreground ml-2">
                 {selectedRecipients.map(r => RECIPIENTS.find(rec => rec.id === r)?.label).join(", ")}
               </span>
             </div>
             {developers.length > 0 && (
               <div className="text-sm mb-2">
                 <span className="text-neutral-500">Desenvolvedores:</span>
-                <span className="text-white ml-2">{developers.join(", ")}</span>
+                <span className="text-foreground ml-2">{developers.join(", ")}</span>
               </div>
             )}
             <div className="text-sm mb-2">
               <span className="text-neutral-500">Formato:</span>
-              <span className="text-white ml-2">{DELIVERY_FORMATS.find(f => f.id === deliveryFormat)?.label}</span>
+              <span className="text-foreground ml-2">{DELIVERY_FORMATS.find(f => f.id === deliveryFormat)?.label}</span>
             </div>
             <div className="text-sm">
               <span className="text-neutral-500">Nivel de detalhe:</span>
-              <span className="text-white ml-2">{DETAIL_LEVELS.find(l => l.id === detailLevel)?.label}</span>
+              <span className="text-foreground ml-2">{DETAIL_LEVELS.find(l => l.id === detailLevel)?.label}</span>
             </div>
           </div>
         </div>
@@ -890,7 +890,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             value={additionalPrompt}
             onChange={e => setAdditionalPrompt(e.target.value)}
             placeholder="Alguma instrucao extra para o relatorio? Ex: destacar riscos, incluir cronograma..."
-            className="min-h-[80px] bg-[#1A1A1A] border-[#2A2A2A] text-white placeholder:text-neutral-600 focus:border-[#ff6b00] resize-none"
+            className="min-h-[80px] bg-[#1A1A1A] border-border text-foreground placeholder:text-neutral-600 focus:border-[#ff6b00] resize-none"
           />
         </div>
 
@@ -905,7 +905,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
         ) : (
           <Button
             onClick={handleGenerate}
-            className="w-full bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white h-12 text-base font-medium shadow-lg shadow-[#ff6b00]/20 hover:shadow-[#ff6b00]/30 transition-shadow"
+            className="w-full bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground h-12 text-base font-medium shadow-lg shadow-[#ff6b00]/20 hover:shadow-[#ff6b00]/30 transition-shadow"
           >
             <Zap className="w-5 h-5 mr-2" />
             Gerar Relatorio com IA
@@ -917,15 +917,15 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-[#161616] border-[#2A2A2A] text-white max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="bg-card border-border text-foreground max-w-2xl max-h-[90vh] overflow-y-auto p-0">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[#2A2A2A]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#ff6b00]/20 flex items-center justify-center">
               <FileText className="w-5 h-5 text-[#ff6b00]" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Ler Transcricao</h2>
+              <h2 className="text-lg font-semibold text-foreground">Ler Transcricao</h2>
               <p className="text-xs text-neutral-500">Passo {step} de 4</p>
             </div>
           </div>
@@ -933,7 +933,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
             variant="ghost"
             size="icon"
             onClick={handleClose}
-            className="text-neutral-500 hover:text-white"
+            className="text-neutral-500 hover:text-foreground"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -962,13 +962,13 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
 
         {/* Footer */}
         {!generationComplete && (
-          <div className="flex justify-between px-6 py-4 border-t border-[#2A2A2A]">
+          <div className="flex justify-between px-6 py-4 border-t border-border">
             <div>
               {step > 1 && !isGenerating && (
                 <Button
                   variant="ghost"
                   onClick={handleBack}
-                  className="text-neutral-400 hover:text-white"
+                  className="text-neutral-400 hover:text-foreground"
                 >
                   <ChevronLeft className="w-4 h-4 mr-1" />
                   Voltar
@@ -984,7 +984,7 @@ export function TranscriptModal({ open, onOpenChange }: TranscriptModalProps) {
                     (step === 2 && !canProceedStep2) ||
                     (step === 3 && !canProceedStep3)
                   }
-                  className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#ff6b00] hover:bg-[#ff6b00]/90 text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Proximo
                   <ChevronRight className="w-4 h-4 ml-1" />

@@ -166,7 +166,7 @@ export default function IntelligencePage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-xl font-display font-bold text-white">Inteligence Center</h1>
+              <h1 className="text-xl font-display font-bold text-foreground">Inteligence Center</h1>
               <p className="text-sm text-neutral-500">Metricas conectadas em tempo real com o Supabase</p>
             </div>
 
@@ -174,18 +174,18 @@ export default function IntelligencePage() {
               {/* Relatorios Anteriores DRAWER (Sheet) */}
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" className="border-[#2A2A2A] text-neutral-400 hover:text-white bg-transparent">
+                  <Button variant="outline" className="border-border text-neutral-400 hover:text-foreground bg-transparent">
                     <FolderOpen className="w-4 h-4 mr-2" />
                     Relatorios Anteriores
                   </Button>
                 </SheetTrigger>
-                <SheetContent className="bg-[#0f0f0f] border-[#2A2A2A] text-white w-full sm:w-[540px]">
+                <SheetContent className="bg-[#0f0f0f] border-border text-foreground w-full sm:w-[540px]">
                   <SheetHeader className="mb-6">
-                    <SheetTitle className="text-white font-display">Acervo de Relatorios</SheetTitle>
+                    <SheetTitle className="text-foreground font-display">Acervo de Relatorios</SheetTitle>
                   </SheetHeader>
                   <div className="space-y-4">
                     {reports.map((report: any) => (
-                      <div key={report.id} className="p-4 bg-[#141414] border border-[#2A2A2A] rounded-lg">
+                      <div key={report.id} className="p-4 bg-card border border-border rounded-lg">
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-medium text-sm">{report.titulo}</h3>
@@ -195,7 +195,7 @@ export default function IntelligencePage() {
                             {report.status.toUpperCase()}
                           </Badge>
                         </div>
-                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-[#2A2A2A]">
+                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-border">
                           <span className="text-[10px] text-neutral-500">{new Date(report.created_at).toLocaleDateString()}</span>
                           <Button size="sm" variant="ghost" className="h-6 text-xs text-orange-500 hover:text-orange-400">
                              <Download className="w-3 h-3 mr-1" /> Exportar
@@ -211,25 +211,25 @@ export default function IntelligencePage() {
               {/* Novo Relatorio Modal */}
               <Dialog open={newReportOpen} onOpenChange={setNewReportOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                  <Button className="bg-orange-500 hover:bg-orange-600 text-foreground">
                     <Plus className="w-4 h-4 mr-2" />
                     Novo Relatorio
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white">
+                <DialogContent className="bg-card border-border text-foreground">
                   <DialogHeader>
                     <DialogTitle className="font-display">Gerar Novo Relatorio</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3 mt-4">
                     <div>
                       <Label className="text-xs text-neutral-400">Titulo do Relatorio</Label>
-                      <Input className="bg-[#1A1A1A] border-[#2A2A2A]" value={reportForm.titulo} onChange={e => setReportForm({...reportForm, titulo: e.target.value})} />
+                      <Input className="bg-[#1A1A1A] border-border" value={reportForm.titulo} onChange={e => setReportForm({...reportForm, titulo: e.target.value})} />
                     </div>
                     <div>
                       <Label className="text-xs text-neutral-400">Projeto Vinculado</Label>
                       <Select value={reportForm.projeto_id} onValueChange={v => setReportForm({...reportForm, projeto_id: v})}>
-                        <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]"><SelectValue placeholder="Selecione..."/></SelectTrigger>
-                        <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                        <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue placeholder="Selecione..."/></SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-border">
                           {projects?.map((p: any) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
@@ -237,18 +237,18 @@ export default function IntelligencePage() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <Label className="text-xs text-neutral-400">Data Inicio</Label>
-                        <Input type="date" className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]" value={reportForm.periodo_inicio} onChange={e => setReportForm({...reportForm, periodo_inicio: e.target.value})} />
+                        <Input type="date" className="bg-[#1A1A1A] border-border [color-scheme:dark]" value={reportForm.periodo_inicio} onChange={e => setReportForm({...reportForm, periodo_inicio: e.target.value})} />
                       </div>
                       <div>
                         <Label className="text-xs text-neutral-400">Data Fim</Label>
-                        <Input type="date" className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]" value={reportForm.periodo_fim} onChange={e => setReportForm({...reportForm, periodo_fim: e.target.value})} />
+                        <Input type="date" className="bg-[#1A1A1A] border-border [color-scheme:dark]" value={reportForm.periodo_fim} onChange={e => setReportForm({...reportForm, periodo_fim: e.target.value})} />
                       </div>
                     </div>
                     <div>
                        <Label className="text-xs text-neutral-400">Tipo</Label>
                        <Select value={reportForm.tipo} onValueChange={v => setReportForm({...reportForm, tipo: v})}>
-                        <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]"><SelectValue /></SelectTrigger>
-                        <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                        <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue /></SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-border">
                           <SelectItem value="Mensal">Mensal</SelectItem>
                           <SelectItem value="Sprint">Sprint</SelectItem>
                           <SelectItem value="Projeto">Fechamento de Projeto</SelectItem>
@@ -257,7 +257,7 @@ export default function IntelligencePage() {
                     </div>
                     <div>
                       <Label className="text-xs text-neutral-400">Observacoes</Label>
-                      <Textarea className="bg-[#1A1A1A] border-[#2A2A2A]" value={reportForm.observacoes} onChange={e => setReportForm({...reportForm, observacoes: e.target.value})} />
+                      <Textarea className="bg-[#1A1A1A] border-border" value={reportForm.observacoes} onChange={e => setReportForm({...reportForm, observacoes: e.target.value})} />
                     </div>
                     <Button onClick={handleCreateReport} className="w-full bg-orange-500 hover:bg-orange-600 mt-2">Criar Relatório e Salvar</Button>
                   </div>
@@ -275,14 +275,14 @@ export default function IntelligencePage() {
               {/* KPIs Realtime */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {kpis.map((kpi, index) => (
-                  <Card key={index} className="bg-[#141414] border-[#2A2A2A]">
+                  <Card key={index} className="bg-card border-border">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="text-xs text-neutral-500 tracking-wider mb-1">{kpi.label.toUpperCase()}</p>
                           <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-bold text-white font-mono">{kpi.value}</span>
-                            {kpi.suffix && <span className="text-lg text-white">{kpi.suffix}</span>}
+                            <span className="text-2xl font-bold text-foreground font-mono">{kpi.value}</span>
+                            {kpi.suffix && <span className="text-lg text-foreground">{kpi.suffix}</span>}
                           </div>
                           {kpi.trend !== "stable" && (
                             <div className={cn(
@@ -308,7 +308,7 @@ export default function IntelligencePage() {
               {/* Main Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 {/* Projetos por Etapa */}
-                <Card className="bg-[#141414] border-[#2A2A2A]">
+                <Card className="bg-card border-border">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-neutral-400 tracking-wider flex items-center gap-2">
                       <PieChart className="w-4 h-4 text-orange-500" />
@@ -320,23 +320,23 @@ export default function IntelligencePage() {
                       {projectsByStage.map((item: any, index: number) => (
                         <div key={index} className="flex items-center gap-3">
                           <div className={cn("w-3 h-3 rounded-full", item.color)} />
-                          <span className="flex-1 text-sm text-neutral-300">{item.stage}</span>
-                          <span className="text-sm font-mono text-white">{item.count}</span>
+                          <span className="flex-1 text-sm text-foreground">{item.stage}</span>
+                          <span className="text-sm font-mono text-foreground">{item.count}</span>
                         </div>
                       ))}
                       {projectsByStage.length === 0 && <p className="text-xs text-neutral-500 text-center py-4">Sem projetos mapeados nas etapas.</p>}
                     </div>
-                    <div className="mt-4 pt-4 border-t border-[#2A2A2A]">
+                    <div className="mt-4 pt-4 border-t border-border">
                       <div className="flex justify-between text-xs text-neutral-500">
                         <span>Total Global</span>
-                        <span className="font-mono text-white">{projectsByStage.reduce((a: any, b: any) => a + b.count, 0)}</span>
+                        <span className="font-mono text-foreground">{projectsByStage.reduce((a: any, b: any) => a + b.count, 0)}</span>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Performance por Setor */}
-                <Card className="bg-[#141414] border-[#2A2A2A]">
+                <Card className="bg-card border-border">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-neutral-400 tracking-wider flex items-center gap-2">
                       <BarChart3 className="w-4 h-4 text-orange-500" />
@@ -348,7 +348,7 @@ export default function IntelligencePage() {
                       {sectorPerformance.map((sector: any, index: number) => (
                         <div key={index}>
                           <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-neutral-300">{sector.sector}</span>
+                            <span className="text-foreground">{sector.sector}</span>
                             <span className="text-neutral-500">
                               {sector.completed}/{sector.tasks} ({sector.velocity}%)
                             </span>
@@ -367,7 +367,7 @@ export default function IntelligencePage() {
                 {/* Alertas e Relatorios */}
                 <div className="space-y-6">
                   {/* Alertas */}
-                  <Card className="bg-[#141414] border-[#2A2A2A]">
+                  <Card className="bg-card border-border">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-sm font-medium text-neutral-400 tracking-wider flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-orange-500" />
@@ -390,14 +390,14 @@ export default function IntelligencePage() {
                           </div>
                         ))}
                         {dbAlerts.length === 0 && (
-                          <div className="text-xs text-neutral-500 text-center py-4 border border-dashed border-[#2A2A2A] rounded-lg">Sistema saudavel. Nenhum alerta pendente.</div>
+                          <div className="text-xs text-neutral-500 text-center py-4 border border-dashed border-border rounded-lg">Sistema saudavel. Nenhum alerta pendente.</div>
                         )}
                       </div>
                     </CardContent>
                   </Card>
 
                   {/* Relatorios Recentes */}
-                  <Card className="bg-[#141414] border-[#2A2A2A]">
+                  <Card className="bg-card border-border">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-sm font-medium text-neutral-400 tracking-wider flex items-center gap-2">
@@ -416,7 +416,7 @@ export default function IntelligencePage() {
                             <div className="flex items-center gap-2">
                               <FileText className="w-4 h-4 text-neutral-500" />
                               <div className="w-[140px] md:w-[100px] xl:w-[140px]">
-                                <p className="text-xs text-white truncate">{report.titulo}</p>
+                                <p className="text-xs text-foreground truncate">{report.titulo}</p>
                                 <p className="text-[10px] text-neutral-500 truncate">{report.projetos?.name}</p>
                               </div>
                             </div>

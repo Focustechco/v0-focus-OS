@@ -209,7 +209,7 @@ export function NovoRelatorioWizard({ open, onOpenChange, onSuccess, defaultProj
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#1A1A1A] border-[#2A2A2A] text-white p-0 max-w-[560px] overflow-hidden gap-0">
+      <DialogContent className="bg-[#1A1A1A] border-border text-foreground p-0 max-w-[560px] overflow-hidden gap-0">
         {/* Radix accessibility requirement — visually hidden */}
         <DialogTitle className="sr-only">Novo Relatório de Projeto</DialogTitle>
         <DialogDescription className="sr-only">Wizard de criação de relatório em 3 passos</DialogDescription>
@@ -220,12 +220,12 @@ export function NovoRelatorioWizard({ open, onOpenChange, onSuccess, defaultProj
             <FileText className="w-5 h-5 text-orange-500" />
           </div>
           <div className="flex-1">
-            <h2 className="font-mono text-sm font-bold tracking-[0.15em] uppercase text-white">
+            <h2 className="font-mono text-sm font-bold tracking-[0.15em] uppercase text-foreground">
               Novo Relatório de Projeto
             </h2>
             <p className="text-[11px] text-neutral-500 mt-0.5">Passo {step} de 3</p>
           </div>
-          <button onClick={() => onOpenChange(false)} className="text-neutral-600 hover:text-white transition-colors">
+          <button onClick={() => onOpenChange(false)} className="text-neutral-600 hover:text-foreground transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -273,23 +273,23 @@ export function NovoRelatorioWizard({ open, onOpenChange, onSuccess, defaultProj
         </div>
 
         {/* ── Footer ── */}
-        <div className="flex items-center justify-between p-6 border-t border-[#2A2A2A] mt-2">
+        <div className="flex items-center justify-between p-6 border-t border-border mt-2">
           <div className="flex items-center gap-2">
             {step > 1 && (
-              <Button variant="ghost" onClick={() => setStep(step - 1)} className="text-neutral-400 hover:text-white gap-1">
+              <Button variant="ghost" onClick={() => setStep(step - 1)} className="text-neutral-400 hover:text-foreground gap-1">
                 <ChevronLeft className="w-4 h-4" /> VOLTAR
               </Button>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-neutral-500 hover:text-white text-xs">
+            <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-neutral-500 hover:text-foreground text-xs">
               CANCELAR
             </Button>
             {step < 3 ? (
               <Button
                 onClick={() => setStep(step + 1)}
                 disabled={step === 1 ? !canProceed1 : !canProceed2}
-                className="bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white font-bold gap-1 min-w-[110px]"
+                className="bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-foreground font-bold gap-1 min-w-[110px]"
               >
                 PRÓXIMO <ChevronRight className="w-4 h-4" />
               </Button>
@@ -297,7 +297,7 @@ export function NovoRelatorioWizard({ open, onOpenChange, onSuccess, defaultProj
               <Button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold gap-2 min-w-[160px]"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-bold gap-2 min-w-[160px]"
               >
                 {isGenerating ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> GERANDO...</>
@@ -333,11 +333,11 @@ function Step1({ projetoSearch, setProjetoSearch, projetoId, setProjetoId, proje
             disabled={!!defaultProjetoId}
             className={cn(
               "w-full flex items-center justify-between px-4 py-3 rounded-lg border text-left transition-all",
-              projetoId ? "border-orange-500 bg-orange-500/5" : "border-[#2A2A2A] bg-[#0A0A0A] hover:border-neutral-600",
+              projetoId ? "border-orange-500 bg-orange-500/5" : "border-border bg-background hover:border-neutral-600",
               defaultProjetoId ? "cursor-not-allowed opacity-70" : ""
             )}
           >
-            <span className={projetoId ? "text-white" : "text-neutral-600"}>
+            <span className={projetoId ? "text-foreground" : "text-neutral-600"}>
               {projetoId
                 ? projetosFiltrados.find((p: any) => p.id === projetoId)?.nome ?? "Projeto selecionado"
                 : "Selecionar projeto..."}
@@ -345,14 +345,14 @@ function Step1({ projetoSearch, setProjetoSearch, projetoId, setProjetoId, proje
             {!defaultProjetoId && <ChevronDown className="w-4 h-4 text-neutral-500" />}
           </button>
           {showDropdown && !defaultProjetoId && (
-            <div className="absolute z-50 w-full mt-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg shadow-2xl overflow-hidden">
-              <div className="p-2 border-b border-[#2A2A2A]">
+            <div className="absolute z-50 w-full mt-1 bg-[#1A1A1A] border border-border rounded-lg shadow-2xl overflow-hidden">
+              <div className="p-2 border-b border-border">
                 <input
                   autoFocus
                   value={projetoSearch}
                   onChange={(e) => setProjetoSearch(e.target.value)}
                   placeholder="Buscar projeto..."
-                  className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded px-3 py-1.5 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-orange-500"
+                  className="w-full bg-background border border-border rounded px-3 py-1.5 text-sm text-foreground placeholder:text-neutral-600 outline-none focus:border-orange-500"
                 />
               </div>
               <div className="max-h-48 overflow-y-auto">
@@ -365,7 +365,7 @@ function Step1({ projetoSearch, setProjetoSearch, projetoId, setProjetoId, proje
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#2A2A2A] transition-colors text-left"
                   >
                     {p.codigo && <span className="text-xs font-mono font-bold text-orange-500">{p.codigo}</span>}
-                    <span className="text-sm text-white">{p.nome}</span>
+                    <span className="text-sm text-foreground">{p.nome}</span>
                   </button>
                 ))}
               </div>
@@ -388,7 +388,7 @@ function Step1({ projetoSearch, setProjetoSearch, projetoId, setProjetoId, proje
                 "w-full flex items-center gap-4 px-4 py-3.5 rounded-lg border transition-all text-left",
                 tipo === t.id
                   ? "border-orange-500 bg-orange-500/10"
-                  : "border-[#2A2A2A] bg-[#0A0A0A] hover:border-neutral-600"
+                  : "border-border bg-background hover:border-neutral-600"
               )}
             >
               <div className={cn(
@@ -398,7 +398,7 @@ function Step1({ projetoSearch, setProjetoSearch, projetoId, setProjetoId, proje
                 {tipo === t.id && <div className="w-2 h-2 rounded-[1px] bg-orange-500" />}
               </div>
               <div>
-                <p className={cn("text-sm font-bold", tipo === t.id ? "text-orange-500" : "text-white")}>{t.label}</p>
+                <p className={cn("text-sm font-bold", tipo === t.id ? "text-orange-500" : "text-foreground")}>{t.label}</p>
                 <p className="text-xs text-neutral-500">{t.sub}</p>
               </div>
             </button>
@@ -438,14 +438,14 @@ function Step2({ secoes, setSecoes, destinatario, setDestinatario, cargoEmpresa,
                 "flex items-center gap-3 px-3 py-2.5 rounded-md border text-left transition-all",
                 secoes[s.id] 
                   ? "border-orange-500/50 bg-orange-500/10" 
-                  : "border-[#2A2A2A] bg-[#0A0A0A] hover:border-neutral-600"
+                  : "border-border bg-background hover:border-neutral-600"
               )}
             >
               <div className={cn(
                 "w-4 h-4 rounded-sm border flex items-center justify-center flex-shrink-0 transition-colors",
-                secoes[s.id] ? "bg-orange-500 border-orange-500" : "border-neutral-600 bg-[#141414]"
+                secoes[s.id] ? "bg-orange-500 border-orange-500" : "border-neutral-600 bg-card"
               )}>
-                 {secoes[s.id] && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                 {secoes[s.id] && <Check className="w-3 h-3 text-foreground" strokeWidth={3} />}
               </div>
               <span className={cn("text-[10px] font-mono font-medium uppercase tracking-[0.1em] truncate", secoes[s.id] ? "text-orange-500" : "text-neutral-500")}>
                 {s.label}
@@ -464,13 +464,13 @@ function Step2({ secoes, setSecoes, destinatario, setDestinatario, cargoEmpresa,
             <p className="text-[10px] text-neutral-500">Nome do destinatário</p>
             <Input value={destinatario} onChange={(e) => setDestinatario(e.target.value)}
               placeholder="João Silva"
-              className="bg-[#0A0A0A] border-[#2A2A2A] text-sm focus:border-orange-500" />
+              className="bg-background border-border text-sm focus:border-orange-500" />
           </div>
           <div className="space-y-1.5">
             <p className="text-[10px] text-neutral-500">Cargo/Empresa</p>
             <Input value={cargoEmpresa} onChange={(e) => setCargoEmpresa(e.target.value)}
               placeholder="CEO, TechFlow Ltda"
-              className="bg-[#0A0A0A] border-[#2A2A2A] text-sm focus:border-orange-500" />
+              className="bg-background border-border text-sm focus:border-orange-500" />
           </div>
         </div>
 
@@ -479,7 +479,7 @@ function Step2({ secoes, setSecoes, destinatario, setDestinatario, cargoEmpresa,
           <select
             value={preparadoPor}
             onChange={(e) => setPreparadoPor(e.target.value)}
-            className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-md px-3 py-2 text-sm text-white outline-none focus:border-orange-500"
+            className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm text-foreground outline-none focus:border-orange-500"
           >
             <option value="">Selecionar membro...</option>
             {equipe.map((m: any) => (
@@ -507,15 +507,15 @@ function Step3({ projeto, periodLabel, tipo, preparadoPorNome, secoesAtivas, tot
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] overflow-hidden">
-        <div className="px-5 py-3 border-b border-[#2A2A2A]">
+      <div className="rounded-xl border border-border bg-background overflow-hidden">
+        <div className="px-5 py-3 border-b border-border">
           <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-neutral-500">RESUMO DA CONFIGURAÇÃO</p>
         </div>
         <div className="divide-y divide-[#1A1A1A]">
           {rows.map(({ label, value }) => (
             <div key={label} className="flex items-center justify-between px-5 py-3.5">
               <span className="text-sm text-neutral-500">{label}</span>
-              <span className="text-sm text-white font-medium text-right max-w-[60%]">{value}</span>
+              <span className="text-sm text-foreground font-medium text-right max-w-[60%]">{value}</span>
             </div>
           ))}
         </div>

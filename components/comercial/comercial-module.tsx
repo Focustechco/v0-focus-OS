@@ -49,10 +49,10 @@ export function ComercialModule() {
   if (!isConfigured) {
     return (
       <div className="space-y-6">
-        <div className="bg-[#141414] border border-[#2A2A2A] rounded-lg p-6">
+        <div className="bg-card border border-border rounded-lg p-6">
           <div className="flex items-center gap-3 mb-4">
             <AlertCircle className="w-6 h-6 text-orange-500" />
-            <h2 className="text-lg font-display font-bold text-white">Configuracao Necessaria</h2>
+            <h2 className="text-lg font-display font-bold text-foreground">Configuracao Necessaria</h2>
           </div>
           <p className="text-neutral-400 text-sm mb-6">
             Para usar o Modulo Comercial, voce precisa conectar sua conta do ClickUp. 
@@ -99,38 +99,38 @@ export function ComercialModule() {
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between mb-4">
-          <TabsList className="bg-[#141414] border border-[#2A2A2A] p-1">
+          <TabsList className="bg-card border border-border p-1">
             <TabsTrigger 
               value="pipeline" 
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
             >
               <Kanban className="w-4 h-4" />
               <span className="hidden sm:inline">PIPELINE</span>
             </TabsTrigger>
             <TabsTrigger 
               value="clientes"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
             >
               <Users className="w-4 h-4" />
               <span className="hidden sm:inline">CLIENTES</span>
             </TabsTrigger>
             <TabsTrigger 
               value="dashboard"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
             >
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">DASHBOARD</span>
             </TabsTrigger>
             <TabsTrigger 
               value="atividade"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
             >
               <Activity className="w-4 h-4" />
               <span className="hidden sm:inline">ATIVIDADE</span>
             </TabsTrigger>
             <TabsTrigger 
               value="configurar"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
             >
               <Settings className="w-4 h-4" />
               <span className="hidden sm:inline">CONFIGURAR</span>

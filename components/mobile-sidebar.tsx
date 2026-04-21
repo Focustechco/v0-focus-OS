@@ -129,9 +129,9 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
       />
 
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-72 bg-[#0F0F0F] border-r border-[#2A2A2A] z-50 lg:hidden flex flex-col animate-in slide-in-from-left duration-300">
+      <div className="fixed inset-y-0 left-0 w-72 bg-background border-r border-border z-50 lg:hidden flex flex-col animate-in slide-in-from-left duration-300">
         {/* Header */}
-        <div className="p-4 border-b border-[#2A2A2A] flex items-center justify-between">
+        <div className="p-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/logo.svg" alt="Focus OS" className="w-10 h-10" />
             <div>
@@ -143,7 +143,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
+            className="text-neutral-500 hover:text-orange-500 hover:bg-accent/10"
           >
             <X className="w-5 h-5" />
           </Button>
@@ -171,10 +171,10 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         onClick={onClose}
                         className={`flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group relative flex-1 ${
                           isActive(item.href) && !isSubItemActive
-                            ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                            ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20"
                             : isSubItemActive || isExpanded
                             ? "bg-orange-500/10 text-orange-500"
-                            : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
+                            : "text-neutral-400 hover:text-foreground hover:bg-accent/10 active:bg-[#252525]"
                         }`}
                       >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -184,7 +184,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                             variant="secondary"
                             className={`text-[10px] px-1.5 py-0 h-5 ${
                               isActive(item.href) && !isSubItemActive
-                                ? "bg-white/20 text-white"
+                                ? "bg-white/20 text-foreground"
                                 : "bg-orange-500/20 text-orange-500"
                             }`}
                           >
@@ -196,7 +196,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         variant="ghost"
                         size="icon"
                         onClick={() => setExpanded(!isExpanded)}
-                        className="h-10 w-10 text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
+                        className="h-10 w-10 text-neutral-500 hover:text-orange-500 hover:bg-accent/10"
                       >
                         {isExpanded ? (
                           <ChevronDown className="w-4 h-4" />
@@ -207,7 +207,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     </div>
                     {/* Subitems */}
                     {isExpanded && (
-                      <div className="ml-4 mt-1 space-y-1 border-l border-[#2A2A2A] pl-2">
+                      <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
                         {subItems.map((subItem) => (
                           <Link
                             key={subItem.id}
@@ -215,8 +215,8 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                             onClick={onClose}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative ${
                               isActive(subItem.href)
-                                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                                : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
+                                ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20"
+                                : "text-neutral-400 hover:text-foreground hover:bg-accent/10 active:bg-[#252525]"
                             }`}
                           >
                             <subItem.icon className="w-4 h-4 flex-shrink-0" />
@@ -226,7 +226,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                                 variant="secondary"
                                 className={`text-[10px] px-1.5 py-0 h-5 ${
                                   isActive(subItem.href)
-                                    ? "bg-white/20 text-white"
+                                    ? "bg-white/20 text-foreground"
                                     : "bg-orange-500/20 text-orange-500"
                                 }`}
                               >
@@ -245,8 +245,8 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                   onClick={onClose}
                   className={`flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group relative ${
                     isActive(item.href)
-                      ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                      : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A] active:bg-[#252525]"
+                      ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20"
+                      : "text-neutral-400 hover:text-foreground hover:bg-accent/10 active:bg-[#252525]"
                   }`}
                 >
                   <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -256,7 +256,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                       variant="secondary"
                       className={`text-[10px] px-1.5 py-0 h-5 ${
                         isActive(item.href)
-                          ? "bg-white/20 text-white"
+                          ? "bg-white/20 text-foreground"
                           : "bg-orange-500/20 text-orange-500"
                       }`}
                     >
@@ -275,7 +275,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             <Button
               onClick={handleInstall}
               variant="outline"
-              className="w-full bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500 hover:text-white transition-all text-xs font-bold h-12"
+              className="w-full bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500 hover:text-foreground transition-all text-xs font-bold h-12"
             >
               <Download className="w-4 h-4 mr-2" />
               INSTALAR APLICATIVO
@@ -284,7 +284,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
         )}
 
         {/* System Status */}
-        <div className="p-3 m-2 bg-[#141414] border border-[#2A2A2A] rounded-lg">
+        <div className="p-3 m-2 bg-card border border-border rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-xs text-green-500 font-mono tracking-wider">SISTEMA ONLINE</span>

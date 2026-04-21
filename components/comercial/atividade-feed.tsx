@@ -176,7 +176,7 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
       case 'created':
         return (
           <span>
-            criou novo deal: <span className="text-white font-medium">{activity.dealName}</span>
+            criou novo deal: <span className="text-foreground font-medium">{activity.dealName}</span>
             {' '}<Badge variant="outline" className="text-[9px] bg-green-500/10 border-green-500/30 text-green-500">LEAD</Badge>
           </span>
         )
@@ -184,7 +184,7 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
         return activity.details.isClosed ? (
           <span>
             <span className="text-green-500 font-bold">FECHOU</span> deal: {' '}
-            <span className="text-white font-medium">{activity.dealName}</span>
+            <span className="text-foreground font-medium">{activity.dealName}</span>
             {activity.details.value && (
               <span className="text-orange-500 font-mono ml-2">{formatCurrency(activity.details.value)}/mes</span>
             )}
@@ -192,13 +192,13 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
         ) : (
           <span>
             <span className="text-red-500 font-bold">PERDEU</span> deal: {' '}
-            <span className="text-white font-medium">{activity.dealName}</span>
+            <span className="text-foreground font-medium">{activity.dealName}</span>
           </span>
         )
       case 'status_change':
         return (
           <span>
-            moveu <span className="text-white font-medium">{activity.dealName}</span>
+            moveu <span className="text-foreground font-medium">{activity.dealName}</span>
             {' '}<ArrowRight className="w-3 h-3 inline" />{' '}
             <Badge variant="outline" className="text-[9px] bg-orange-500/10 border-orange-500/30 text-orange-500">
               {activity.details.to}
@@ -208,14 +208,14 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
       case 'comment':
         return (
           <span>
-            adicionou comentario em <span className="text-white font-medium">{activity.dealName}</span>:
+            adicionou comentario em <span className="text-foreground font-medium">{activity.dealName}</span>:
             <span className="text-neutral-400 block mt-1">"{activity.details.text}"</span>
           </span>
         )
       case 'value_change':
         return (
           <span>
-            atualizou valor de <span className="text-white font-medium">{activity.dealName}</span>:
+            atualizou valor de <span className="text-foreground font-medium">{activity.dealName}</span>:
             <span className="text-orange-500 font-mono ml-2">{formatCurrency(activity.details.value!)}</span>
           </span>
         )
@@ -225,19 +225,19 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
   }
 
   return (
-    <Card className="bg-[#141414] border-[#2A2A2A]">
-      <CardHeader className="pb-3 border-b border-[#2A2A2A]">
+    <Card className="bg-card border-border">
+      <CardHeader className="pb-3 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+          <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
             <Activity className="w-4 h-4 text-orange-500" />
             ATIVIDADE DO CRM
           </CardTitle>
           <Select value={filterType} onValueChange={(v) => setFilterType(v as ActivityType)}>
-            <SelectTrigger className="w-40 bg-[#0A0A0A] border-[#2A2A2A] h-8">
+            <SelectTrigger className="w-40 bg-background border-border h-8">
               <Filter className="w-3 h-3 mr-2" />
               <SelectValue placeholder="Filtrar por" />
             </SelectTrigger>
-            <SelectContent className="bg-[#141414] border-[#2A2A2A]">
+            <SelectContent className="bg-card border-border">
               <SelectItem value="all">Todas</SelectItem>
               <SelectItem value="status_change">Mudancas de Status</SelectItem>
               <SelectItem value="created">Novos Deals</SelectItem>
@@ -268,7 +268,7 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
                   {activities.map((activity) => (
                     <div 
                       key={activity.id}
-                      className="flex gap-3 p-3 rounded-lg hover:bg-[#1A1A1A] transition-colors group"
+                      className="flex gap-3 p-3 rounded-lg hover:bg-accent/10 transition-colors group"
                     >
                       {/* Time */}
                       <div className="w-12 flex-shrink-0">
@@ -316,7 +316,7 @@ export function AtividadeFeed({ deals }: AtividadeFeedProps) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-7 w-7 text-neutral-500 hover:text-white"
+                          className="h-7 w-7 text-neutral-500 hover:text-foreground"
                           onClick={() => window.open(activity.dealUrl, '_blank')}
                         >
                           <ExternalLink className="w-3 h-3" />

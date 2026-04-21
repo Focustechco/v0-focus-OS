@@ -67,7 +67,7 @@ export default function ClientesPage() {
     <PageWrapper title="CLIENTES" breadcrumb="CLIENTES">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-xl font-display font-bold text-white tracking-tight">Clientes</h1>
+              <h1 className="text-xl font-display font-bold text-foreground tracking-tight">Clientes</h1>
               <p className="text-sm text-neutral-500">Gerencie os clientes da Focus Tecnologia</p>
             </div>
 
@@ -76,14 +76,14 @@ export default function ClientesPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
                 <Input 
                   placeholder="Buscar clientes..." 
-                  className="pl-9 bg-[#141414] border-[#2A2A2A] text-white w-[250px] focus:border-orange-500/50"
+                  className="pl-9 bg-card border-border text-foreground w-[250px] focus:border-orange-500/50"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
               <Button 
                 onClick={() => setNovoClienteOpen(true)}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-medium"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-medium"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Novo Cliente
@@ -94,15 +94,15 @@ export default function ClientesPage() {
           {isLoading ? (
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1,2,3,4,5,6].map(i => (
-                  <div key={i} className="h-[200px] bg-[#141414] border border-[#2A2A2A] rounded-xl animate-pulse" />
+                  <div key={i} className="h-[200px] bg-card border border-border rounded-xl animate-pulse" />
                 ))}
              </div>
           ) : filteredClientes.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-[50vh] text-center">
-              <div className="w-16 h-16 bg-[#141414] border border-[#2A2A2A] rounded-full flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-card border border-border rounded-full flex items-center justify-center mb-4">
                 <Users className="w-8 h-8 text-neutral-700" />
               </div>
-              <h3 className="text-white font-medium">Nenhum cliente encontrado</h3>
+              <h3 className="text-foreground font-medium">Nenhum cliente encontrado</h3>
               <p className="text-neutral-500 text-sm max-w-xs mt-1">
                 {searchTerm ? "Tente ajustar os termos da sua busca." : "Comece cadastrando seu primeiro cliente tecnológico."}
               </p>

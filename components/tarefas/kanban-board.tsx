@@ -36,10 +36,16 @@ export function KanbanBoard({
   }, [])
 
   useEffect(() => {
-    if (tasks) {
-      setLocalTasks(tasks)
+    if (tasks && tasks.length > 0) {
+      // Evita loop infinito: só atualiza se os dados realmente mudarem
+      const hasChanged = JSON.stringify(tasks) !== JSON.stringify(localTasks)
+      if (hasChanged) {
+        setLocalTasks(tasks)
+      }
+    } else if (tasks && tasks.length === 0 && localTasks.length > 0) {
+       setLocalTasks([])
     }
-  }, [tasks])
+  }, [tasks, localTasks])
 
   const filteredTasks = useMemo(() => {
     return localTasks.filter(t => {
@@ -113,7 +119,7 @@ export function KanbanBoard({
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             className={`
-              bg-[#111] p-3 rounded-lg border border-[#2A2A2A] relative flex flex-col gap-2 
+              bg-background p-3 rounded-lg border border-border relative flex flex-col gap-2 
               hover:border-orange-500/30 transition-all group select-none
               ${isPrioAlta ? "border-l-4 border-l-red-500" : ""}
               ${snapshot.isDragging ? "opacity-50 shadow-xl shadow-black/50" : ""}
@@ -121,7 +127,7 @@ export function KanbanBoard({
           >
             {/* Action Header */}
             <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button onClick={(e) => { e.stopPropagation(); onEditTask(t) }} className="p-1 hover:bg-[#2A2A2A] rounded text-neutral-400 hover:text-white">
+              <button onClick={(e) => { e.stopPropagation(); onEditTask(t) }} className="p-1 hover:bg-[#2A2A2A] rounded text-neutral-400 hover:text-foreground">
                 <Edit2 className="w-3.5 h-3.5" />
               </button>
               <button onClick={(e) => handleDelete(t.id, e)} className="p-1 hover:bg-red-500/20 rounded text-neutral-400 hover:text-red-500">
@@ -131,7 +137,7 @@ export function KanbanBoard({
 
             {/* Title & Desc */}
             <div className="pr-12">
-              <h4 className="text-white text-sm font-bold line-clamp-2 leading-tight">{t.titulo}</h4>
+              <h4 className="text-foreground text-sm font-bold line-clamp-2 leading-tight">{t.titulo}</h4>
               {t.descricao && <p className="text-xs text-neutral-500 line-clamp-2 mt-1">{t.descricao}</p>}
             </div>
 
@@ -161,7 +167,7 @@ export function KanbanBoard({
                 )}
               </div>
               
-              <div className="w-6 h-6 rounded-full bg-[#1A1A1A] border border-[#2A2A2A] flex items-center justify-center text-[8px] font-bold text-orange-500 flex-shrink-0">
+              <div className="w-6 h-6 rounded-full bg-[#1A1A1A] border border-border flex items-center justify-center text-[8px] font-bold text-orange-500 flex-shrink-0">
                  {avatar}
               </div>
             </div>
@@ -178,15 +184,15 @@ export function KanbanBoard({
         {/* COLUNA PENDENTE */}
         <div className="flex flex-col gap-3 min-w-[300px]">
           <div className="flex items-center gap-2 border-b-2 border-[#d97706] pb-2">
-            <h3 className="text-white font-bold font-display tracking-wide">Pendente</h3>
-            <Badge className="bg-[#1A1A1A] text-neutral-400 border-[#2A2A2A]">{columns.a_fazer.length}</Badge>
+            <h3 className="text-foreground font-bold font-display tracking-wide">Pendente</h3>
+            <Badge className="bg-[#1A1A1A] text-neutral-400 border-border">{columns.a_fazer.length}</Badge>
           </div>
           <Droppable droppableId="a_fazer">
             {(provided, snapshot) => (
               <div 
                 ref={provided.innerRef} 
                 {...provided.droppableProps}
-                className={`flex-1 bg-[#141414]/50 border border-[#1E1E1E] rounded-xl p-3 flex flex-col gap-3 transition-colors ${snapshot.isDraggingOver ? 'bg-[#1A1A1A]/80' : ''}`}
+                className={`flex-1 bg-card/50 border border-[#1E1E1E] rounded-xl p-3 flex flex-col gap-3 transition-colors ${snapshot.isDraggingOver ? 'bg-[#1A1A1A]/80' : ''}`}
               >
                 {columns.a_fazer.length === 0 && <p className="text-center text-xs text-neutral-600 font-mono py-8">Nenhuma tarefa aqui.</p>}
                 {columns.a_fazer.map((t, i) => renderCard(t, i))}
@@ -199,15 +205,15 @@ export function KanbanBoard({
         {/* COLUNA EM PROGRESSO */}
         <div className="flex flex-col gap-3 min-w-[300px]">
           <div className="flex items-center gap-2 border-b-2 border-[#3b82f6] pb-2">
-            <h3 className="text-white font-bold font-display tracking-wide">Em Progresso</h3>
-            <Badge className="bg-[#1A1A1A] text-neutral-400 border-[#2A2A2A]">{columns.em_progresso.length}</Badge>
+            <h3 className="text-foreground font-bold font-display tracking-wide">Em Progresso</h3>
+            <Badge className="bg-[#1A1A1A] text-neutral-400 border-border">{columns.em_progresso.length}</Badge>
           </div>
           <Droppable droppableId="em_progresso">
             {(provided, snapshot) => (
               <div 
                 ref={provided.innerRef} 
                 {...provided.droppableProps}
-                className={`flex-1 bg-[#141414]/50 border border-[#1E1E1E] rounded-xl p-3 flex flex-col gap-3 transition-colors ${snapshot.isDraggingOver ? 'bg-[#1A1A1A]/80' : ''}`}
+                className={`flex-1 bg-card/50 border border-[#1E1E1E] rounded-xl p-3 flex flex-col gap-3 transition-colors ${snapshot.isDraggingOver ? 'bg-[#1A1A1A]/80' : ''}`}
               >
                 {columns.em_progresso.length === 0 && <p className="text-center text-xs text-neutral-600 font-mono py-8">Nenhuma tarefa aqui.</p>}
                 {columns.em_progresso.map((t, i) => renderCard(t, i))}
@@ -220,15 +226,15 @@ export function KanbanBoard({
         {/* COLUNA CONCLUÍDA */}
         <div className="flex flex-col gap-3 min-w-[300px]">
           <div className="flex items-center gap-2 border-b-2 border-[#22c55e] pb-2">
-            <h3 className="text-white font-bold font-display tracking-wide">Concluída</h3>
-            <Badge className="bg-[#1A1A1A] text-neutral-400 border-[#2A2A2A]">{columns.concluida.length}</Badge>
+            <h3 className="text-foreground font-bold font-display tracking-wide">Concluída</h3>
+            <Badge className="bg-[#1A1A1A] text-neutral-400 border-border">{columns.concluida.length}</Badge>
           </div>
           <Droppable droppableId="concluida">
             {(provided, snapshot) => (
               <div 
                 ref={provided.innerRef} 
                 {...provided.droppableProps}
-                className={`flex-1 bg-[#141414]/50 border border-[#1E1E1E] rounded-xl p-3 flex flex-col gap-3 transition-colors ${snapshot.isDraggingOver ? 'bg-[#1A1A1A]/80' : ''}`}
+                className={`flex-1 bg-card/50 border border-[#1E1E1E] rounded-xl p-3 flex flex-col gap-3 transition-colors ${snapshot.isDraggingOver ? 'bg-[#1A1A1A]/80' : ''}`}
               >
                 {columns.concluida.length === 0 && <p className="text-center text-xs text-neutral-600 font-mono py-8">Nenhuma tarefa aqui.</p>}
                 {columns.concluida.map((t, i) => renderCard(t, i))}

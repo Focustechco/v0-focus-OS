@@ -168,12 +168,12 @@ export function AbaTarefas({ userType }: { userType: string }) {
       {/* Container Grid */}
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-4 space-y-4 order-1 lg:order-1">
-            <Card className="bg-[#141414] border-[#2A2A2A] relative overflow-hidden">
+            <Card className="bg-card border-border relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 font-mono text-[8px] text-orange-500/20 uppercase tracking-widest leading-none">
                     Dailies
                 </div>
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-bold text-white uppercase tracking-tight">Minha Pauta do Dia</CardTitle>
+                    <CardTitle className="text-sm font-bold text-foreground uppercase tracking-tight">Minha Pauta do Dia</CardTitle>
                     <p className="text-[10px] text-neutral-500 font-mono uppercase">
                         {new Date().toLocaleDateString('pt-BR', { dateStyle: 'long' })}
                     </p>
@@ -189,19 +189,19 @@ export function AbaTarefas({ userType }: { userType: string }) {
 
                     <div className="space-y-3 pt-2">
                         {myTasks.length === 0 ? (
-                            <div className="py-8 text-center border border-dashed border-[#2A2A2A] rounded-xl">
+                            <div className="py-8 text-center border border-dashed border-border rounded-xl">
                                 <p className="text-xs text-neutral-600 italic">Sem tarefas para hoje.</p>
                             </div>
                         ) : (
                             myTasks.map(t => (
-                                <div key={t.id} className="flex items-start gap-3 p-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl group hover:border-orange-500/30 transition-all">
+                                <div key={t.id} className="flex items-start gap-3 p-3 bg-background border border-border rounded-xl group hover:border-orange-500/30 transition-all">
                                     <Checkbox 
                                         checked={t.concluida} 
                                         onCheckedChange={() => toggleTask(t.id, t.concluida)}
                                         className="mt-0.5 border-neutral-700 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500" 
                                     />
                                     <div className="flex-1 space-y-1">
-                                        <p className={`text-xs font-medium transition-all ${t.concluida ? 'text-neutral-600 line-through' : 'text-white'}`}>
+                                        <p className={`text-xs font-medium transition-all ${t.concluida ? 'text-neutral-600 line-through' : 'text-foreground'}`}>
                                             {t.titulo}
                                         </p>
                                         {t.descricao && <p className="text-[10px] text-neutral-500 line-clamp-1">{t.descricao}</p>}
@@ -228,7 +228,7 @@ export function AbaTarefas({ userType }: { userType: string }) {
                 <Button 
                     onClick={() => setIsAddModalOpen(true)}
                     variant="outline"
-                    className="w-full sm:w-auto h-8 px-4 bg-[#111] border-[#2A2A2A] text-white hover:bg-orange-500 hover:border-orange-500 transition-all font-mono text-[10px] tracking-widest rounded-sm"
+                    className="w-full sm:w-auto h-8 px-4 bg-background border-border text-foreground hover:bg-orange-500 hover:border-orange-500 transition-all font-mono text-[10px] tracking-widest rounded-sm"
                 >
                     <Plus className="w-3.5 h-3.5 mr-2" />
                     NOVA TAREFA / ATRIBUIR
@@ -242,11 +242,11 @@ export function AbaTarefas({ userType }: { userType: string }) {
                         const perc = memberTasks.length > 0 ? (comp / memberTasks.length) * 100 : 0
                         
                         return (
-                            <Card key={member.id} className="bg-[#141414] border-[#2A2A2A] hover:bg-white/5 transition-colors">
+                            <Card key={member.id} className="bg-card border-border hover:bg-white/5 transition-colors">
                                 <CardContent className="p-4 space-y-4">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
-                                            <p className="text-xs font-bold text-white">{member.nome}</p>
+                                            <p className="text-xs font-bold text-foreground">{member.nome}</p>
                                             <p className="text-[10px] font-mono text-neutral-500 uppercase">{member.tipo}</p>
                                         </div>
                                         <Badge variant="outline" className="text-[9px] font-mono border-orange-500/20 text-orange-500">
@@ -278,7 +278,7 @@ export function AbaTarefas({ userType }: { userType: string }) {
 
       {/* Modal Atribuir Tarefa */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="bg-[#111111] border-[#2A2A2A] text-white">
+        <DialogContent className="bg-background border-border text-foreground">
           <DialogHeader>
             <DialogTitle className="text-orange-500 font-mono text-sm tracking-widest uppercase">
               Atribuir Nova Tarefa
@@ -291,12 +291,12 @@ export function AbaTarefas({ userType }: { userType: string }) {
                 value={formData.titulo}
                 onChange={(e) => setFormData({...formData, titulo: e.target.value})}
                 placeholder="Ex: Atualizar relatório mensal"
-                className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
+                className="bg-background border-border text-foreground" 
               />
             </div>
             <div className="space-y-2">
               <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Membro(s) da Equipe</Label>
-              <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl">
+              <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-background border border-border rounded-xl">
                   {team.map(m => (
                       <div key={m.id} className="flex items-center gap-2 p-1.5">
                           <Checkbox 
@@ -324,7 +324,7 @@ export function AbaTarefas({ userType }: { userType: string }) {
                             type="date"
                             value={formData.data}
                             onChange={(e) => setFormData({...formData, data: e.target.value})}
-                            className="bg-[#0A0A0A] border-[#2A2A2A] text-white pl-9 text-xs" 
+                            className="bg-background border-border text-foreground pl-9 text-xs" 
                         />
                     </div>
                 </div>
@@ -334,7 +334,7 @@ export function AbaTarefas({ userType }: { userType: string }) {
               <Textarea 
                 value={formData.descricao}
                 onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-                className="bg-[#0A0A0A] border-[#2A2A2A] text-white h-20" 
+                className="bg-background border-border text-foreground h-20" 
               />
             </div>
           </div>
@@ -349,7 +349,7 @@ export function AbaTarefas({ userType }: { userType: string }) {
             <Button 
                 onClick={handleAddTasks} 
                 disabled={saving}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-[10px] tracking-widest uppercase px-6 rounded-sm"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-[10px] tracking-widest uppercase px-6 rounded-sm"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Atribuir Tarefa(s)"}
             </Button>

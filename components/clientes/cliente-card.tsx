@@ -43,7 +43,7 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
   const initials = getInitials(cliente.empresa || cliente.nome)
 
   return (
-    <Card className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-all group overflow-hidden relative">
+    <Card className="bg-card border-border hover:border-orange-500/30 transition-all group overflow-hidden relative">
       <div className="absolute top-0 left-0 w-1 h-full bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
       
       <CardContent className="p-5">
@@ -58,7 +58,7 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
               />
             ) : (
               <div 
-                className="w-11 h-11 rounded-lg bg-[#1A1A1A] flex items-center justify-center border border-[#2A2A2A]"
+                className="w-11 h-11 rounded-lg bg-[#1A1A1A] flex items-center justify-center border border-border"
                 style={{ width: "44px", height: "44px", borderRadius: "8px" }}
               >
                 <span className="text-orange-500 font-bold font-mono tracking-widest text-sm uppercase">{initials}</span>
@@ -66,7 +66,7 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
             )}
             
             <div>
-              <h3 className="text-white font-medium text-sm group-hover:text-orange-400 transition-colors uppercase tracking-tight flex items-center gap-2">
+              <h3 className="text-foreground font-medium text-sm group-hover:text-orange-400 transition-colors uppercase tracking-tight flex items-center gap-2">
                 {cliente.empresa || "Sem Empresa"}
               </h3>
               <p className="text-neutral-500 text-xs">{cliente.nome}</p>
@@ -81,13 +81,13 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="h-8 w-8 text-neutral-500 hover:text-white"
+                      className="h-8 w-8 text-neutral-500 hover:text-foreground"
                       onClick={() => window.open(cliente.contract_url, '_blank')}
                     >
                       <Paperclip className="w-4 h-4 text-orange-500" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-[#1A1A1A] border-[#2A2A2A] text-white">
+                  <TooltipContent className="bg-[#1A1A1A] border-border text-foreground">
                     <p>Contrato anexado</p>
                   </TooltipContent>
                 </Tooltip>
@@ -107,15 +107,15 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-white">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-foreground">
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-[#1A1A1A] border-[#2A2A2A] text-white">
+              <DropdownMenuContent className="bg-[#1A1A1A] border-border text-foreground">
                 <DropdownMenuItem onClick={onViewDetails} className="focus:bg-[#2A2A2A] focus:text-orange-500 cursor-pointer">
                   Ver Detalhes
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-[#2A2A2A] focus:text-white cursor-pointer">
+                <DropdownMenuItem className="focus:bg-[#2A2A2A] focus:text-foreground cursor-pointer">
                   Editar
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -138,7 +138,7 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-[#2A2A2A]">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="bg-orange-500/5 border-orange-500/20 text-orange-500 text-[10px] py-0 px-2 h-5 flex items-center gap-1">
               <FolderKanban className="w-3 h-3" />
@@ -155,7 +155,7 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
         <Button 
           variant="ghost" 
           onClick={onViewDetails}
-          className="w-full mt-4 h-8 text-xs bg-[#1A1A1A] hover:bg-orange-500 hover:text-white transition-all text-neutral-400 font-mono tracking-widest uppercase"
+          className="w-full mt-4 h-8 text-xs bg-[#1A1A1A] hover:bg-orange-500 hover:text-foreground transition-all text-neutral-400 font-mono tracking-widest uppercase"
         >
           Ver Detalhes
           <ExternalLink className="w-3 h-3 ml-2" />

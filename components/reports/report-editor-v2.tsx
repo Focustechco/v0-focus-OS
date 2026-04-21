@@ -209,7 +209,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
   }
 
   if (isLoading) return (
-    <div className="flex items-center justify-center h-screen bg-[#0A0A0A]">
+    <div className="flex items-center justify-center h-screen bg-background">
       <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
     </div>
   )
@@ -220,16 +220,16 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
     .map(([k]) => k)
 
   return (
-    <div className="flex flex-col h-screen bg-[#0A0A0A] overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       {/* ── Fixed Header ─────────────────────────────────── */}
-      <header className="flex items-center justify-between px-6 py-4 bg-[#0A0A0A] border-b border-[#1A1A1A] flex-shrink-0 z-20">
+      <header className="flex items-center justify-between px-6 py-4 bg-background border-b border-[#1A1A1A] flex-shrink-0 z-20">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={onBack} className="text-neutral-400 hover:text-white gap-2 -ml-2">
+          <Button variant="ghost" onClick={onBack} className="text-neutral-400 hover:text-foreground gap-2 -ml-2">
             <ChevronLeft className="w-4 h-4" /> Voltar
           </Button>
           <div className="h-4 w-px bg-[#2A2A2A]" />
           <div>
-            <h1 className="text-sm font-bold text-white">{report?.titulo}</h1>
+            <h1 className="text-sm font-bold text-foreground">{report?.titulo}</h1>
             {lastSaved && (
               <p className="text-[10px] text-neutral-600 flex items-center gap-1 mt-0.5">
                 <Clock className="w-2.5 h-2.5" />
@@ -244,15 +244,15 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
             onClick={() => doSave()}
             disabled={isSaving}
             variant="outline"
-            className="border-[#2A2A2A] text-neutral-300 hover:text-white hover:border-neutral-500 gap-2 text-xs"
+            className="border-border text-foreground hover:text-foreground hover:border-neutral-500 gap-2 text-xs"
           >
             <Save className="w-3.5 h-3.5" />
             {isSaving ? "Salvando..." : "Salvar"}
           </Button>
-          <Button onClick={() => setShowPreview(true)} className="bg-orange-500 hover:bg-orange-600 text-white gap-2 text-xs">
+          <Button onClick={() => setShowPreview(true)} className="bg-orange-500 hover:bg-orange-600 text-foreground gap-2 text-xs">
             <Eye className="w-3.5 h-3.5" /> Preview
           </Button>
-          <Button onClick={handleExport} className="bg-orange-500 hover:bg-orange-600 text-white gap-2 text-xs">
+          <Button onClick={handleExport} className="bg-orange-500 hover:bg-orange-600 text-foreground gap-2 text-xs">
             <Download className="w-3.5 h-3.5" /> Exportar
           </Button>
         </div>
@@ -264,18 +264,18 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
         {/* RESUMO EXECUTIVO */}
         {enabledSections.includes("resumo") && (
           <Section id="resumo" open={openSections["resumo"]} toggle={toggleSection}>
-            <div className="p-4 bg-[#0A0A0A] rounded-lg border border-orange-500/10 mb-3">
+            <div className="p-4 bg-background rounded-lg border border-orange-500/10 mb-3">
               <textarea
                 value={resumoTexto}
                 onChange={(e) => setResumoTexto(e.target.value)}
                 rows={4}
-                className="w-full bg-transparent text-sm text-neutral-300 leading-relaxed resize-none outline-none"
+                className="w-full bg-transparent text-sm text-foreground leading-relaxed resize-none outline-none"
               />
             </div>
             {/* Tags */}
             <div className="flex flex-wrap items-center gap-2">
               {resumoTags.map((tag) => (
-                <span key={tag} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded text-xs text-neutral-300">
+                <span key={tag} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1A1A1A] border border-border rounded text-xs text-foreground">
                   {tag}
                   <button onClick={() => setResumoTags((t) => t.filter((x) => x !== tag))}>
                     <X className="w-3 h-3 text-neutral-600 hover:text-red-400" />
@@ -296,12 +296,12 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                     if (e.key === "Escape") { setAddingTag(false); setNovaTag("") }
                   }}
                   placeholder="Nova tag..."
-                  className="px-2.5 py-1 bg-[#1A1A1A] border border-orange-500 rounded text-xs text-white outline-none w-24"
+                  className="px-2.5 py-1 bg-[#1A1A1A] border border-orange-500 rounded text-xs text-foreground outline-none w-24"
                 />
               ) : (
                 <button
                   onClick={() => setAddingTag(true)}
-                  className="flex items-center gap-1 px-2.5 py-1 border border-dashed border-[#2A2A2A] rounded text-xs text-neutral-600 hover:border-orange-500 hover:text-orange-500 transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 border border-dashed border-border rounded text-xs text-neutral-600 hover:border-orange-500 hover:text-orange-500 transition-colors"
                 >
                   <Plus className="w-3 h-3" /> Nova tag...
                 </button>
@@ -320,7 +320,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                 <select
                   value={statusEtapa}
                   onChange={(e) => setStatusEtapa(e.target.value)}
-                  className="bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded border-none outline-none cursor-pointer"
+                  className="bg-orange-500 text-foreground text-xs font-bold px-3 py-1.5 rounded border-none outline-none cursor-pointer"
                 >
                   {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                 </select>
@@ -335,7 +335,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                     onChange={(e) => setStatusProgresso(Number(e.target.value))}
                     className="flex-1 accent-orange-500"
                   />
-                  <span className="text-sm font-mono text-white w-10 text-right">{statusProgresso}%</span>
+                  <span className="text-sm font-mono text-foreground w-10 text-right">{statusProgresso}%</span>
                 </div>
               </div>
               {/* Saúde */}
@@ -348,7 +348,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                       onClick={() => setStatusSaude(o.id)}
                       className={cn(
                         "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium border transition-all",
-                        statusSaude === o.id ? o.color : "border-[#2A2A2A] text-neutral-600 bg-transparent hover:border-neutral-500"
+                        statusSaude === o.id ? o.color : "border-border text-neutral-600 bg-transparent hover:border-neutral-500"
                       )}
                     >
                       <span className={cn("w-1.5 h-1.5 rounded-sm",
@@ -366,7 +366,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                   type="date"
                   value={statusEntrega}
                   onChange={(e) => setStatusEntrega(e.target.value)}
-                  className="bg-[#0A0A0A] border border-[#2A2A2A] rounded px-3 py-1.5 text-sm text-white [color-scheme:dark] outline-none focus:border-orange-500"
+                  className="bg-background border border-border rounded px-3 py-1.5 text-sm text-foreground [color-scheme:dark] outline-none focus:border-orange-500"
                 />
               </div>
               {/* Contexto */}
@@ -375,7 +375,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                 onChange={(e) => setStatusContexto(e.target.value)}
                 rows={3}
                 placeholder="Adicione contexto sobre o status atual para o cliente..."
-                className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg px-4 py-3 text-sm text-neutral-300 placeholder:text-neutral-700 outline-none focus:border-orange-500/50 resize-none"
+                className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-neutral-700 outline-none focus:border-orange-500/50 resize-none"
               />
             </div>
           </Section>
@@ -390,14 +390,14 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                    <h4 className="text-sm font-bold text-orange-500 mb-2">{g.sprint}</h4>
                    <div className="space-y-1">
                      {g.tarefas.map((t: any, ti: number) => (
-                       <div key={t.id ?? ti} className="flex items-center gap-3 py-2 px-3 rounded hover:bg-[#1A1A1A] group">
+                       <div key={t.id ?? ti} className="flex items-center gap-3 py-2 px-3 rounded hover:bg-accent/10 group">
                          <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                          {t.data && (
                            <span className="text-[11px] font-mono text-neutral-600 w-12 flex-shrink-0">
                              {new Date(t.data).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}
                            </span>
                          )}
-                         <span className="flex-1 text-sm text-neutral-300 flex items-center gap-2">
+                         <span className="flex-1 text-sm text-foreground flex items-center gap-2">
                            {t.titulo}
                            {t.status && (
                              <span className={cn(
@@ -436,7 +436,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                             if (e.key === "Escape") { setAddingTarefaGroupIdx(null); setNovaAtividade("") }
                           }}
                           placeholder="Descrição da atividade..."
-                          className="w-full bg-[#1A1A1A] border border-orange-500 rounded px-3 py-2 text-sm text-white outline-none mt-1"
+                          className="w-full bg-[#1A1A1A] border border-orange-500 rounded px-3 py-2 text-sm text-foreground outline-none mt-1"
                         />
                      ) : (
                         <button
@@ -464,7 +464,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
               {proximosPassos.map((t, i) => (
                 <div key={i} className="flex items-start gap-3 py-2 group">
                   <span className="text-sm font-mono text-orange-500 w-5 flex-shrink-0 mt-0.5">{i + 1}.</span>
-                  <span className="flex-1 text-sm text-neutral-300">{t.titulo}</span>
+                  <span className="flex-1 text-sm text-foreground">{t.titulo}</span>
                   {t.responsavel && <span className="text-xs text-orange-400">– {t.responsavel}</span>}
                   {t.prazo && (
                     <span className="text-xs text-neutral-600 flex-shrink-0">
@@ -498,13 +498,13 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
               onChange={(e) => setObservacoes(e.target.value)}
               rows={5}
               placeholder="Observações internas da equipe (não aparece no relatório para cliente)..."
-              className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg px-4 py-3 text-sm text-neutral-300 placeholder:text-neutral-700 outline-none focus:border-orange-500/50 resize-none"
+              className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-neutral-700 outline-none focus:border-orange-500/50 resize-none"
             />
           </Section>
         )}
 
         {/* CONFIGURAÇÃO EXTRA - LOGOS */}
-        <div className="mt-8 border border-[#1A1A1A] rounded-xl p-5 bg-[#111111] space-y-4">
+        <div className="mt-8 border border-[#1A1A1A] rounded-xl p-5 bg-background space-y-4">
           <h3 className="text-xs font-mono font-bold tracking-[0.15em] text-neutral-400 mb-2">MARCA & LOGOS</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
@@ -513,14 +513,14 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                 "flex items-center gap-3 px-3 py-2.5 rounded-md border text-left transition-all",
                 incluirLogoFocus 
                   ? "border-orange-500/50 bg-orange-500/10" 
-                  : "border-[#2A2A2A] bg-[#0A0A0A] hover:border-neutral-600"
+                  : "border-border bg-background hover:border-neutral-600"
               )}
             >
               <div className={cn(
                 "w-4 h-4 rounded-sm border flex items-center justify-center flex-shrink-0 transition-colors",
-                incluirLogoFocus ? "bg-orange-500 border-orange-500" : "border-neutral-600 bg-[#141414]"
+                incluirLogoFocus ? "bg-orange-500 border-orange-500" : "border-neutral-600 bg-card"
               )}>
-                 {incluirLogoFocus && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                 {incluirLogoFocus && <Check className="w-3 h-3 text-foreground" strokeWidth={3} />}
               </div>
               <span className={cn("text-[11px] font-mono font-medium uppercase tracking-wider", incluirLogoFocus ? "text-orange-500" : "text-neutral-500")}>
                 Logo da Focus OS
@@ -533,14 +533,14 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
                 "flex items-center gap-3 px-3 py-2.5 rounded-md border text-left transition-all",
                 incluirLogoCliente
                   ? "border-orange-500/50 bg-orange-500/10" 
-                  : "border-[#2A2A2A] bg-[#0A0A0A] hover:border-neutral-600"
+                  : "border-border bg-background hover:border-neutral-600"
               )}
             >
               <div className={cn(
                 "w-4 h-4 rounded-sm border flex items-center justify-center flex-shrink-0 transition-colors",
-                incluirLogoCliente ? "bg-orange-500 border-orange-500" : "border-neutral-600 bg-[#141414]"
+                incluirLogoCliente ? "bg-orange-500 border-orange-500" : "border-neutral-600 bg-card"
               )}>
-                 {incluirLogoCliente && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                 {incluirLogoCliente && <Check className="w-3 h-3 text-foreground" strokeWidth={3} />}
               </div>
               <span className={cn("text-[11px] font-mono font-medium uppercase tracking-wider", incluirLogoCliente ? "text-orange-500" : "text-neutral-500")}>
                 Logo do Cliente
@@ -551,7 +551,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
             <div className="space-y-2 mt-2">
               <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
               {logoClienteFile ? (
-                <div className="flex items-center gap-3 p-3 bg-[#0A0A0A] border border-orange-500/30 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-background border border-orange-500/30 rounded-lg">
                   <img src={logoClienteFile} className="h-10 object-contain bg-white rounded p-1" alt="Logo Cliente" />
                   <button onClick={() => setLogoClienteFile(null)} className="text-xs text-orange-500 hover:underline">
                     Remover
@@ -560,7 +560,7 @@ export function ReportEditorV2({ reportId, onBack }: Props) {
               ) : (
                 <button
                   onClick={() => logoInputRef.current?.click()}
-                  className="w-full py-4 rounded-lg border-2 border-dashed border-[#2A2A2A] text-xs text-neutral-500 hover:border-orange-500/50 hover:text-orange-500 transition-all flex flex-col items-center justify-center gap-2 bg-[#0A0A0A]"
+                  className="w-full py-4 rounded-lg border-2 border-dashed border-border text-xs text-neutral-500 hover:border-orange-500/50 hover:text-orange-500 transition-all flex flex-col items-center justify-center gap-2 bg-background"
                 >
                   <Building2 className="w-5 h-5 text-neutral-600" />
                   Clique para enviar a logo do cliente
@@ -602,10 +602,10 @@ function Section({ id, open, toggle, children }: any) {
   const Icon = meta.icon
 
   return (
-    <div className="rounded-xl border border-[#1A1A1A] bg-[#111111] overflow-hidden">
+    <div className="rounded-xl border border-[#1A1A1A] bg-background overflow-hidden">
       <button
         onClick={() => toggle(id)}
-        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-[#1A1A1A] transition-colors"
+        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-accent/10 transition-colors"
       >
         <Icon className={cn("w-4 h-4 flex-shrink-0", meta.color)} />
         <span className={cn("flex-1 text-xs font-mono font-bold tracking-[0.15em] text-left", meta.color)}>

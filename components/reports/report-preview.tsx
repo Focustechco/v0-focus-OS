@@ -97,14 +97,14 @@ export function ReportPreview({ report, editorData, onClose }: PreviewProps) {
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex flex-col overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-6 py-3 bg-[#1A1A1A] border-b border-[#2A2A2A] flex-shrink-0">
-        <h3 className="text-sm font-mono font-bold text-white tracking-wider">PREVIEW DO RELATÓRIO</h3>
+      <div className="flex items-center justify-between px-6 py-3 bg-[#1A1A1A] border-b border-border flex-shrink-0">
+        <h3 className="text-sm font-mono font-bold text-foreground tracking-wider">PREVIEW DO RELATÓRIO</h3>
         <div className="flex items-center gap-2">
           {/* Download button for mobile/ios */}
           <Button 
             onClick={handleDownloadPDF} 
             disabled={isExporting}
-            className="bg-orange-500 hover:bg-orange-600 text-white gap-2 text-xs h-8 sm:flex"
+            className="bg-orange-500 hover:bg-orange-600 text-foreground gap-2 text-xs h-8 sm:flex"
           >
             {isExporting ? (
               <span className="animate-pulse">GERANDO...</span>
@@ -119,11 +119,11 @@ export function ReportPreview({ report, editorData, onClose }: PreviewProps) {
           <Button 
             onClick={handlePrint} 
             variant="outline"
-            className="border-[#2A2A2A] hover:bg-[#2A2A2A] text-white gap-2 text-xs h-8 hidden sm:flex"
+            className="border-border hover:bg-[#2A2A2A] text-foreground gap-2 text-xs h-8 hidden sm:flex"
           >
             <Printer className="w-3.5 h-3.5" /> Imprimir
           </Button>
-          <Button variant="ghost" size="icon" onClick={onClose} className="text-neutral-400 hover:text-white h-8 w-8">
+          <Button variant="ghost" size="icon" onClick={onClose} className="text-neutral-400 hover:text-foreground h-8 w-8">
             <X className="w-4 h-4" />
           </Button>
         </div>

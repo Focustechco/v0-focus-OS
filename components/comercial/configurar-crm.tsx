@@ -9,9 +9,9 @@ export function ConfigurarCRM() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
             <Link2 className="w-4 h-4 text-orange-500" />
             CONEXAO COM CLICKUP
           </CardTitle>
@@ -33,19 +33,19 @@ export function ConfigurarCRM() {
                 <div className="mt-3 grid grid-cols-1 gap-1 font-mono text-[11px] text-neutral-500 sm:grid-cols-3">
                   <div>
                     Team ID:{" "}
-                    <span className="text-neutral-300">
+                    <span className="text-foreground">
                       {config.teamId || "—"}
                     </span>
                   </div>
                   <div>
                     Space ID:{" "}
-                    <span className="text-neutral-300">
+                    <span className="text-foreground">
                       {config.spaceId || "—"}
                     </span>
                   </div>
                   <div>
                     List ID:{" "}
-                    <span className="text-neutral-300">
+                    <span className="text-foreground">
                       {config.listId || "—"}
                     </span>
                   </div>
@@ -69,19 +69,19 @@ export function ConfigurarCRM() {
         </CardContent>
       </Card>
 
-      <Card className="bg-[#141414] border-[#2A2A2A]">
-        <CardHeader className="border-b border-[#2A2A2A]">
-          <CardTitle className="text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="border-b border-border">
+          <CardTitle className="text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
             <Info className="w-4 h-4 text-orange-500" />
             COMO CONFIGURAR
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6 space-y-4 text-sm text-neutral-300">
+        <CardContent className="pt-6 space-y-4 text-sm text-foreground">
           <p className="text-xs text-neutral-400">
             Por segurança, o token do ClickUp agora é mantido somente no
             servidor. Para configurar:
           </p>
-          <ol className="list-decimal space-y-2 pl-5 text-xs text-neutral-300">
+          <ol className="list-decimal space-y-2 pl-5 text-xs text-foreground">
             <li>
               Obtenha seu token em{" "}
               <a
@@ -94,8 +94,8 @@ export function ConfigurarCRM() {
               </a>
             </li>
             <li>
-              No arquivo <code className="rounded bg-[#0A0A0A] px-1 font-mono">.env.local</code> (ou nas variáveis do Vercel), defina:
-              <pre className="mt-2 overflow-x-auto rounded bg-[#0A0A0A] p-3 font-mono text-[11px] text-neutral-400">{`CLICKUP_API_TOKEN=pk_xxxxx
+              No arquivo <code className="rounded bg-background px-1 font-mono">.env.local</code> (ou nas variáveis do Vercel), defina:
+              <pre className="mt-2 overflow-x-auto rounded bg-background p-3 font-mono text-[11px] text-neutral-400">{`CLICKUP_API_TOKEN=pk_xxxxx
 CLICKUP_TEAM_ID=xxxxx
 CLICKUP_SPACE_ID=xxxxx
 CLICKUP_LIST_ID=xxxxx`}</pre>

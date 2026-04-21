@@ -121,7 +121,7 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
       </div>
 
       {/* Progress Bar */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-neutral-400 text-sm font-mono">{activeCount} de {totalCount} modulos ativos</span>
@@ -143,7 +143,7 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
                 return (
                   <Card
                     key={module.id}
-                    className={`relative bg-[#141414] border-[#2a2a2a] transition-all duration-300 ${
+                    className={`relative bg-card border-[#2a2a2a] transition-all duration-300 ${
                       animatingModule === module.id ? "ring-2 ring-orange-500 shadow-lg shadow-orange-500/20" : ""
                     } ${enabled ? "border-[#2a2a2a]" : "opacity-60"}`}
                   >
@@ -176,7 +176,7 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
                         </div>
                       </div>
 
-                      <h4 className="text-white font-display font-semibold mb-1">{module.name}</h4>
+                      <h4 className="text-foreground font-display font-semibold mb-1">{module.name}</h4>
                       <p className="text-neutral-500 text-xs mb-2">{module.description}</p>
 
                       <div className="flex items-center justify-between">
@@ -244,9 +244,9 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
 
       {/* Deactivation Confirmation Modal */}
       <Dialog open={confirmModal.open} onOpenChange={(open) => setConfirmModal({ open, moduleId: null })}>
-        <DialogContent className="bg-[#141414] border-[#2a2a2a] max-w-md">
+        <DialogContent className="bg-card border-[#2a2a2a] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white font-display">Desativar {moduleToDeactivate?.name}?</DialogTitle>
+            <DialogTitle className="text-foreground font-display">Desativar {moduleToDeactivate?.name}?</DialogTitle>
             <DialogDescription className="text-neutral-500 font-mono text-sm">
               O modulo sera removido do menu lateral. Os dados serao preservados e o modulo pode ser reativado a qualquer momento.
             </DialogDescription>
@@ -255,13 +255,13 @@ export function ModulosSection({ onChange }: ModulosSectionProps) {
             <Button
               variant="ghost"
               onClick={() => setConfirmModal({ open: false, moduleId: null })}
-              className="text-neutral-400 hover:text-white font-mono"
+              className="text-neutral-400 hover:text-foreground font-mono"
             >
               Cancelar
             </Button>
             <Button
               onClick={confirmDeactivate}
-              className="bg-red-600 hover:bg-red-700 text-white font-mono"
+              className="bg-red-600 hover:bg-red-700 text-foreground font-mono"
             >
               Desativar
             </Button>

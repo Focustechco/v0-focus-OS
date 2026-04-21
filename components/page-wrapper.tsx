@@ -15,7 +15,7 @@ export function PageWrapper({ title, breadcrumb, children }: PageWrapperProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   return (
-    <div className="flex h-[100dvh] bg-[#0A0A0A] overflow-hidden">
+    <div className="flex h-[100dvh] bg-background overflow-hidden">
       {/* Desktop Sidebar — hidden on mobile */}
       <div className="hidden lg:block">
         <FocusSidebar collapsed={sidebarCollapsed} onCollapse={setSidebarCollapsed} />

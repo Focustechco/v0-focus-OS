@@ -111,10 +111,10 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
 
   return (
     <div
-      className={`${collapsed ? "w-16" : "w-56"} bg-[#0F0F0F] border-r border-[#2A2A2A] transition-all duration-300 flex flex-col h-full`}
+      className={`${collapsed ? "w-16" : "w-56"} bg-background border-r border-border transition-all duration-300 flex flex-col h-full`}
     >
       {/* Header */}
-      <div className="p-4 border-b border-[#2A2A2A]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className={`${collapsed ? "hidden" : "flex items-center gap-3"}`}>
             <img src="/logo.svg" alt="Focus OS" className="w-10 h-10" />
@@ -130,7 +130,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
             variant="ghost"
             size="icon"
             onClick={() => onCollapse(!collapsed)}
-            className={`text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A] ${collapsed ? "absolute right-2 top-4" : ""}`}
+            className={`text-neutral-500 hover:text-orange-500 hover:bg-accent/10 ${collapsed ? "absolute right-2 top-4" : ""}`}
           >
             <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? "rotate-180" : ""}`} />
           </Button>
@@ -158,10 +158,10 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                       href={item.href}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative flex-1 ${
                         isActive(item.href) && !isSubItemActive
-                          ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                          ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20"
                           : isSubItemActive || isExpanded
                           ? "bg-orange-500/10 text-orange-500"
-                          : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
+                          : "text-neutral-400 hover:text-foreground hover:bg-accent/10"
                       }`}
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -173,7 +173,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                               variant="secondary"
                               className={`text-[10px] px-1.5 py-0 h-5 ${
                                 isActive(item.href) && !isSubItemActive
-                                  ? "bg-white/20 text-white"
+                                  ? "bg-white/20 text-foreground"
                                   : "bg-orange-500/20 text-orange-500"
                               }`}
                             >
@@ -183,7 +183,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                         </>
                       )}
                       {collapsed && item.badge && (
-                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-white font-bold">
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-foreground font-bold">
                           {item.badge > 9 ? "9+" : item.badge}
                         </span>
                       )}
@@ -193,7 +193,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                         variant="ghost"
                         size="icon"
                         onClick={() => setExpanded(!isExpanded)}
-                        className="h-8 w-8 text-neutral-500 hover:text-orange-500 hover:bg-[#1A1A1A]"
+                        className="h-8 w-8 text-neutral-500 hover:text-orange-500 hover:bg-accent/10"
                       >
                         {isExpanded ? (
                           <ChevronDown className="w-4 h-4" />
@@ -205,15 +205,15 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                   </div>
                   {/* Subitems */}
                   {!collapsed && isExpanded && (
-                    <div className="ml-4 mt-1 space-y-1 border-l border-[#2A2A2A] pl-2">
+                    <div className="ml-4 mt-1 space-y-1 border-l border-border pl-2">
                       {subItems.map((subItem) => (
                         <Link
                           key={subItem.id}
                           href={subItem.href}
                           className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group relative ${
                             isActive(subItem.href)
-                              ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                              : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
+                              ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20"
+                              : "text-neutral-400 hover:text-foreground hover:bg-accent/10"
                           }`}
                         >
                           <subItem.icon className="w-4 h-4 flex-shrink-0" />
@@ -223,7 +223,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                               variant="secondary"
                               className={`text-[10px] px-1.5 py-0 h-5 ${
                                 isActive(subItem.href)
-                                  ? "bg-white/20 text-white"
+                                  ? "bg-white/20 text-foreground"
                                   : "bg-orange-500/20 text-orange-500"
                               }`}
                             >
@@ -241,8 +241,8 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
                   isActive(item.href)
-                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                    : "text-neutral-400 hover:text-white hover:bg-[#1A1A1A]"
+                    ? "bg-orange-500 text-foreground shadow-lg shadow-orange-500/20"
+                    : "text-neutral-400 hover:text-foreground hover:bg-accent/10"
                 }`}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -254,7 +254,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                         variant="secondary"
                         className={`text-[10px] px-1.5 py-0 h-5 ${
                           isActive(item.href)
-                            ? "bg-white/20 text-white"
+                            ? "bg-white/20 text-foreground"
                             : "bg-orange-500/20 text-orange-500"
                         }`}
                       >
@@ -264,7 +264,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
                   </>
                 )}
                 {collapsed && item.badge && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-white font-bold">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] flex items-center justify-center text-foreground font-bold">
                     {item.badge > 9 ? "9+" : item.badge}
                   </span>
                 )}
@@ -281,7 +281,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
             onClick={handleInstall}
             variant="outline"
             size="sm"
-            className="w-full bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500 hover:text-white transition-all text-[10px] font-bold h-9"
+            className="w-full bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500 hover:text-foreground transition-all text-[10px] font-bold h-9"
           >
             <Download className="w-3.5 h-3.5 mr-2" />
             INSTALAR APLICATIVO
@@ -304,7 +304,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
 
       {/* System Status */}
       {!collapsed && (
-        <div className="p-3 m-2 bg-[#141414] border border-[#2A2A2A] rounded-lg">
+        <div className="p-3 m-2 bg-card border border-border rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-xs text-green-500 font-mono tracking-wider">SISTEMA ONLINE</span>

@@ -155,14 +155,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
       <Accordion type="multiple" defaultValue={["personal", "status"]} className="space-y-4 border-none">
         
         {/* Seção 1: Informações Pessoais */}
-        <AccordionItem value="personal" className="bg-[#111111] border border-[#2A2A2A] rounded-xl overflow-hidden px-4">
+        <AccordionItem value="personal" className="bg-background border border-border rounded-xl overflow-hidden px-4">
           <AccordionTrigger className="hover:no-underline py-4 group">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all">
+              <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-foreground transition-all">
                 <User className="w-4 h-4" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-bold text-white tracking-widest uppercase font-mono">Informações Pessoais</p>
+                <p className="text-sm font-bold text-foreground tracking-widest uppercase font-mono">Informações Pessoais</p>
                 <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">Dados base e biografia</p>
               </div>
             </div>
@@ -171,24 +171,24 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Nome Completo</Label>
-                <Input {...register("nome_completo")} className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
+                <Input {...register("nome_completo")} className="bg-background border-border text-foreground" />
                 {errors.nome_completo && <p className="text-red-500 text-[10px]">{errors.nome_completo.message as string}</p>}
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Cargo / Função</Label>
-                <Input {...register("cargo")} className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
+                <Input {...register("cargo")} className="bg-background border-border text-foreground" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Empresa</Label>
-                <Input {...register("empresa")} className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
+                <Input {...register("empresa")} className="bg-background border-border text-foreground" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Email Profissional</Label>
-                <Input {...register("email_profissional")} className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
+                <Input {...register("email_profissional")} className="bg-background border-border text-foreground" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Telefone</Label>
-                <Input {...register("telefone")} placeholder="(00) 00000-0000" className="bg-[#0A0A0A] border-[#2A2A2A] text-white" />
+                <Input {...register("telefone")} placeholder="(00) 00000-0000" className="bg-background border-border text-foreground" />
               </div>
             </div>
             <div className="space-y-2">
@@ -198,13 +198,13 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
               </div>
               <Textarea 
                 {...register("bio")} 
-                className="bg-[#0A0A0A] border-[#2A2A2A] text-white min-h-[100px] resize-none" 
+                className="bg-background border-border text-foreground min-h-[100px] resize-none" 
               />
             </div>
             <Button 
                 onClick={handleSubmit(handleSaveInfo)} 
                 disabled={saving}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs tracking-widest uppercase px-8"
+                className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs tracking-widest uppercase px-8"
             >
               <Save className="w-4 h-4 mr-2" />
               {saving ? "Salvando..." : "Salvar Alterações"}
@@ -213,14 +213,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
         </AccordionItem>
 
         {/* Seção 2: Status de Disponibilidade */}
-        <AccordionItem value="status" className="bg-[#111111] border border-[#2A2A2A] rounded-xl overflow-hidden px-4">
+        <AccordionItem value="status" className="bg-background border border-border rounded-xl overflow-hidden px-4">
           <AccordionTrigger className="hover:no-underline py-4 group">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all">
+              <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-foreground transition-all">
                 <Layout className="w-4 h-4" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-bold text-white tracking-widest uppercase font-mono">Status de Disponibilidade</p>
+                <p className="text-sm font-bold text-foreground tracking-widest uppercase font-mono">Status de Disponibilidade</p>
                 <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">Como outros te veem no sistema</p>
               </div>
             </div>
@@ -238,8 +238,8 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                   onClick={() => handleStatusChange(s.label, s.color)}
                   className={`flex flex-col items-center gap-3 p-4 rounded-xl border transition-all ${
                     profile?.status_cor === s.color 
-                        ? "bg-orange-500/5 border-orange-500 text-white" 
-                        : "bg-[#0A0A0A] border-[#2A2A2A] text-neutral-500 hover:border-neutral-700"
+                        ? "bg-orange-500/5 border-orange-500 text-foreground" 
+                        : "bg-background border-border text-neutral-500 hover:border-neutral-700"
                   }`}
                 >
                   <div className={`w-3 h-3 rounded-full ${s.css} ${profile?.status_cor === s.color ? 'animate-pulse ring-4 ring-orange-500/20' : ''}`} />
@@ -251,14 +251,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
         </AccordionItem>
 
         {/* Seção 3: Presença Profissional */}
-        <AccordionItem value="professional" className="bg-[#111111] border border-[#2A2A2A] rounded-xl overflow-hidden px-4">
+        <AccordionItem value="professional" className="bg-background border border-border rounded-xl overflow-hidden px-4">
             <AccordionTrigger className="hover:no-underline py-4 group">
                 <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-foreground transition-all">
                     <Briefcase className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                    <p className="text-sm font-bold text-white tracking-widest uppercase font-mono">Presença Profissional</p>
+                    <p className="text-sm font-bold text-foreground tracking-widest uppercase font-mono">Presença Profissional</p>
                     <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">Social, Setor e Stack</p>
                 </div>
                 </div>
@@ -269,14 +269,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                     <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">URL LinkedIn</Label>
                     <div className="relative">
                         <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
-                        <Input {...register("linkedin")} className="bg-[#0A0A0A] border-[#2A2A2A] text-white pl-10" placeholder="https://linkedin.com/in/..." />
+                        <Input {...register("linkedin")} className="bg-background border-border text-foreground pl-10" placeholder="https://linkedin.com/in/..." />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">URL GitHub</Label>
                     <div className="relative">
                         <Github className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
-                        <Input {...register("github")} className="bg-[#0A0A0A] border-[#2A2A2A] text-white pl-10" placeholder="https://github.com/..." />
+                        <Input {...register("github")} className="bg-background border-border text-foreground pl-10" placeholder="https://github.com/..." />
                     </div>
                 </div>
             </div>
@@ -285,10 +285,10 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                 <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Setor de Atuação</Label>
                     <Select defaultValue={profile?.setor}>
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                             <SelectValue placeholder="Selecione um setor" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111111] border-[#2A2A2A] text-white">
+                        <SelectContent className="bg-background border-border text-foreground">
                             <SelectItem value="Tech">Setor Tech / Dev</SelectItem>
                             <SelectItem value="Comercial">Setor Comercial / CRM</SelectItem>
                             <SelectItem value="Criativo">Setor Criativo / Design</SelectItem>
@@ -305,10 +305,10 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                             value={tagInput}
                             onChange={(e) => setTagInput(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                            className="bg-[#0A0A0A] border-[#2A2A2A] text-white" 
+                            className="bg-background border-border text-foreground" 
                             placeholder="Digite e pressione Enter..."
                         />
-                        <Button variant="outline" size="icon" onClick={addTag} className="bg-[#1A1A1A] border-[#2A2A2A]">
+                        <Button variant="outline" size="icon" onClick={addTag} className="bg-[#1A1A1A] border-border">
                             <Plus className="w-4 h-4" />
                         </Button>
                     </div>
@@ -316,27 +316,27 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                         {techs.map((t) => (
                             <span key={t} className="flex items-center gap-2 px-3 py-1 bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-mono tracking-widest uppercase rounded-full">
                                 {t}
-                                <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => removeTag(t)} />
+                                <X className="w-3 h-3 cursor-pointer hover:text-foreground" onClick={() => removeTag(t)} />
                             </span>
                         ))}
                     </div>
                 </div>
             </div>
-            <Button onClick={handleSubmit(handleSaveInfo)} className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs tracking-widest uppercase">
+            <Button onClick={handleSubmit(handleSaveInfo)} className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs tracking-widest uppercase">
                 Atualizar Perfil Profissional
             </Button>
           </AccordionContent>
         </AccordionItem>
 
         {/* Seção 4: Segurança */}
-        <AccordionItem value="security" className="bg-[#111111] border border-[#2A2A2A] rounded-xl overflow-hidden px-4">
+        <AccordionItem value="security" className="bg-background border border-border rounded-xl overflow-hidden px-4">
             <AccordionTrigger className="hover:no-underline py-4 group">
                 <div className="flex items-center gap-3">
-                <div className="p-2 bg-neutral-900 rounded-lg text-neutral-600 group-hover:bg-red-500 group-hover:text-white transition-all">
+                <div className="p-2 bg-neutral-900 rounded-lg text-neutral-600 group-hover:bg-red-500 group-hover:text-foreground transition-all">
                     <Shield className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                    <p className="text-sm font-bold text-white tracking-widest uppercase font-mono">Segurança e Acesso</p>
+                    <p className="text-sm font-bold text-foreground tracking-widest uppercase font-mono">Segurança e Acesso</p>
                     <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">Senhas e autenticação</p>
                 </div>
                 </div>
@@ -346,14 +346,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                 <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Alterar Senha de Acesso</Label>
                     <div className="relative">
-                        <Input type={showNewPassword ? "text" : "password"} className="bg-[#0A0A0A] border-[#2A2A2A] text-white pr-10" placeholder="Nova senha" />
+                        <Input type={showNewPassword ? "text" : "password"} className="bg-background border-border text-foreground pr-10" placeholder="Nova senha" />
                         <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={() => setShowNewPassword(!showNewPassword)}>
                             {showNewPassword ? <EyeOff className="w-4 h-4 text-neutral-600" /> : <Eye className="w-4 h-4 text-neutral-600" />}
                         </button>
                     </div>
-                    <Input type="password" className="bg-[#0A0A0A] border-[#2A2A2A] text-white" placeholder="Confirmar nova senha" />
+                    <Input type="password" className="bg-background border-border text-foreground" placeholder="Confirmar nova senha" />
                 </div>
-                <Button className="bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white font-mono text-xs tracking-widest uppercase transition-all">
+                <Button className="bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-foreground font-mono text-xs tracking-widest uppercase transition-all">
                     Atualizar Senha
                 </Button>
             </div>
@@ -361,7 +361,7 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
             <div className="pt-6 border-t border-white/5 space-y-2">
                 <h4 className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Gerenciar Sessões</h4>
                 <p className="text-[10px] text-neutral-600 italic">Encerre o acesso em outros dispositivos onde você pode estar logado.</p>
-                <Button variant="ghost" className="text-neutral-500 hover:text-white text-[10px] font-mono tracking-widest uppercase p-0 h-auto">
+                <Button variant="ghost" className="text-neutral-500 hover:text-foreground text-[10px] font-mono tracking-widest uppercase p-0 h-auto">
                     Encerrar outras sessões ativas
                 </Button>
             </div>
@@ -369,14 +369,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
         </AccordionItem>
 
         {/* Seção 5: Preferências */}
-        <AccordionItem value="preferences" className="bg-[#111111] border border-[#2A2A2A] rounded-xl overflow-hidden px-4">
+        <AccordionItem value="preferences" className="bg-background border border-border rounded-xl overflow-hidden px-4">
             <AccordionTrigger className="hover:no-underline py-4 group">
                 <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:bg-orange-500 group-hover:text-foreground transition-all">
                     <Globe className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                    <p className="text-sm font-bold text-white tracking-widest uppercase font-mono">Preferências da Aplicação</p>
+                    <p className="text-sm font-bold text-foreground tracking-widest uppercase font-mono">Preferências da Aplicação</p>
                     <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">Notificações e localidade</p>
                 </div>
                 </div>
@@ -385,14 +385,14 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-sm text-white font-medium">Notificações Push</p>
+                        <p className="text-sm text-foreground font-medium">Notificações Push</p>
                         <p className="text-xs text-neutral-500">Alertas em tempo real no navegador</p>
                     </div>
                     <Switch />
                 </div>
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-sm text-white font-medium">Notificações por E-mail</p>
+                        <p className="text-sm text-foreground font-medium">Notificações por E-mail</p>
                         <p className="text-xs text-neutral-500">Resumos diários e alertas críticos</p>
                     </div>
                     <Switch defaultChecked />
@@ -403,10 +403,10 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                 <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Fuso Horário</Label>
                     <Select defaultValue="utc-3">
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111111] border-[#2A2A2A] text-white">
+                        <SelectContent className="bg-background border-border text-foreground">
                             <SelectItem value="utc-3">Brasília (UTC-3)</SelectItem>
                             <SelectItem value="utc-0">Londres (UTC+0)</SelectItem>
                         </SelectContent>
@@ -415,10 +415,10 @@ export function ProfileForms({ profile, onUpdate }: ProfileFormsProps) {
                 <div className="space-y-2">
                     <Label className="text-[10px] uppercase font-mono text-neutral-500 tracking-wider">Formato de Data</Label>
                     <Select defaultValue="br">
-                        <SelectTrigger className="bg-[#0A0A0A] border-[#2A2A2A] text-white">
+                        <SelectTrigger className="bg-background border-border text-foreground">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111111] border-[#2A2A2A] text-white">
+                        <SelectContent className="bg-background border-border text-foreground">
                             <SelectItem value="br">DD/MM/AAAA</SelectItem>
                             <SelectItem value="us">MM/DD/AAAA</SelectItem>
                         </SelectContent>

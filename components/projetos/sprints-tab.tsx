@@ -105,18 +105,18 @@ export function SprintsTab() {
     <div className="flex-1 w-full relative">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-lg sm:text-xl font-display font-bold text-white">Sprints</h1>
+          <h1 className="text-lg sm:text-xl font-display font-bold text-foreground">Sprints</h1>
           <p className="text-xs sm:text-sm text-neutral-500">Gerenciamento de sprints ativas do Supabase</p>
         </div>
         
         <Dialog open={newSprintOpen} onOpenChange={setNewSprintOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto">
+            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-foreground w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Nova Sprint
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-[#141414] border-[#2A2A2A] text-white">
+          <DialogContent className="bg-card border-border text-foreground">
             <DialogHeader>
               <DialogTitle className="font-display">Criar Nova Sprint</DialogTitle>
             </DialogHeader>
@@ -125,7 +125,7 @@ export function SprintsTab() {
                 <Label className="text-neutral-400 text-xs font-mono uppercase">Nome da Sprint</Label>
                 <Input 
                   placeholder="Ex: SPRINT #12 - MVP"
-                  className="bg-[#1A1A1A] border-[#2A2A2A]"
+                  className="bg-[#1A1A1A] border-border"
                   value={formData.nome}
                   onChange={(e) => setFormData({...formData, nome: e.target.value})}
                 />
@@ -133,10 +133,10 @@ export function SprintsTab() {
               <div className="space-y-2">
                 <Label className="text-neutral-400 text-xs font-mono uppercase">Vincular Projeto</Label>
                 <Select value={formData.projeto_id} onValueChange={(val) => setFormData({...formData, projeto_id: val})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-[#2A2A2A]">
+                  <SelectTrigger className="bg-[#1A1A1A] border-border">
                     <SelectValue placeholder="Selecione o projeto" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
+                  <SelectContent className="bg-[#1A1A1A] border-border">
                     {projects.map((proj: any) => (
                       <SelectItem key={proj.id} value={proj.id}>{proj.nome}</SelectItem>
                     ))}
@@ -147,7 +147,7 @@ export function SprintsTab() {
                 <Label className="text-neutral-400 text-xs font-mono uppercase">Objetivo da Sprint</Label>
                 <Textarea 
                   placeholder="O que queremos entregar..."
-                  className="bg-[#1A1A1A] border-[#2A2A2A] min-h-[80px]"
+                  className="bg-[#1A1A1A] border-border min-h-[80px]"
                   value={formData.objetivo}
                   onChange={(e) => setFormData({...formData, objetivo: e.target.value})}
                 />
@@ -157,7 +157,7 @@ export function SprintsTab() {
                   <Label className="text-neutral-400 text-xs font-mono uppercase">Data Inicio</Label>
                   <Input 
                     type="date"
-                    className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]"
+                    className="bg-[#1A1A1A] border-border [color-scheme:dark]"
                     value={formData.data_inicio}
                     onChange={(e) => setFormData({...formData, data_inicio: e.target.value})}
                   />
@@ -166,7 +166,7 @@ export function SprintsTab() {
                   <Label className="text-neutral-400 text-xs font-mono uppercase">Data Fim</Label>
                   <Input 
                     type="date"
-                    className="bg-[#1A1A1A] border-[#2A2A2A] [color-scheme:dark]"
+                    className="bg-[#1A1A1A] border-border [color-scheme:dark]"
                     value={formData.data_fim}
                     onChange={(e) => setFormData({...formData, data_fim: e.target.value})}
                   />
@@ -181,17 +181,17 @@ export function SprintsTab() {
       </div>
 
       {!activeSprint ? (
-        <div className="text-neutral-500 text-center p-12 bg-[#141414] rounded border border-[#2A2A2A]">
+        <div className="text-neutral-500 text-center p-12 bg-card rounded border border-border">
            Nenhuma Sprint cadastrada no banco.
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Active Sprint Detail */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            <Card className="bg-[#141414] border-[#2A2A2A] border-l-4 border-l-orange-500">
-              <CardHeader className="border-b border-[#2A2A2A] p-3 sm:p-6">
+            <Card className="bg-card border-border border-l-4 border-l-orange-500">
+              <CardHeader className="border-b border-border p-3 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <CardTitle className="text-xs sm:text-sm font-medium text-neutral-300 tracking-wider flex items-center gap-2">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-foreground tracking-wider flex items-center gap-2">
                     <Zap className="w-4 h-4 text-orange-500" />
                     {activeSprint.nome.toUpperCase()}
                   </CardTitle>
@@ -200,11 +200,11 @@ export function SprintsTab() {
               <CardContent className="pt-4 p-3 sm:p-6">
                 <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
                   <div className="text-sm text-neutral-400 max-w-lg">
-                    Objetivo Oficial: <span className="text-white">{activeSprint.objetivo}</span>
+                    Objetivo Oficial: <span className="text-foreground">{activeSprint.objetivo}</span>
                   </div>
                 </div>
 
-                <div className="h-40 sm:h-48 bg-[#0A0A0A] rounded-lg p-3 sm:p-4 flex items-center justify-center border border-[#2A2A2A] border-dashed">
+                <div className="h-40 sm:h-48 bg-background rounded-lg p-3 sm:p-4 flex items-center justify-center border border-border border-dashed">
                     <div className="text-center text-neutral-500">
                         <TrendingDown className="w-8 h-8 opacity-20 mx-auto mb-2" />
                         <span className="text-xs font-mono">GRAFICO BURNDOWN</span><br/>
@@ -214,9 +214,9 @@ export function SprintsTab() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#141414] border-[#2A2A2A]">
-              <CardHeader className="border-b border-[#2A2A2A] p-3 sm:p-6">
-                <CardTitle className="text-xs sm:text-sm font-medium text-neutral-300 tracking-wider">
+            <Card className="bg-card border-border">
+              <CardHeader className="border-b border-border p-3 sm:p-6">
+                <CardTitle className="text-xs sm:text-sm font-medium text-foreground tracking-wider">
                   TASKS DESTA SPRINT (WIP)
                 </CardTitle>
               </CardHeader>

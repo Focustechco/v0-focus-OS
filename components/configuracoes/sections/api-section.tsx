@@ -67,13 +67,13 @@ console.log(projects);`
       </div>
 
       {/* API Keys */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <Label className="text-neutral-400 font-mono text-xs uppercase">Chaves de API</Label>
             <Button
               onClick={() => setNewKeyModal(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-mono text-xs"
+              className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs"
             >
               <Plus className="w-4 h-4 mr-2" />
               Gerar Nova Chave
@@ -94,7 +94,7 @@ console.log(projects);`
               <tbody>
                 {apiKeys.map((key) => (
                   <tr key={key.id} className="border-b border-[#2a2a2a] hover:bg-[#1a1a1a]">
-                    <td className="p-3 text-white text-sm">{key.name}</td>
+                    <td className="p-3 text-foreground text-sm">{key.name}</td>
                     <td className="p-3 text-neutral-400 font-mono text-sm">{key.prefix}</td>
                     <td className="p-3 text-neutral-400 font-mono text-sm">{key.created}</td>
                     <td className="p-3 text-neutral-400 font-mono text-sm">{key.lastUsed}</td>
@@ -126,11 +126,11 @@ console.log(projects);`
       </Card>
 
       {/* Webhooks */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <Label className="text-neutral-400 font-mono text-xs uppercase">Webhooks</Label>
-            <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-white font-mono text-xs">
+            <Button variant="outline" className="bg-transparent border-[#2a2a2a] text-neutral-400 hover:text-foreground font-mono text-xs">
               <Plus className="w-4 h-4 mr-2" />
               Adicionar Webhook
             </Button>
@@ -139,7 +139,7 @@ console.log(projects);`
             {webhooks.map((webhook, i) => (
               <div key={i} className="p-4 bg-[#1a1a1a] rounded border border-[#2a2a2a]">
                 <div className="flex items-center justify-between mb-2">
-                  <code className="text-neutral-300 text-sm font-mono truncate max-w-md">{webhook.url}</code>
+                  <code className="text-foreground text-sm font-mono truncate max-w-md">{webhook.url}</code>
                   <div className="flex items-center gap-2">
                     <Badge className={`text-[9px] font-mono ${webhook.lastDelivery === "success" ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"}`}>
                       {webhook.lastDelivery === "success" ? <Check className="w-3 h-3 mr-1" /> : <AlertCircle className="w-3 h-3 mr-1" />}
@@ -152,7 +152,7 @@ console.log(projects);`
                 </div>
                 <div className="flex gap-1">
                   {webhook.events.map((event) => (
-                    <Badge key={event} className="bg-[#0d0d0d] text-neutral-500 text-[9px] font-mono">
+                    <Badge key={event} className="bg-secondary text-neutral-500 text-[9px] font-mono">
                       {event}
                     </Badge>
                   ))}
@@ -164,7 +164,7 @@ console.log(projects);`
       </Card>
 
       {/* Rate Limits */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Rate Limits</Label>
           <div className="flex items-center gap-8">
@@ -184,13 +184,13 @@ console.log(projects);`
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-white text-2xl font-display font-bold">65</p>
+                  <p className="text-foreground text-2xl font-display font-bold">65</p>
                   <p className="text-neutral-500 text-xs font-mono">/100</p>
                 </div>
               </div>
             </div>
             <div>
-              <p className="text-white font-medium">65 requisicoes/min</p>
+              <p className="text-foreground font-medium">65 requisicoes/min</p>
               <p className="text-neutral-500 text-sm">Limite: 100 req/min</p>
               <p className="text-neutral-600 text-xs font-mono mt-2">Resetar em: 45s</p>
             </div>
@@ -199,7 +199,7 @@ console.log(projects);`
       </Card>
 
       {/* Documentation Link */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Documentacao</Label>
           <Button variant="outline" className="bg-transparent border-orange-500/30 text-orange-500 hover:bg-orange-500/10 font-mono text-xs">
@@ -210,12 +210,12 @@ console.log(projects);`
       </Card>
 
       {/* SDK Snippet */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      <Card className="bg-card border-[#2a2a2a]">
         <CardContent className="p-6">
           <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Quick Start</Label>
-          <div className="bg-[#0d0d0d] rounded p-4 overflow-x-auto">
+          <div className="bg-secondary rounded p-4 overflow-x-auto">
             <pre className="text-sm font-mono">
-              <code className="text-neutral-300">{codeSnippet}</code>
+              <code className="text-foreground">{codeSnippet}</code>
             </pre>
           </div>
         </CardContent>
@@ -223,9 +223,9 @@ console.log(projects);`
 
       {/* New Key Modal */}
       <Dialog open={newKeyModal} onOpenChange={setNewKeyModal}>
-        <DialogContent className="bg-[#141414] border-[#2a2a2a] max-w-md">
+        <DialogContent className="bg-card border-[#2a2a2a] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white font-display flex items-center gap-2">
+            <DialogTitle className="text-foreground font-display flex items-center gap-2">
               <Key className="w-5 h-5 text-orange-500" />
               Gerar Nova Chave
             </DialogTitle>
@@ -235,13 +235,13 @@ console.log(projects);`
               <Label className="text-neutral-400 font-mono text-xs uppercase">Nome</Label>
               <Input
                 placeholder="Ex: Producao"
-                className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono"
+                className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono"
               />
             </div>
             <div className="space-y-2">
               <Label className="text-neutral-400 font-mono text-xs uppercase">Expiracao</Label>
               <Select defaultValue="never">
-                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-white font-mono">
+                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
@@ -268,7 +268,7 @@ console.log(projects);`
             <Button variant="ghost" onClick={() => setNewKeyModal(false)} className="text-neutral-400 font-mono">
               Cancelar
             </Button>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-mono">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono">
               Gerar Chave
             </Button>
           </DialogFooter>

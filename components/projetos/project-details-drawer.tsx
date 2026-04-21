@@ -74,10 +74,10 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-[#0f0f0f] border-l border-[#2A2A2A] text-white w-full sm:w-[500px] md:w-[600px] lg:w-[40%] p-0">
+      <SheetContent className="bg-[#0f0f0f] border-l border-border text-foreground w-full sm:w-[500px] md:w-[600px] lg:w-[40%] p-0">
         <div className="h-full flex flex-col">
           {/* Header Section */}
-          <div className="p-6 border-b border-[#2A2A2A]">
+          <div className="p-6 border-b border-border">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono text-orange-500 tracking-widest uppercase">
                 {project.codigo}
@@ -86,14 +86,14 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                 <Badge className={cn("text-[9px] uppercase tracking-wider", currentStage.bg, currentStage.color)}>
                   {currentStage.label}
                 </Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-white">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-foreground">
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </div>
             </div>
             
             <SheetHeader className="text-left mb-6">
-              <SheetTitle className="text-2xl font-display font-bold text-white flex items-center gap-2">
+              <SheetTitle className="text-2xl font-display font-bold text-foreground flex items-center gap-2">
                 {project.nome}
                 <ArrowUpRight className="w-4 h-4 text-neutral-600" />
               </SheetTitle>
@@ -109,18 +109,18 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#141414] border border-[#2A2A2A] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center">
                     <Calendar className="w-4 h-4 text-neutral-400" />
                   </div>
                   <div>
                     <p className="text-[9px] text-neutral-500 uppercase tracking-tighter">Prazo</p>
-                    <p className="text-xs text-white font-mono">{project.prazo || "Sem data"}</p>
+                    <p className="text-xs text-foreground font-mono">{project.prazo || "Sem data"}</p>
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-[10px] mb-2 uppercase tracking-widest">
                     <span className="text-neutral-500">Progresso Geral</span>
-                    <span className="text-white font-mono">{project.progresso}%</span>
+                    <span className="text-foreground font-mono">{project.progresso}%</span>
                   </div>
                   <Progress value={project.progresso} className="h-1.5 bg-[#1A1A1A]" />
                 </div>
@@ -140,7 +140,7 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                     </Avatar>
                   </div>
                   <div className="text-[10px] text-neutral-400 leading-tight">
-                    <p className="text-white font-medium">{project.tech_lead}</p>
+                    <p className="text-foreground font-medium">{project.tech_lead}</p>
                     <p>Secundário: {project.dev}</p>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
 
           {/* Navigation Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <div className="px-6 border-b border-[#2A2A2A] overflow-x-auto no-scrollbar">
+            <div className="px-6 border-b border-border overflow-x-auto no-scrollbar">
               <TabsList className="bg-transparent h-12 p-0 gap-6 w-full justify-start">
                 <TabsTrigger value="visao-geral" className="bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-orange-500 data-[state=active]:border-b-2 data-[state=active]:border-orange-500 rounded-none h-full px-0 font-mono text-[9px] uppercase tracking-widest">
                   <LayoutGrid className="w-3.5 h-3.5 mr-2" />
@@ -183,19 +183,19 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
               <TabsContent value="visao-geral" className="m-0 space-y-6">
                 <div>
                    <h4 className="text-[10px] font-mono uppercase text-neutral-500 mb-3 tracking-widest">Descrição do Projeto</h4>
-                   <p className="text-sm text-neutral-400 leading-relaxed bg-[#141414] p-4 rounded-xl border border-[#2A2A2A]">
+                   <p className="text-sm text-neutral-400 leading-relaxed bg-card p-4 rounded-xl border border-border">
                      {project.descricao || "Nenhuma descrição fornecida para este projeto."}
                    </p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-[#141414] border border-[#2A2A2A] rounded-xl">
+                  <div className="p-4 bg-card border border-border rounded-xl">
                     <h4 className="text-[9px] font-mono uppercase text-neutral-500 mb-1">Data Início</h4>
-                    <p className="text-sm text-white font-mono">{project.data_inicio}</p>
+                    <p className="text-sm text-foreground font-mono">{project.data_inicio}</p>
                   </div>
-                  <div className="p-4 bg-[#141414] border border-[#2A2A2A] rounded-xl">
+                  <div className="p-4 bg-card border border-border rounded-xl">
                     <h4 className="text-[9px] font-mono uppercase text-neutral-500 mb-1">Data Final (Estimada)</h4>
-                    <p className="text-sm text-white font-mono">{project.data_fim || "TBD"}</p>
+                    <p className="text-sm text-foreground font-mono">{project.data_fim || "TBD"}</p>
                   </div>
                 </div>
               </TabsContent>
@@ -206,7 +206,7 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                 </div>
                 <div className="space-y-4">
                    {projectSprints.length === 0 ? (
-                     <div className="p-10 border border-dashed border-[#2A2A2A] rounded-xl text-center flex flex-col items-center">
+                     <div className="p-10 border border-dashed border-border rounded-xl text-center flex flex-col items-center">
                        <Clock className="w-8 h-8 text-neutral-600 mb-2 opacity-50" />
                        <p className="text-xs text-neutral-600">Nenhuma sprint cadastrada ainda.</p>
                      </div>
@@ -226,7 +226,7 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                 </div>
                 <div className="space-y-4">
                    {tasks.length === 0 ? (
-                     <div className="p-10 border border-dashed border-[#2A2A2A] rounded-xl text-center flex flex-col items-center">
+                     <div className="p-10 border border-dashed border-border rounded-xl text-center flex flex-col items-center">
                        <CheckCircle2 className="w-8 h-8 text-neutral-600 mb-2 opacity-50" />
                        <p className="text-xs text-neutral-600">O backlog de tarefas está vazio.</p>
                      </div>
@@ -243,25 +243,25 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
               <TabsContent value="relatorios" className="m-0">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-[10px] font-mono uppercase text-neutral-500 tracking-widest">Relatórios Gerados</h4>
-                  <Button size="sm" className="h-7 text-[10px] bg-orange-500 hover:bg-orange-600 text-white" onClick={() => setIsReportWizardOpen(true)}>
+                  <Button size="sm" className="h-7 text-[10px] bg-orange-500 hover:bg-orange-600 text-foreground" onClick={() => setIsReportWizardOpen(true)}>
                     Gerar Novo <Plus className="w-3 h-3 ml-1" />
                   </Button>
                 </div>
                 <div className="space-y-3">
                    {projectReports.length === 0 ? (
-                     <div className="p-10 border border-dashed border-[#2A2A2A] rounded-xl text-center flex flex-col items-center">
+                     <div className="p-10 border border-dashed border-border rounded-xl text-center flex flex-col items-center">
                        <FileText className="w-8 h-8 text-neutral-600 mb-2 opacity-50" />
                        <p className="text-xs text-neutral-600">Nenhum relatório emitido.</p>
                      </div>
                    ) : (
                      projectReports.map((report: any) => (
-                        <div key={report.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-[#141414] border border-[#2A2A2A] rounded-lg gap-3">
+                        <div key={report.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-card border border-border rounded-lg gap-3">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
                               <FileText className="w-4 h-4 text-orange-500" />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-white line-clamp-1">{report.titulo}</p>
+                              <p className="text-sm font-medium text-foreground line-clamp-1">{report.titulo}</p>
                               <div className="flex items-center gap-2 mt-1">
                                 <Badge className="text-[8px] sm:text-[9px] bg-[#2A2A2A] text-neutral-400">
                                   {report.status?.toUpperCase() || "SALVO"}
@@ -272,7 +272,7 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
                               </div>
                             </div>
                           </div>
-                          <Button size="sm" variant="ghost" className="text-xs text-neutral-400 hover:text-white" onClick={() => router.push("/relatorios")}>
+                          <Button size="sm" variant="ghost" className="text-xs text-neutral-400 hover:text-foreground" onClick={() => router.push("/relatorios")}>
                             Acessar Central
                           </Button>
                         </div>
@@ -283,10 +283,10 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
 
               <TabsContent value="historico" className="m-0">
                 <h4 className="text-[10px] font-mono uppercase text-neutral-500 mb-4 tracking-widest">Log de Atividades</h4>
-                <div className="space-y-6 relative ml-4 border-l border-[#2A2A2A] pl-6 pb-6 pt-2">
+                <div className="space-y-6 relative ml-4 border-l border-border pl-6 pb-6 pt-2">
                   <div className="relative">
                     <div className="absolute -left-[31px] top-0 w-2.5 h-2.5 rounded-full bg-orange-500 ring-4 ring-orange-500/10" />
-                    <p className="text-xs text-white  mb-1">Projeto criado no sistema</p>
+                    <p className="text-xs text-foreground  mb-1">Projeto criado no sistema</p>
                     <p className="text-[10px] text-neutral-500 font-mono uppercase">{new Date(project.created_at).toLocaleString()}</p>
                   </div>
                 </div>
@@ -301,8 +301,8 @@ export function ProjectDetailsDrawer({ project, open, onOpenChange }: ProjectDet
             </div>
           </Tabs>
 
-          <div className="p-6 border-t border-[#2A2A2A] bg-[#141414]">
-            <Button className="w-full bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white border border-[#2A2A2A]" onClick={() => onOpenChange(false)}>
+          <div className="p-6 border-t border-border bg-card">
+            <Button className="w-full bg-[#1A1A1A] hover:bg-[#2A2A2A] text-foreground border border-border" onClick={() => onOpenChange(false)}>
                Fechar Detalhes
             </Button>
           </div>

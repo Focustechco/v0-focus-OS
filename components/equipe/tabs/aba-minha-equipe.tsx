@@ -80,12 +80,12 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total", value: totalCount, color: "text-white" },
+          { label: "Total", value: totalCount, color: "text-foreground" },
           { label: "Ativos", value: activeCount, color: "text-green-400" },
-          { label: "Tech", value: equipe.filter((m) => m.setor === "tech").length, color: "text-white" },
-          { label: "Comercial", value: equipe.filter((m) => m.setor === "comercial").length, color: "text-white" },
+          { label: "Tech", value: equipe.filter((m) => m.setor === "tech").length, color: "text-foreground" },
+          { label: "Comercial", value: equipe.filter((m) => m.setor === "comercial").length, color: "text-foreground" },
         ].map((item, idx) => (
-          <Card key={idx} className="bg-[#141414] border-[#2A2A2A] shadow-lg shadow-black/20">
+          <Card key={idx} className="bg-card border-border shadow-lg shadow-black/20">
             <CardContent className="p-4">
               <p className="text-[9px] sm:text-[10px] font-mono uppercase text-neutral-500 tracking-widest">{item.label}</p>
               <p className={cn("text-xl sm:text-2xl font-bold font-mono mt-1", item.color)}>{item.value}</p>
@@ -103,7 +103,7 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nome, cargo ou setor..."
-              className="pl-9 bg-[#141414] border-[#2A2A2A] text-white w-full sm:w-72 focus:border-orange-500/50"
+              className="pl-9 bg-card border-border text-foreground w-full sm:w-72 focus:border-orange-500/50"
             />
           </div>
 
@@ -116,8 +116,8 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                 className={cn(
                   "px-3 py-1 rounded text-[10px] font-mono uppercase transition-all",
                   filterSetor === s
-                    ? "bg-orange-500 text-white"
-                    : "bg-[#141414] border border-[#2A2A2A] text-neutral-400 hover:border-orange-500/30"
+                    ? "bg-orange-500 text-foreground"
+                    : "bg-card border border-border text-neutral-400 hover:border-orange-500/30"
                 )}
               >
                 {s}
@@ -128,7 +128,7 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
 
         <Button
           onClick={() => setNovoMembroOpen(true)}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-medium w-full sm:w-auto"
+          className="bg-orange-500 hover:bg-orange-600 text-foreground font-medium w-full sm:w-auto"
         >
           <Plus className="w-4 h-4 mr-2" />
           Novo Membro
@@ -171,11 +171,11 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                 <Card 
                   key={m.id} 
                   onClick={() => openDetalhes(m.id)}
-                  className="bg-[#141414] border-[#2A2A2A] hover:border-orange-500/30 transition-all active:scale-[0.98]"
+                  className="bg-card border-border hover:border-orange-500/30 transition-all active:scale-[0.98]"
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
-                      <Avatar className="w-12! h-12! min-w-[48px] min-h-[48px] rounded-full! border border-[#2A2A2A] flex-shrink-0">
+                      <Avatar className="w-12! h-12! min-w-[48px] min-h-[48px] rounded-full! border border-border flex-shrink-0">
                         <AvatarImage src={m.foto_url} className="rounded-full!" />
                         <AvatarFallback
                           className="text-sm font-bold rounded-full!"
@@ -186,7 +186,7 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-0.5">
-                          <h3 className="text-sm font-bold text-white truncate">{m.nome}</h3>
+                          <h3 className="text-sm font-bold text-foreground truncate">{m.nome}</h3>
                           <Badge variant="outline" className={cn("text-[9px] uppercase font-mono", tipoInfo.color)}>
                             {tipoInfo.label}
                           </Badge>
@@ -197,7 +197,7 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-[#2A2A2A]/50">
+                    <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border/50">
                       <div className="flex flex-col gap-1">
                         <span className="text-[9px] text-neutral-600 uppercase font-mono tracking-widest">Status</span>
                         <div className="flex items-center gap-2">
@@ -222,11 +222,11 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
           </div>
 
           {/* Desktop Table View */}
-          <Card className="bg-[#141414] border-[#2A2A2A] hidden lg:block overflow-hidden">
+          <Card className="bg-card border-border hidden lg:block overflow-hidden">
             <CardContent className="p-0">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#2A2A2A]">
+                  <tr className="border-b border-border">
                     {["Membro", "Cargo", "Setor", "Tipo", "Status", "Ações"].map((h) => (
                       <th key={h} className="text-left p-4 text-[10px] font-mono uppercase text-neutral-500 tracking-wider">
                         {h}
@@ -241,7 +241,7 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                       <tr
                         key={m.id}
                         onClick={() => openDetalhes(m.id)}
-                        className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A] transition-colors cursor-pointer group"
+                        className="border-b border-border hover:bg-accent/10 transition-colors cursor-pointer group"
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
@@ -254,7 +254,7 @@ export function AbaMinhaEquipe({ userType }: { userType: string }) {
                                 {initials(m.nome)}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-sm font-medium text-white group-hover:text-orange-400 transition-colors whitespace-nowrap">
+                            <span className="text-sm font-medium text-foreground group-hover:text-orange-400 transition-colors whitespace-nowrap">
                               {m.nome}
                             </span>
                           </div>
