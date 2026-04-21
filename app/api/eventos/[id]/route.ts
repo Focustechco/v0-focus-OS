@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const dynamic = 'force-dynamic'
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+  )
+}
 
 async function deletarDoGoogle(googleEventId: string, userId: string) {
+  const supabase = getSupabase()
   try {
     const { data: tokenData } = await supabase
       .from("google_tokens")
@@ -36,6 +41,7 @@ async function deletarDoGoogle(googleEventId: string, userId: string) {
 
 // DELETE /api/eventos/[id]
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const supabase = getSupabase()
   try {
     const { id } = params
     const { searchParams } = new URL(req.url)
@@ -68,6 +74,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
 // PATCH /api/eventos/[id]
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const supabase = getSupabase()
   try {
     const { id } = params
     const body = await req.json()
