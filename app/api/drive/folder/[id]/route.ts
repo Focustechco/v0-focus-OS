@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { DriveService } from "@/lib/services/drive.service";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }

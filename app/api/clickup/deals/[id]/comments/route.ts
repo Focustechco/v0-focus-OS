@@ -3,6 +3,8 @@ import { clickupFetch } from "@/lib/clickup-server"
 import { requireUser } from "@/lib/api-auth"
 import type { ClickUpComment } from "@/lib/clickup-api"
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/clickup/deals/[id]/comments
  */

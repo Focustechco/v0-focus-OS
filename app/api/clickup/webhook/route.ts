@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getTask } from "@/lib/clickup-server"
 import { syncClickUpTasksToLeads } from "@/lib/clickup-sync"
+export const dynamic = 'force-dynamic'
 
 /**
  * Endpoint para receber Webhooks do ClickUp.

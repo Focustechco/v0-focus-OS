@@ -3,6 +3,7 @@ import { clickupFetch, getClickUpConfig, ClickUpNotConfiguredError } from "@/lib
 import { mapTaskToDeal } from "@/lib/crm-field-mapper"
 import type { ClickUpTask } from "@/lib/clickup-api"
 import { requireUser } from "@/lib/api-auth"
+export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/clickup/deals

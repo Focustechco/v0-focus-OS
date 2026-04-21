@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
 
+export const dynamic = 'force-dynamic'
+
 // PATCH /api/checklist-items/[id]
 export async function PATCH(
   request: Request,

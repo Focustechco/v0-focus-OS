@@ -3,6 +3,8 @@ import { clickupFetch } from "@/lib/clickup-server"
 import { requireUser } from "@/lib/api-auth"
 import type { ClickUpTask } from "@/lib/clickup-api"
 
+export const dynamic = 'force-dynamic'
+
 /**
  * PUT /api/clickup/deals/[id]
  * Atualiza status/dados de uma task ClickUp.

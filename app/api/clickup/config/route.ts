@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getClickUpConfig } from "@/lib/clickup-server"
 import { requireUser } from "@/lib/api-auth"
+export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/clickup/config

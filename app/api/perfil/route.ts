@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
+export const dynamic = 'force-dynamic'
 
 // Acesso seguro ao perfil bypassando RLS e criando row padrao se precisar
 export async function GET(request: Request) {

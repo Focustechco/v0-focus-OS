@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
+export const dynamic = 'force-dynamic'
 
 // GET /api/checklist-items?task_id=X
 export async function GET(request: Request) {

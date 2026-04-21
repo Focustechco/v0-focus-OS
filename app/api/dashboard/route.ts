@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
+export const dynamic = 'force-dynamic'
 
 // Helper: run a query and return [] / 0 on any error instead of throwing
 async function safeQuery<T>(fn: () => Promise<{ data: T | null; error: any; count?: number | null }>): Promise<{ data: T; count: number }> {
