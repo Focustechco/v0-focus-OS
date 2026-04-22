@@ -1,17 +1,29 @@
 const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const path = require('path');
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://nmvupgurzfdwzsocsvyq.supabase.co";
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdnVwZ3VyemZkd3pzb2NzdnlxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTk0MzQ3NiwiZXhwIjoyMDkxNTE5NDc2fQ.N8-XT85QFolD8sQD0VzVm91Lv-BPi5-xc5eSSbo1emw";
+// Carregar .env.local manualmente
+const envContent = fs.readFileSync(path.join(process.cwd(), '.env.local'), 'utf8');
+const env = {};
+envContent.split('\n').forEach(line => {
+  const parts = line.split('=');
+  if (parts.length === 2) {
+    env[parts[0].trim()] = parts[1].trim();
+  }
+});
 
-const supabase = createClient(url, key);
+const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
-async function run() {
-  const { data, error } = await supabase.from('push_subscriptions').select('*').limit(1);
+async function test() {
+  const { data, error, count } = await supabase
+    .from('push_subscriptions')
+    .select('*', { count: 'exact', head: true });
+
   if (error) {
-    console.log("Table error:", error.message);
+    console.error('Erro:', error);
   } else {
-    console.log("Table push_subscriptions exists.");
+    console.log('Sucesso! Tabela existe. Count:', count);
   }
 }
 
-run();
+test();

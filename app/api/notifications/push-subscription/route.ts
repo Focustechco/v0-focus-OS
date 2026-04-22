@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
+export const dynamic = 'force-dynamic'
+import { createAdminClient } from "@/lib/supabase/server"
 
 export async function POST(request: Request) {
   try {
@@ -16,22 +15,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid subscription object" }, { status: 400 })
     }
 
-    const pushSub = await prisma.pushSubscription.upsert({
-      where: { endpoint },
-      update: {
-        userId,
-        p256dh: keys.p256dh,
-        auth: keys.auth
-      },
-      create: {
+    const supabase = createAdminClient()
+
+    // Usar upsert do Supabase
+    // A tabela push_subscriptions deve ter 'endpoint' como chave única/primária para o upsert funcionar por conflito
+    const { data, error } = await supabase
+      .from("push_subscriptions")
+      .upsert({
         userId,
         endpoint,
         p256dh: keys.p256dh,
-        auth: keys.auth
-      }
-    })
+        auth: keys.auth,
+        created_at: new Date().toISOString()
+      }, { onConflict: 'endpoint' })
+      .select()
+      .single()
 
-    return NextResponse.json(pushSub)
+    if (error) {
+      console.error("Erro no Supabase ao salvar push subscription:", error)
+      throw error
+    }
+
+    return NextResponse.json(data)
   } catch (error: any) {
     console.error("Erro ao salvar push subscription:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
