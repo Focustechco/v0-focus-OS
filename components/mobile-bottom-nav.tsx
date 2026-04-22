@@ -9,6 +9,12 @@ import {
   Users,
   Grid,
   CheckSquare,
+  CalendarClock,
+  Settings,
+  Cog,
+  BarChart3,
+  FileText,
+  Box,
 } from "lucide-react"
 import {
   Sheet,
@@ -23,21 +29,22 @@ import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
 const PRIMARY_NAV = [
   { id: "command-center", href: "/",         icon: LayoutDashboard, label: "Home" },
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
-  { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tarefas" },
+  { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tasks" },
   { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "Comercial" },
 ]
 
 const ALL_MODULES = [
   { id: "command-center", href: "/",         icon: LayoutDashboard, label: "Dashboard" },
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
-  { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tarefas" },
+  { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tasks" },
+  { id: "agenda",         href: "/agenda",    icon: CalendarClock,   label: "Agenda" },
   { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "Comercial" },
   { id: "equipe",         href: "/equipe",    icon: Users,           label: "Equipe" },
-  { id: "intelligence",   href: "/intelligence", icon: Grid, label: "Inteligence" },
-  { id: "clientes",       href: "/clientes",  icon: Users,           label: "Clientes" },
-  { id: "relatorios",     href: "/relatorios", icon: Briefcase,       label: "Relatórios" },
-  { id: "sistemas",       href: "/sistemas",  icon: Briefcase,       label: "Sistemas" },
-  { id: "configuracoes",  href: "/configuracoes", icon: Briefcase,     label: "Ajustes" },
+  { id: "intelligence",   href: "/intelligence", icon: BarChart3,    label: "Inteligence" },
+  { id: "clientes",       href: "/clientes",  icon: Box,             label: "Clientes" },
+  { id: "relatorios",     href: "/relatorios", icon: FileText,        label: "Relatórios" },
+  { id: "sistemas",       href: "/sistemas",  icon: Settings,        label: "Sistemas" },
+  { id: "configuracoes",  href: "/configuracoes", icon: Cog,          label: "Ajustes" },
 ]
 
 export function MobileBottomNav() {
