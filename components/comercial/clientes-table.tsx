@@ -515,38 +515,42 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
         </Table>
       </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-            <span className="text-xs text-neutral-500">
-              Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredDeals.length)} de {filteredDeals.length}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border mt-4">
+          <span className="text-xs text-neutral-500">
+            Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredDeals.length)} de {filteredDeals.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="border-border"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <span className="text-sm text-neutral-400">
+              {currentPage} / {totalPages}
             </span>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="border-border"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <span className="text-sm text-neutral-400">
-                {currentPage} / {totalPages}
-              </span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="border-border"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="border-border"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      <ModalGerarCobranca 
+        open={isFinanceiroOpen}
+        onOpenChange={setIsFinanceiroOpen}
+      />
     </div>
   )
 }
