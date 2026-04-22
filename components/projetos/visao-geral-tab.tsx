@@ -108,20 +108,20 @@ function ProjectCard({ project, onClick }: { project: any; onClick: () => void }
               {project.client_name || project.clientes?.nome || "—"}
             </p>
           </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-500 hover:text-foreground -mr-2">
-            <MoreVertical className="w-4 h-4" />
+          <Button variant="ghost" size="icon" className="h-4 w-4 text-neutral-500 hover:text-foreground -mr-1">
+            <MoreVertical className="w-3 h-3" />
           </Button>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-end justify-between">
             <div className="flex -space-x-1">
-              <Avatar className="w-3.5 h-3.5 border border-[#141414]">
+              <Avatar className="w-2.5 h-2.5 border border-[#141414]">
                 <AvatarFallback className="bg-orange-500 text-[5px]">
                   {project.tech_lead?.substring(0, 2) ?? "TL"}
                 </AvatarFallback>
               </Avatar>
-              <Avatar className="w-3.5 h-3.5 border border-[#141414]">
+              <Avatar className="w-2.5 h-2.5 border border-[#141414]">
                 <AvatarFallback className="bg-neutral-700 text-[5px]">
                   {project.dev?.substring(0, 2) ?? "DV"}
                 </AvatarFallback>
@@ -130,7 +130,7 @@ function ProjectCard({ project, onClick }: { project: any; onClick: () => void }
             <div className="text-right">
               <p className="text-[8px] text-neutral-500 uppercase tracking-widest mb-0.5">Prazo</p>
               <div className={cn("flex items-center gap-1 text-[10px] font-mono", deadlineColor)}>
-                <Clock className="w-3 h-3" />
+                <Clock className="w-2.5 h-2.5" />
                 {project.prazo || "N/A"}
               </div>
             </div>

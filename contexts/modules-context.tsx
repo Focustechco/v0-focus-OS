@@ -16,6 +16,7 @@ const MODULE_MAPPING: Record<string, string[]> = {
   "sistemas": ["sistemas"],
   "configuracoes": ["configuracoes"],
   "documentos": ["documentos"],
+  "financeiro": ["financeiro"],
 }
 
 // Modulos que sempre devem estar visiveis (essenciais)
@@ -35,6 +36,7 @@ const DEFAULT_MODULE_STATES: Record<string, boolean> = {
   "intelligence": true,
   "relatorios": true,
   "documentos": true,
+  "financeiro": true,
 }
 
 interface ModulesContextType {

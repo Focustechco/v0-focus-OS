@@ -153,7 +153,7 @@ export function TaskCard({ task, onClick, onDelete }: { task: any, onClick?: () 
               onClick={handleToggleCircle}
               className="text-neutral-500 hover:text-foreground transition-colors flex-shrink-0"
             >
-              {isCompleted ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className="w-5 h-5" />}
+              {isCompleted ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Circle className="w-4 h-4" />}
             </button>
             <span className="text-xs text-neutral-500 font-mono flex-shrink-0">
               {optimisticTask.codigo_tarefa || optimisticTask.id.substring(0,8)}

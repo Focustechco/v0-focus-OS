@@ -15,6 +15,7 @@ import {
   BarChart3,
   FileText,
   Box,
+  DollarSign,
 } from "lucide-react"
 import {
   Sheet,
@@ -46,6 +47,7 @@ const ALL_MODULES = [
   { id: "sistemas",       href: "/sistemas",  icon: Settings,        label: "Sistemas" },
   { id: "configuracoes",  href: "/configuracoes", icon: Cog,          label: "Ajustes" },
   { id: "documentos",     href: "/documentos", icon: Box,          label: "Documentos" },
+  { id: "financeiro",     href: "/financeiro", icon: DollarSign,     label: "Financeiro" },
 ]
 
 export function MobileBottomNav() {

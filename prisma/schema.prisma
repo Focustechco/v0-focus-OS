@@ -373,3 +373,12 @@ model Approval {
   @@map("aprovacoes")
 }
 
+model NotaFiscal {
+  id          String   @id @default(cuid())
+  cobrancaId  String
+  numero      String
+  arquivo     String   // URL ou base64
+  createdAt   DateTime @default(now())
+  
+  @@map("notas_fiscais")
+}
