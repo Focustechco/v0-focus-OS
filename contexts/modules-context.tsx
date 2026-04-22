@@ -53,6 +53,7 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
+    // Só roda no cliente
     const saved = localStorage.getItem("focus-module-states")
     if (saved) {
       try {
@@ -62,12 +63,11 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
         if (parsed.financeiro === undefined) {
           const newState = { ...DEFAULT_MODULE_STATES, ...parsed, financeiro: true, comercial: true }
           setModuleStates(newState)
-          localStorage.setItem("focus-module-states", JSON.stringify(newState))
         } else {
           setModuleStates({ ...DEFAULT_MODULE_STATES, ...parsed })
         }
-      } catch {
-        // Manter estado padrao se houver erro
+      } catch (e) {
+        console.error("Erro ao carregar modulos do cache:", e)
       }
     }
     setIsHydrated(true)

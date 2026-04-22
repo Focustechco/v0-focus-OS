@@ -10,30 +10,25 @@ import {
   LayoutDashboard,
   FolderKanban,
   GitBranch,
-  Zap,
-  ListTodo,
   CheckSquare,
-  Clock,
   CalendarClock,
   Cpu,
   BarChart3,
   Settings,
-  Bell,
   Briefcase,
   FileText,
-  Layers,
   Cog,
   Users,
   Box,
   Grid,
   DollarSign,
+  Download,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useModules } from "@/contexts/modules-context"
 import { useIntelligence } from "@/lib/hooks/use-intelligence"
 import { usePwa } from "@/contexts/pwa-context"
-import { Download, Target } from "lucide-react"
 import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
 
 // Subitems do módulo Projetos
@@ -123,14 +118,14 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className={`${collapsed ? "hidden" : "flex items-center gap-3"}`}>
-            <img src="/logo.svg" alt="Focus OS" className="w-10 h-10" />
+            <img src="/logo.svg" alt="Focus OS" width={40} height={40} className="w-10 h-10" />
             <div>
               <h1 className="text-orange-500 font-display font-bold text-lg tracking-wider whitespace-nowrap">FOCUS OS</h1>
               <p className="text-neutral-600 text-xs font-mono">v1.0</p>
             </div>
           </div>
           {collapsed && (
-            <img src="/logo.svg" alt="Focus OS" className="w-8 h-8 mx-auto" />
+            <img src="/logo.svg" alt="Focus OS" width={32} height={32} className="w-8 h-8 mx-auto" />
           )}
           <Button
             variant="ghost"
