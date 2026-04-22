@@ -21,7 +21,7 @@ import {
   Settings,
   Users,
   FolderKanban,
-  ClipboardList,
+  CheckSquare,
   Zap,
   Clock,
   FileText,
