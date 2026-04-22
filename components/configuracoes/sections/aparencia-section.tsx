@@ -12,8 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Moon, Sun, Check } from "lucide-react"
+import { Moon, Sun, Check, Monitor, Layout, Smartphone } from "lucide-react"
 import { useTheme } from "next-themes"
+import { cn } from "@/lib/utils"
 
 interface AparenciaSectionProps {
   onChange: () => void
@@ -34,83 +35,139 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
   const [sidebarMode, setSidebarMode] = useState<"expandida" | "mini">("expandida")
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div>
-        <h2 className="text-sm font-mono tracking-widest text-neutral-400 uppercase mb-1 flex items-center gap-2 border-l-2 border-orange-500 pl-3">
-          Aparencia
+    <div className="space-y-8 max-w-4xl animate-in fade-in duration-500">
+      <div className="space-y-1">
+        <h2 className="text-sm font-bold tracking-widest text-orange-500 uppercase flex items-center gap-2">
+          <Layout className="w-4 h-4" />
+          PERSONALIZAÇÃO
         </h2>
-        <p className="text-neutral-600 text-sm pl-5">
-          Personalize a aparencia do sistema
+        <p className="text-neutral-500 text-xs font-mono">
+          Ajuste a interface do Focus OS para o seu fluxo de trabalho
         </p>
       </div>
 
-      {/* Theme */}
-      <Card className="bg-card border-[#2a2a2a]">
-        <CardContent className="p-6">
-          <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Tema</Label>
-          <div className="flex gap-4">
-            <button
-              onClick={() => { setTheme("dark"); onChange() }}
-              className={`flex-1 p-4 rounded border-2 transition-all ${
-                theme === "dark"
-                  ? "border-orange-500 bg-[#1a1a1a]"
-                  : "border-[#2a2a2a] bg-[#1a1a1a] hover:border-neutral-600"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-3">
-                <Moon className={`w-5 h-5 ${theme === "dark" ? "text-orange-500" : "text-neutral-400"}`} />
-                <span className={`font-mono text-sm ${theme === "dark" ? "text-foreground" : "text-neutral-400"}`}>DARK</span>
-                {theme === "dark" && <Check className="w-4 h-4 text-orange-500" />}
-              </div>
-              <div className="mt-3 h-16 rounded bg-secondary border border-[#2a2a2a] flex items-center justify-center">
-                <div className="w-8 h-2 bg-orange-500 rounded" />
-              </div>
-            </button>
-            <button
-              onClick={() => { setTheme("light"); onChange() }}
-              className={`flex-1 p-4 rounded border-2 transition-all ${
-                theme === "light"
-                  ? "border-orange-500 bg-white"
-                  : "border-[#2a2a2a] bg-neutral-100 hover:border-neutral-600"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-3">
-                <Sun className={`w-5 h-5 ${theme === "light" ? "text-orange-500" : "text-neutral-500"}`} />
-                <span className={`font-mono text-sm ${theme === "light" ? "text-black" : "text-neutral-500"}`}>LIGHT</span>
-                {theme === "light" && <Check className="w-4 h-4 text-orange-500" />}
-              </div>
-              <div className="mt-3 h-16 rounded bg-white border border-neutral-200 flex items-center justify-center">
-                <div className="w-8 h-2 bg-orange-500 rounded" />
-              </div>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Accent Color */}
-      <Card className="bg-card border-[#2a2a2a]">
-        <CardContent className="p-6">
-          <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Cor de Destaque</Label>
-          <div className="flex items-center gap-3">
-            {accentColors.map((color) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Theme Selection */}
+        <div className="space-y-3">
+          <Label className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500 ml-1">Tema do Sistema</Label>
+          <div className="flex bg-secondary/50 p-1 rounded-lg border border-border h-12">
+            {[
+              { id: "dark", label: "Dark", icon: Moon },
+              { id: "light", label: "Light", icon: Sun },
+              { id: "system", label: "Auto", icon: Monitor },
+            ].map((t) => (
               <button
-                key={color.hex}
-                onClick={() => { setAccentColor(color.hex); onChange() }}
-                className={`w-10 h-10 rounded-md transition-all flex items-center justify-center ${
-                  accentColor === color.hex ? "ring-2 ring-white ring-offset-2 ring-offset-[#141414]" : ""
-                }`}
-                style={{ backgroundColor: color.hex }}
-                title={color.name}
+                key={t.id}
+                onClick={() => { setTheme(t.id); onChange() }}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 rounded-md transition-all text-xs font-bold uppercase tracking-wider",
+                  theme === t.id 
+                    ? "bg-background text-orange-500 shadow-sm border border-border" 
+                    : "text-neutral-500 hover:text-foreground hover:bg-white/5"
+                )}
               >
-                {accentColor === color.hex && <Check className="w-5 h-5 text-foreground" />}
+                <t.icon className={cn("w-3.5 h-3.5", theme === t.id ? "text-orange-500" : "text-neutral-500")} />
+                {t.label}
               </button>
             ))}
-            <div className="flex items-center gap-2 ml-4">
-              <span className="text-neutral-500 text-sm font-mono">#</span>
+          </div>
+        </div>
+
+        {/* Density Selection */}
+        <div className="space-y-3">
+          <Label className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500 ml-1">Densidade da UI</Label>
+          <div className="flex bg-secondary/50 p-1 rounded-lg border border-border h-12">
+            {[
+              { id: "compacta", label: "Compacta" },
+              { id: "normal", label: "Normal" },
+              { id: "confortavel", label: "Confort" },
+            ].map((d) => (
+              <button
+                key={d.id}
+                onClick={() => { setDensity(d.id as any); onChange() }}
+                className={cn(
+                  "flex-1 flex items-center justify-center rounded-md transition-all text-[10px] font-bold uppercase tracking-wider",
+                  density === d.id 
+                    ? "bg-background text-orange-500 shadow-sm border border-border" 
+                    : "text-neutral-500 hover:text-foreground hover:bg-white/5"
+                )}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Sidebar Mode */}
+        <div className="space-y-3">
+          <Label className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500 ml-1">Layout da Sidebar</Label>
+          <div className="flex bg-secondary/50 p-1 rounded-lg border border-border h-12">
+            {[
+              { id: "expandida", label: "Expandida" },
+              { id: "mini", label: "Mini Ícones" },
+            ].map((s) => (
+              <button
+                key={s.id}
+                onClick={() => { setSidebarMode(s.id as any); onChange() }}
+                className={cn(
+                  "flex-1 flex items-center justify-center rounded-md transition-all text-[10px] font-bold uppercase tracking-wider",
+                  sidebarMode === s.id 
+                    ? "bg-background text-orange-500 shadow-sm border border-border" 
+                    : "text-neutral-500 hover:text-foreground hover:bg-white/5"
+                )}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Font Selection */}
+        <div className="space-y-3">
+          <Label className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500 ml-1">Fonte da Interface</Label>
+          <Select defaultValue="jetbrains" onValueChange={onChange}>
+            <SelectTrigger className="bg-secondary/50 border-border text-foreground font-mono h-12 text-xs uppercase tracking-wider font-bold">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              <SelectItem value="jetbrains">JetBrains Mono</SelectItem>
+              <SelectItem value="ibm-plex">IBM Plex Mono</SelectItem>
+              <SelectItem value="fira">Fira Code</SelectItem>
+              <SelectItem value="roboto">Roboto Mono</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Accent Colors */}
+      <Card className="bg-secondary/20 border-border overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1">
+              <Label className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500 ml-1">Cor do Sistema</Label>
+              <div className="flex items-center gap-3">
+                {accentColors.map((color) => (
+                  <button
+                    key={color.hex}
+                    onClick={() => { setAccentColor(color.hex); onChange() }}
+                    className={cn(
+                      "w-8 h-8 rounded-full transition-all flex items-center justify-center relative",
+                      accentColor === color.hex ? "scale-110 shadow-lg shadow-orange-500/20" : "opacity-60 hover:opacity-100"
+                    )}
+                    style={{ backgroundColor: color.hex }}
+                  >
+                    {accentColor === color.hex && <Check className="w-4 h-4 text-white" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 bg-background/50 p-2 rounded-xl border border-border">
+              <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-xs font-bold text-white">#</div>
               <Input
                 value={accentColor.replace("#", "")}
                 onChange={(e) => { setAccentColor(`#${e.target.value}`); onChange() }}
-                className="w-24 bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono text-sm uppercase"
+                className="w-24 bg-transparent border-none text-foreground font-mono text-xs uppercase focus-visible:ring-0 h-8"
                 maxLength={6}
               />
             </div>
@@ -118,117 +175,31 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
         </CardContent>
       </Card>
 
-      {/* Density */}
-      <Card className="bg-card border-[#2a2a2a]">
-        <CardContent className="p-6">
-          <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Densidade da Interface</Label>
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { value: "compacta" as const, label: "COMPACTA", lines: 4 },
-              { value: "normal" as const, label: "NORMAL", lines: 3 },
-              { value: "confortavel" as const, label: "CONFORTAVEL", lines: 2 },
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => { setDensity(option.value); onChange() }}
-                className={`p-4 rounded border-2 transition-all ${
-                  density === option.value
-                    ? "border-orange-500 bg-[#1a1a1a]"
-                    : "border-[#2a2a2a] hover:border-neutral-600"
-                }`}
-              >
-                <span className={`font-mono text-xs ${density === option.value ? "text-orange-500" : "text-neutral-400"}`}>
-                  {option.label}
-                </span>
-                <div className="mt-3 space-y-1">
-                  {Array.from({ length: option.lines }).map((_, i) => (
-                    <div key={i} className="h-1.5 bg-neutral-700 rounded" style={{ width: `${100 - i * 15}%` }} />
-                  ))}
-                </div>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Font */}
-      <Card className="bg-card border-[#2a2a2a]">
-        <CardContent className="p-6">
-          <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Fonte do Sistema</Label>
-          <Select defaultValue="jetbrains" onValueChange={onChange}>
-            <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
-              <SelectItem value="jetbrains">JetBrains Mono</SelectItem>
-              <SelectItem value="ibm-plex">IBM Plex Mono</SelectItem>
-              <SelectItem value="fira">Fira Code</SelectItem>
-              <SelectItem value="roboto">Roboto Mono</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
-
-      {/* Sidebar Mode */}
-      <Card className="bg-card border-[#2a2a2a]">
-        <CardContent className="p-6">
-          <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block">Sidebar</Label>
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={() => { setSidebarMode("expandida"); onChange() }}
-              className={`p-4 rounded border-2 transition-all ${
-                sidebarMode === "expandida"
-                  ? "border-orange-500 bg-[#1a1a1a]"
-                  : "border-[#2a2a2a] hover:border-neutral-600"
-              }`}
-            >
-              <span className={`font-mono text-xs ${sidebarMode === "expandida" ? "text-orange-500" : "text-neutral-400"}`}>
-                EXPANDIDA
-              </span>
-              <div className="mt-3 flex gap-1">
-                <div className="w-12 h-16 bg-neutral-700 rounded" />
-                <div className="flex-1 h-16 bg-neutral-800 rounded" />
-              </div>
-            </button>
-            <button
-              onClick={() => { setSidebarMode("mini"); onChange() }}
-              className={`p-4 rounded border-2 transition-all ${
-                sidebarMode === "mini"
-                  ? "border-orange-500 bg-[#1a1a1a]"
-                  : "border-[#2a2a2a] hover:border-neutral-600"
-              }`}
-            >
-              <span className={`font-mono text-xs ${sidebarMode === "mini" ? "text-orange-500" : "text-neutral-400"}`}>
-                MINI ICONES
-              </span>
-              <div className="mt-3 flex gap-1">
-                <div className="w-4 h-16 bg-neutral-700 rounded" />
-                <div className="flex-1 h-16 bg-neutral-800 rounded" />
-              </div>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Toggles */}
-      <Card className="bg-card border-[#2a2a2a]">
-        <CardContent className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-foreground text-sm font-medium">Animacoes</p>
-              <p className="text-neutral-500 text-xs">Ativar micro-animacoes e transicoes</p>
+      {/* Switches Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          { label: "Animações Fluídas", desc: "Transições e micro-interações", checked: true },
+          { label: "Timestamps Dinâmicos", desc: "Exibir 'há 2 horas' em vez de datas", checked: true },
+          { label: "Glassmorphism", desc: "Efeito de transparência nas janelas", checked: true },
+          { label: "Barra de Ferramentas", desc: "Acesso rápido em telas menores", checked: false },
+        ].map((item, idx) => (
+          <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-secondary/20 border border-border/50 hover:border-orange-500/30 transition-all group">
+            <div className="space-y-0.5">
+              <p className="text-[11px] font-bold text-foreground uppercase tracking-widest group-hover:text-orange-500 transition-colors">{item.label}</p>
+              <p className="text-[10px] text-neutral-500 font-mono">{item.desc}</p>
             </div>
-            <Switch defaultChecked onCheckedChange={onChange} />
+            <Switch defaultChecked={item.checked} onCheckedChange={onChange} className="data-[state=checked]:bg-orange-500" />
           </div>
-          <div className="flex items-center justify-between pt-4 border-t border-[#2a2a2a]">
-            <div>
-              <p className="text-foreground text-sm font-medium">Timestamps Relativos</p>
-              <p className="text-neutral-500 text-xs">Exibir horarios relativos (ex: ha 2 horas)</p>
-            </div>
-            <Switch defaultChecked onCheckedChange={onChange} />
-          </div>
-        </CardContent>
-      </Card>
+        ))}
+      </div>
+
+      <div className="pt-4 flex items-center gap-3 p-4 bg-orange-500/5 rounded-xl border border-orange-500/20 italic">
+        <Layout className="w-4 h-4 text-orange-500 mt-0.5" />
+        <p className="text-[10px] text-neutral-500 leading-relaxed font-mono">
+          As preferências visuais são salvas no seu perfil e sincronizadas entre dispositivos. 
+          Algumas alterações na densidade podem exigir recarregamento da página.
+        </p>
+      </div>
     </div>
   )
 }
