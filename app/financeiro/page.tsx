@@ -3,60 +3,169 @@
 import { PageWrapper } from "@/components/page-wrapper"
 import { TabelaCobrancas } from "@/components/financeiro/tabela-cobrancas"
 import { Button } from "@/components/ui/button"
-import { Plus, Wallet, FileText, Download } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { 
+  Plus, 
+  Wallet, 
+  TrendingUp, 
+  AlertTriangle, 
+  Clock,
+  DollarSign,
+  Loader2,
+  RefreshCw
+} from "lucide-react"
 import { useState } from "react"
 import { ModalGerarCobranca } from "@/components/financeiro/modal-gerar-cobranca"
+import { useAsaas } from "@/lib/hooks/use-asaas"
+
+function formatBRL(value: number) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
+}
 
 export default function FinanceiroPage() {
   const [isModalGerarOpen, setIsModalGerarOpen] = useState(false)
+  const { resumo, isLoading, isError, mutateCobrancas } = useAsaas()
 
   return (
     <PageWrapper title="FINANCEIRO" breadcrumb="FINANCEIRO">
-      <div className="space-y-6 font-mono bg-[#060606] p-6 -m-6 min-h-screen">
-        {/* Dashboard Cards Quick Info */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[#0f0f0f] border border-[#1a1a1a] p-4 rounded-lg">
-            <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">Saldo Previsto</p>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold text-foreground">R$ 45.230,00</span>
-              <Wallet className="w-5 h-5 text-orange-500 opacity-50" />
-            </div>
+      <div className="space-y-6 font-mono bg-secondary p-6 -m-6 min-h-screen rounded-lg">
+
+        {/* Status Bar */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <DollarSign className="w-5 h-5 text-orange-500" />
+            <h1 className="text-lg font-bold text-foreground tracking-tight">Painel Financeiro</h1>
+            <Badge variant="outline" className="text-[9px] uppercase tracking-widest border-green-500/30 text-green-500">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-1.5" />
+              ASAAS_CONNECTED
+            </Badge>
           </div>
-          <div className="bg-[#0f0f0f] border border-[#1a1a1a] p-4 rounded-lg">
-            <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">Recebido (Mês)</p>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold text-green-500">R$ 12.450,00</span>
-              <Download className="w-5 h-5 text-green-500 opacity-50" />
-            </div>
-          </div>
-          <div className="bg-[#0f0f0f] border border-[#1a1a1a] p-4 rounded-lg">
-            <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">Inadimplência</p>
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold text-red-500">2.4%</span>
-              <FileText className="w-5 h-5 text-red-500 opacity-50" />
-            </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-border text-neutral-400 hover:text-foreground h-8 text-[10px]"
+              onClick={() => mutateCobrancas()}
+            >
+              <RefreshCw className="w-3 h-3 mr-1.5" /> SYNC
+            </Button>
+            <Button 
+              onClick={() => setIsModalGerarOpen(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-black font-bold h-8 text-[10px]"
+            >
+              <Plus className="w-3.5 h-3.5 mr-1.5" />
+              NOVA COBRANÇA
+            </Button>
           </div>
         </div>
 
-        {/* Actions Bar */}
-        <div className="flex items-center justify-between border-b border-[#1a1a1a] pb-4">
-          <div className="flex items-center gap-4">
-            <h2 className="text-sm font-bold text-orange-500 tracking-tighter flex items-center gap-2">
-              <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
-              COBRANCAS_LIST.SH
-            </h2>
+        {/* Dashboard KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Saldo Previsto */}
+          <div className="bg-card border border-border p-4 rounded-lg group hover:border-orange-500/30 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[10px] text-neutral-500 uppercase tracking-widest">Saldo Previsto</p>
+              <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                <Wallet className="w-4 h-4 text-orange-500" />
+              </div>
+            </div>
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
+            ) : (
+              <span className="text-xl font-bold text-foreground">
+                {resumo ? formatBRL(resumo.saldoPrevisto) : 'R$ —'}
+              </span>
+            )}
+            <p className="text-[9px] text-neutral-600 mt-1">
+              {resumo ? `${resumo.qtdPendente} cobrança(s) pendente(s)` : '—'}
+            </p>
           </div>
-          <Button 
-            onClick={() => setIsModalGerarOpen(true)}
-            className="bg-orange-500 hover:bg-orange-600 text-black font-bold h-9 text-xs"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            NOVA_COBRANCA
-          </Button>
+
+          {/* Recebido */}
+          <div className="bg-card border border-border p-4 rounded-lg group hover:border-green-500/30 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[10px] text-neutral-500 uppercase tracking-widest">Recebido</p>
+              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-green-500" />
+              </div>
+            </div>
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
+            ) : (
+              <span className="text-xl font-bold text-green-500">
+                {resumo ? formatBRL(resumo.totalRecebido) : 'R$ —'}
+              </span>
+            )}
+            <p className="text-[9px] text-neutral-600 mt-1">
+              {resumo ? `${resumo.qtdRecebido} pagamento(s) confirmado(s)` : '—'}
+            </p>
+          </div>
+
+          {/* Pendente */}
+          <div className="bg-card border border-border p-4 rounded-lg group hover:border-yellow-500/30 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[10px] text-neutral-500 uppercase tracking-widest">Pendente</p>
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-yellow-500" />
+              </div>
+            </div>
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
+            ) : (
+              <span className="text-xl font-bold text-yellow-500">
+                {resumo ? formatBRL(resumo.totalPendente) : 'R$ —'}
+              </span>
+            )}
+            <p className="text-[9px] text-neutral-600 mt-1">
+              {resumo ? `${resumo.qtdPendente} aguardando pagamento` : '—'}
+            </p>
+          </div>
+
+          {/* Vencido / Inadimplência */}
+          <div className="bg-card border border-border p-4 rounded-lg group hover:border-red-500/30 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-[10px] text-neutral-500 uppercase tracking-widest">Inadimplência</p>
+              <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4 text-red-500" />
+              </div>
+            </div>
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
+            ) : (
+              <span className="text-xl font-bold text-red-500">
+                {resumo ? `${resumo.inadimplencia}%` : '—'}
+              </span>
+            )}
+            <p className="text-[9px] text-neutral-600 mt-1">
+              {resumo ? `${resumo.qtdVencido} cobrança(s) vencida(s)` : '—'}
+            </p>
+          </div>
         </div>
+
+        {/* Section Header */}
+        <div className="flex items-center gap-3 border-b border-border pb-3">
+          <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+          <h2 className="text-xs font-bold text-orange-500 tracking-widest uppercase">Cobranças</h2>
+          <span className="text-[10px] text-neutral-600 font-mono">/ LISTA COMPLETA</span>
+        </div>
+
+        {/* Error Banner */}
+        {isError && (
+          <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 flex items-start gap-3">
+            <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-xs text-red-400 font-bold">Erro de conexão com o Asaas</p>
+              <p className="text-[10px] text-neutral-500 mt-1">
+                Verifique se a variável <code className="text-orange-500">ASAAS_API_KEY</code> está 
+                configurada corretamente no arquivo <code className="text-orange-500">.env.local</code>.
+                Se estiver usando sandbox, a URL deve ser <code className="text-orange-500">https://sandbox.asaas.com/api/v3</code>.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Main Table */}
-        <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-lg overflow-hidden">
+        <div className="bg-card border border-border rounded-lg overflow-hidden">
           <TabelaCobrancas />
         </div>
       </div>
