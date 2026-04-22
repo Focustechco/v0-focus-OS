@@ -59,36 +59,63 @@ export function ReportPreview({ report, editorData, onClose }: PreviewProps) {
     setIsExporting(true)
 
     try {
-      // Carregamento via CDN para evitar problemas de instalação local
-      if (!(window as any).html2pdf) {
-        await new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-          script.onload = resolve;
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-      }
-      
-      const html2pdf = (window as any).html2pdf;
-      const element = docRef.current;
-      const opt = {
-        margin: [0, 0, 0, 0],
-        filename: `relatorio-${proj?.nome || 'focustec'}-${dateAll.replace(/\//g, '-')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-          scale: 2, 
-          useCORS: true, 
-          letterRendering: true,
-          scrollY: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
+      // Importações dinâmicas via npm — sem dependência de CDN
+      const html2canvas = (await import("html2canvas")).default
+      const { jsPDF } = await import("jspdf")
 
-      await html2pdf().set(opt).from(element).save();
+      const element = docRef.current
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        scrollY: 0,
+        backgroundColor: "#ffffff",
+      })
+
+      const imgData = canvas.toDataURL("image/jpeg", 0.98)
+
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" })
+      const pageWidth  = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+
+      // Calcula altura proporcional ao canvas para multi-página
+      const canvasRatio   = canvas.height / canvas.width
+      const imgHeightOnA4 = pageWidth * canvasRatio
+
+      let yOffset = 0
+      let remainingHeight = imgHeightOnA4
+
+      while (remainingHeight > 0) {
+        // slice de canvas equivalente a 1 página
+        const sliceCanvas   = document.createElement("canvas")
+        const dpr           = 2 // deve bater com scale do html2canvas
+        const slicePx       = Math.min(pageHeight * (canvas.width / pageWidth), canvas.height - yOffset * dpr)
+
+        sliceCanvas.width  = canvas.width
+        sliceCanvas.height = Math.ceil(slicePx)
+
+        sliceCanvas.getContext("2d")?.drawImage(
+          canvas,
+          0, yOffset * dpr,
+          canvas.width, sliceCanvas.height,
+          0, 0,
+          canvas.width, sliceCanvas.height
+        )
+
+        const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.98)
+        const sliceH    = (sliceCanvas.height / canvas.width) * pageWidth
+
+        if (yOffset > 0) pdf.addPage()
+        pdf.addImage(sliceData, "JPEG", 0, 0, pageWidth, sliceH)
+
+        yOffset          += pageHeight * (canvas.width / pageWidth) / dpr
+        remainingHeight  -= pageHeight
+      }
+
+      pdf.save(`relatorio-${proj?.nome || "focustec"}-${dateAll.replace(/\//g, "-")}.pdf`)
     } catch (error) {
-      console.error("Erro ao gerar PDF:", error);
-      window.print();
+      console.error("Erro ao gerar PDF:", error)
+      window.print()
     } finally {
       setIsExporting(false)
     }

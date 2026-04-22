@@ -25,12 +25,11 @@ import {
   LayoutKanban
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AgendaModule } from "@/components/agenda-module"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { KanbanBoard } from "./kanban-board"
 import { useTarefas } from "@/lib/hooks/use-tarefas"
 import { useEquipe } from "@/lib/hooks/use-equipe"
@@ -391,7 +390,7 @@ export function MinhasTarefasModule() {
     <div className="space-y-6 flex flex-col h-full">
       {/* HEADER KANBAN */}
       <div>
-        <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground tracking-tight">Gerenciador de Tarefas</h1>
+        <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground tracking-tight">Gerenciador de Tasks</h1>
         <p className="text-sm text-neutral-500 mt-1">Organize, delegue e acompanhe o progresso da sua equipe.</p>
       </div>
 
@@ -455,12 +454,6 @@ export function MinhasTarefasModule() {
           >
             Quadro
           </TabsTrigger>
-          <TabsTrigger 
-            value="calendario" 
-            className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#e65c00] data-[state=active]:text-[#e65c00] rounded-none py-3 px-1 text-sm font-medium text-neutral-500"
-          >
-            Calendário
-          </TabsTrigger>
         </TabsList>
 
         <div className="mt-6 flex-1">
@@ -474,9 +467,6 @@ export function MinhasTarefasModule() {
               priorityFilter={priorityFilter}
               onEditTask={openEditTask}
             />
-          </TabsContent>
-          <TabsContent value="calendario" className="mt-0 h-full">
-            <AgendaModule />
           </TabsContent>
         </div>
       </Tabs>

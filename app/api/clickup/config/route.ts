@@ -11,7 +11,7 @@ export async function GET() {
   const auth = await requireUser()
   if (auth instanceof NextResponse) return auth
 
-  const cfg = getClickUpConfig()
+  const cfg = await getClickUpConfig()
   return NextResponse.json({
     configured: cfg.configured,
     teamId: cfg.teamId,

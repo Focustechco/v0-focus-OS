@@ -35,10 +35,11 @@ import { Download, Target } from "lucide-react"
 import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
 
 // Subitems do módulo Projetos
-const projetosSubItems: any[] = [];
+const projetosSubItems = [
+  { id: "fluxo", href: "/intelligence/fluxo", icon: GitBranch, label: "Fluxo de Etapas" },
+];
 
 const intelligenceSubItems = [
-  { id: "fluxo", href: "/intelligence/fluxo", icon: GitBranch, label: "Fluxo de Etapas" },
   { id: "setores", href: "/setores", icon: Cpu, label: "Setores Tech" },
   { id: "comercial-intel", href: "/intelligence/comercial", icon: Briefcase, label: "Setor Comercial" },
 ]
@@ -61,13 +62,14 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   // Atualizar contagens dinamicamente no navigation
   const navigation: any[] = [
     { id: "command-center", href: "/", icon: LayoutDashboard, label: "Dashboard" },
-    { id: "projetos", href: "/projetos", icon: FolderKanban, label: "Projetos", badge: stats.projects > 0 ? stats.projects : null },
-    { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "Tarefas" },
+    { id: "projetos", href: "/projetos", icon: FolderKanban, label: "Projetos", badge: stats.projects > 0 ? stats.projects : null, hasSubmenu: "projetos" },
+    { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "Tasks" },
+    { id: "agenda", href: "/agenda", icon: CalendarClock, label: "Agenda" },
     { id: "comercial", href: "/comercial", icon: Briefcase, label: "Comercial", badge: stats.comercial > 0 ? stats.comercial : null },
     { id: "equipe", href: "/equipe", icon: Users, label: "Equipe" },
-    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "Intelligence", hasSubmenu: "intelligence" },
     { id: "clientes", href: "/clientes", icon: Box, label: "Clientes" },
     { id: "relatorios", href: "/relatorios", icon: FileText, label: "Relatórios" },
+    { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "Inteligence", hasSubmenu: "intelligence" },
     { id: "sistemas", href: "/sistemas", icon: Settings, label: "Sistemas" },
     { id: "configuracoes", href: "/configuracoes", icon: Cog, label: "Configurações" },
   ]

@@ -5,7 +5,7 @@ import { MinhasTarefasModule } from "@/components/tarefas/minhas-tarefas-module"
 
 export default function TarefasPage() {
   return (
-    <PageWrapper title="TAREFAS" breadcrumb="TAREFAS">
+    <PageWrapper title="TASKS" breadcrumb="TASKS">
       <MinhasTarefasModule />
     </PageWrapper>
   )

@@ -121,17 +121,7 @@ export async function generateReportContent({
   const progress = calcProgress(tarefas)
   const saude = calcSaude(progress, tarefas)
 
-  const dateStart = new Date(startDate)
-  const dateEnd = new Date(endDate)
-  dateEnd.setHours(23, 59, 59, 999)
-
-  // Filter tasks by period if needed, or just focus on concluded ones
-  const concluidas = tarefas.filter((t) => 
-    t.status === "concluida" && 
-    new Date(t.updated_at) >= dateStart && 
-    new Date(t.updated_at) <= dateEnd
-  )
-  
+  const concluidas = tarefas.filter((t) => t.status === "concluida")
   const emAndamento = tarefas.filter((t) => t.status === "em_andamento")
   const bloqueadas = tarefas.filter(
     (t) =>
@@ -147,7 +137,7 @@ export async function generateReportContent({
     })
     .slice(0, 10)
 
-  const sprintAtiva = sprints.find((s) => s.status === "ativa") ?? sprints[sprints.length - 1]
+  const sprintAtiva = sprints.find((s) => s.status === "ativo") ?? sprints[sprints.length - 1]
 
   const dateStart = new Date(projeto?.created_at || Date.now()).toLocaleDateString("pt-BR")
   const dateEnd = new Date().toLocaleDateString("pt-BR")

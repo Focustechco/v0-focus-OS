@@ -1,59 +1,73 @@
-function isPublicRoute(pathname: string) {
-  return (
-    pathname === "/login" ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/api/auth") ||
-    pathname === "/manifest.json" ||
-    pathname === "/logo.svg"
-  )
-}
+import { createServerClient } from "@supabase/ssr"
+import { NextResponse, type NextRequest } from "next/server"
 
-function hasSupabaseSessionCookie(request: MiddlewareRequest) {
-  const cookies = request.cookies.getAll()
-  // Procura por qualquer cookie que comece com sb- e termine com auth-token
-  // O formato padrão é sb-[project-ref]-auth-token
-  return cookies.some(
-    (cookie) =>
-      cookie.name.startsWith("sb-") &&
-      cookie.name.endsWith("auth-token")
-  )
-}
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
 
-type MiddlewareRequest = {
-  nextUrl: URL & { clone(): URL }
-  cookies: {
-    getAll(): Array<{ name: string; value: string }>
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          )
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (e) {
+    console.error("[Middleware] Erro ao recuperar usuário:", e)
   }
-}
 
-export function middleware(request: MiddlewareRequest) {
-  const { pathname } = request.nextUrl
-  const routeIsPublic = isPublicRoute(pathname)
-  const hasSession = hasSupabaseSessionCookie(request)
+  const pathname = request.nextUrl.pathname
+  const isPublic = pathname === "/login" || 
+                  pathname.startsWith("/auth") || 
+                  pathname.startsWith("/api/auth") ||
+                  pathname === "/manifest.json" ||
+                  pathname === "/logo.svg" ||
+                  pathname.includes(".") // Arquivos estáticos
 
-  if (!hasSession && !routeIsPublic) {
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone()
     url.pathname = "/login"
     url.searchParams.set("redirectTo", pathname)
-    return Response.redirect(url)
+    return NextResponse.redirect(url)
   }
 
-  if (hasSession && pathname === "/login") {
+  if (user && pathname === "/login") {
     const url = request.nextUrl.clone()
     url.pathname = "/"
-    return Response.redirect(url)
+    return NextResponse.redirect(url)
   }
+
+  return response
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match em todas as rotas exceto:
-     * - _next/static (arquivos estáticos)
-     * - _next/image (otimização de imagem)
-     * - favicon.ico
-     * - arquivos estáticos (imagens, splash, ícones, etc)
-     */
     "/((?!_next/static|_next/image|favicon.ico|splash|icon-|apple-touch-|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 }
+

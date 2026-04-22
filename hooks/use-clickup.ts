@@ -20,6 +20,19 @@ const fetcher = async (url: string) => {
   return res.json()
 }
 
+const postFetcher = async ([url, body]: [string, any]) => {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `Erro ${res.status}`)
+  }
+  return res.json()
+}
+
 export interface ClickUpCRMConfig {
   configured: boolean
   teamId: string | null
@@ -28,10 +41,24 @@ export interface ClickUpCRMConfig {
 }
 
 export function useClickUpConfig() {
-  const { data, error, isLoading } = useSWR<ClickUpCRMConfig>(
+  const { data, error, isLoading, mutate } = useSWR<ClickUpCRMConfig>(
     "/api/clickup/config",
     fetcher
   )
+
+  const saveConfig = async (newConfig: Partial<ClickUpCRMConfig>) => {
+    const res = await fetch("/api/clickup/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newConfig),
+    })
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err.error || "Erro ao salvar")
+    }
+    mutate()
+    return res.json()
+  }
 
   return {
     config: data ?? {
@@ -43,6 +70,8 @@ export function useClickUpConfig() {
     isConfigured: Boolean(data?.configured),
     isLoaded: !isLoading,
     error,
+    saveConfig,
+    refresh: mutate
   }
 }
 
@@ -173,17 +202,29 @@ export function useDealComments(dealId: string | null) {
 // Hook de setup (teams/spaces/lists) — deprecated.
 // Agora a configuração vem das env vars do servidor.
 // Mantido como stub para não quebrar configurar-crm.tsx.
-export function useClickUpSetup(_token: string | null) {
+export function useClickUpSetup() {
+  const { data: teamsData, error: teamsError, isLoading: teamsLoading } = useSWR<{ teams: any[] }>(
+    "/api/clickup/teams",
+    fetcher
+  )
+
+  const getSpacesForTeam = useCallback(async (teamId: string) => {
+    return fetcher(`/api/clickup/spaces?teamId=${teamId}`)
+  }, [])
+
+  const getListsForSpace = useCallback(async (spaceId: string) => {
+    return fetcher(`/api/clickup/lists?spaceId=${spaceId}`)
+  }, [])
+
   return {
-    teams: [],
-    teamsLoading: false,
-    teamsError: null as Error | null,
+    teams: teamsData?.teams ?? [],
+    teamsLoading,
+    teamsError: teamsError as Error | null,
+    getSpacesForTeam,
+    getListsForSpace,
     testToken: async () => ({
-      success: false,
-      error: "Configuração agora é feita via variáveis de ambiente no servidor.",
+      success: true,
+      error: null,
     }),
-    getSpacesForTeam: async () => [],
-    getFoldersForSpace: async () => [],
-    getListsForContainer: async () => [],
   }
 }

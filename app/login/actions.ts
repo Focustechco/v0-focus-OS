@@ -13,24 +13,38 @@ export async function signIn(
   _prevState: AuthState,
   formData: FormData
 ): Promise<AuthState> {
-  const email = String(formData.get("email") || "").trim()
-  const password = String(formData.get("password") || "")
-  const redirectTo = String(formData.get("redirectTo") || "/")
+  try {
+    const email = String(formData.get("email") || "").trim()
+    const password = String(formData.get("password") || "")
+    const redirectTo = String(formData.get("redirectTo") || "/")
 
-  if (!email || !password) {
-    return { error: "Email e senha são obrigatórios" }
+    console.log(`[signIn] Tentando login para: ${email}`)
+
+    if (!email || !password) {
+      return { error: "Email e senha são obrigatórios" }
+    }
+
+    const supabase = await createClient()
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      console.error(`[signIn] Erro no Supabase: ${error.message}`)
+      return { error: error.message === "Invalid login credentials" ? "Credenciais inválidas" : error.message }
+    }
+
+    console.log(`[signIn] Login bem-sucedido para ${data.user?.email}. Redirecionando para ${redirectTo}`)
+
+    revalidatePath("/", "layout")
+    return redirect(redirectTo)
+  } catch (err: any) {
+    if (err.digest?.startsWith("NEXT_REDIRECT")) {
+      throw err
+    }
+    console.error("[signIn] Erro inesperado:", err)
+    return { error: "Ocorreu um erro inesperado no servidor." }
   }
-
-  const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
-
-  if (error) {
-    return { error: error.message === "Invalid login credentials" ? "Credenciais inválidas" : error.message }
-  }
-
-  revalidatePath("/", "layout")
-  redirect(redirectTo)
 }
+
 
 export async function signUp(
   _prevState: AuthState,

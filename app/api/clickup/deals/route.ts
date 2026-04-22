@@ -14,7 +14,7 @@ export async function GET() {
   if (auth instanceof NextResponse) return auth
 
   try {
-    const cfg = getClickUpConfig()
+    const cfg = await getClickUpConfig()
     if (!cfg.configured || !cfg.listId) {
       return NextResponse.json(
         { error: "ClickUp não configurado (faltando CLICKUP_API_TOKEN ou CLICKUP_LIST_ID)" },

@@ -12,11 +12,11 @@ export async function createClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('[Supabase] Aviso: Variáveis de ambiente faltando. Usando fallback.')
+    throw new Error('Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY) are missing.')
   }
 
-  const url = supabaseUrl || 'https://vxxxxxxxxx.supabase.co'
-  const key = supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy'
+  const url = supabaseUrl
+  const key = supabaseAnonKey
 
   return createServerClient(
     url,

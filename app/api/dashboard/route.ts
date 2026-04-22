@@ -44,12 +44,12 @@ export async function GET() {
       ),
       safeQuery(() =>
         supabase.from("aprovacoes")
-          .select("id, titulo, status, priority, created_at, assigned_to", { count: "exact" })
+          .select("id, titulo, status, created_at, assigned_to", { count: "exact" })
           .eq("status", "pendente")
           .order("created_at", { ascending: true })
       ),
       safeQuery(() =>
-        supabase.from("equipe").select("id, nome, tipo, status")
+        supabase.from("equipe").select("id, nome, status")
       ),
       safeQuery(() =>
         supabase.from("leads")
@@ -163,7 +163,6 @@ export async function GET() {
         id: a.id,
         titulo: a.titulo,
         projeto: null,
-        priority: a.priority,
         created_at: a.created_at,
         assigned_to: a.assigned_to,
       })),

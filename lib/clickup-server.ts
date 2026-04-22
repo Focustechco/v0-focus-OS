@@ -13,27 +13,47 @@ export class ClickUpNotConfiguredError extends Error {
   }
 }
 
-function getToken(): string {
-  const token = process.env.CLICKUP_API_TOKEN
-  if (!token) throw new ClickUpNotConfiguredError()
-  return token
-}
+import fs from 'fs'
+import path from 'path'
 
-export function getClickUpConfig() {
-  return {
+export async function getClickUpConfig() {
+  const envConfig = {
     token: process.env.CLICKUP_API_TOKEN || null,
     teamId: process.env.CLICKUP_TEAM_ID || null,
     spaceId: process.env.CLICKUP_SPACE_ID || null,
     listId: process.env.CLICKUP_LIST_ID || null,
     configured: Boolean(process.env.CLICKUP_API_TOKEN),
   }
+
+  try {
+    const configPath = path.join(process.cwd(), '.clickup-config.json')
+    if (fs.existsSync(configPath)) {
+      const fileContent = fs.readFileSync(configPath, 'utf8')
+      const fileConfig = JSON.parse(fileContent)
+      
+      return {
+        ...envConfig,
+        teamId: fileConfig.teamId || envConfig.teamId,
+        spaceId: fileConfig.spaceId || envConfig.spaceId,
+        listId: fileConfig.listId || envConfig.listId,
+        enabled: fileConfig.enabled ?? true,
+      }
+    }
+  } catch (error) {
+    console.error("Erro ao carregar ClickUp config do arquivo local:", error)
+  }
+
+  return { ...envConfig, enabled: true }
 }
 
 export async function clickupFetch<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const token = getToken()
+  const cfg = await getClickUpConfig()
+  const token = cfg.token
+  if (!token) throw new ClickUpNotConfiguredError()
+
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers: {
