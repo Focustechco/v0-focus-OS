@@ -38,6 +38,11 @@ import {
   Lock,
   ChevronRight,
   Check,
+  CalendarClock,
+  Grid,
+  BarChart3,
+  Box,
+  Cog,
 } from "lucide-react"
 import { useModules } from "@/contexts/modules-context"
 
@@ -47,31 +52,26 @@ interface ModulosSectionProps {
 
 const modules = [
   // Core
-  { id: "command-center", name: "Command Center", description: "Dashboard principal do sistema", icon: LayoutDashboard, category: "CORE", essential: true },
-  { id: "configuracoes", name: "Configuracoes", description: "Painel de configuracoes do sistema", icon: Settings, category: "CORE", essential: true },
-  { id: "usuarios", name: "Usuarios & Permissoes", description: "Gerenciamento de usuarios e acessos", icon: Users, category: "CORE", essential: true },
-  // Projetos & Producao
-  { id: "projetos", name: "Projetos", description: "Gerenciamento de projetos e sprints", icon: FolderKanban, category: "PROJETOS", essential: false, subFeatures: ["Kanban", "Gantt", "Timeline"] },
-  { id: "backlog", name: "Backlog ADM", description: "Administracao centralizada", icon: ClipboardList, category: "PROJETOS", essential: false },
-  { id: "sprint-board", name: "Sprint Board", description: "Quadro kanban de sprints", icon: Zap, category: "PROJETOS", essential: false },
-  { id: "time-tracker", name: "Time Tracker", description: "Rastreamento de horas", icon: Clock, category: "PROJETOS", essential: false },
-  { id: "relatorios", name: "Relatorios", description: "Analytics e exportacoes", icon: FileText, category: "PROJETOS", essential: false },
-  // Comercial
-  { id: "pipeline", name: "Pipeline Comercial", description: "Gestao de deals e CRM", icon: Briefcase, category: "COMERCIAL", essential: false },
-  { id: "propostas", name: "Propostas", description: "Criacao e envio de propostas", icon: FileSignature, category: "COMERCIAL", essential: false },
-  { id: "contratos", name: "Contratos", description: "Gestao juridica de contratos", icon: Scale, category: "COMERCIAL", essential: false },
-  // Comunicacao
-  { id: "canal-interno", name: "Canal Interno", description: "Comunicacao segura da equipe", icon: MessageSquare, category: "COMUNICACAO", essential: false },
-  { id: "notificacoes", name: "Notificacoes", description: "Central de alertas", icon: Bell, category: "COMUNICACAO", essential: false },
-  { id: "activity-log", name: "Activity Log", description: "Log de atividades", icon: Activity, category: "COMUNICACAO", essential: false },
-  // Integracoes
-  { id: "google", name: "Google Workspace", description: "Sheets, Drive, Calendar", icon: FileSpreadsheet, category: "INTEGRACOES", essential: false },
-  { id: "github", name: "GitHub", description: "Repositorios e pull requests", icon: Github, category: "INTEGRACOES", essential: false },
-  { id: "slack", name: "Slack", description: "Notificacoes externas", icon: MessageCircle, category: "INTEGRACOES", essential: false },
-  { id: "webhooks", name: "Webhooks", description: "Integracoes customizadas", icon: Webhook, category: "INTEGRACOES", essential: false },
+  { id: "command-center", name: "Dashboard", description: "Visão geral e métricas do sistema", icon: LayoutDashboard, category: "CORE", essential: true },
+  { id: "configuracoes", name: "Configurações", description: "Personalização e ajustes globais", icon: Cog, category: "CORE", essential: true },
+  { id: "sistemas", name: "Sistemas", description: "Gerenciamento de acessos e ferramentas", icon: Settings, category: "CORE", essential: false },
+  
+  // Produção
+  { id: "projetos", name: "Projetos", description: "Gestão completa de projetos e etapas", icon: FolderKanban, category: "PRODUÇÃO", essential: false },
+  { id: "tarefas", name: "Tasks", description: "Controle de tarefas e checklists", icon: CheckSquare, category: "PRODUÇÃO", essential: false },
+  { id: "agenda", name: "Agenda", description: "Calendário de prazos e compromissos", icon: CalendarClock, category: "PRODUÇÃO", essential: false },
+
+  // Negócios
+  { id: "comercial", name: "Comercial", description: "Pipeline de vendas e CRM ClickUp", icon: Briefcase, category: "NEGÓCIOS", essential: false },
+  { id: "clientes", name: "Clientes", description: "Base unificada de parceiros e clientes", icon: Users, category: "NEGÓCIOS", essential: false },
+  
+  // Equipe & Dados
+  { id: "equipe", name: "Hub", description: "Central de equipe e acessos internos", icon: Grid, category: "EQUIPE", essential: false },
+  { id: "intelligence", name: "Intelligence", description: "BI e análise de dados avançada", icon: BarChart3, category: "DADOS", essential: false },
+  { id: "relatorios", name: "Relatórios", description: "Exportação de PDFs e métricas", icon: FileText, category: "DADOS", essential: false },
 ]
 
-const categories = ["CORE", "PROJETOS", "COMERCIAL", "COMUNICACAO", "INTEGRACOES"]
+const categories = ["CORE", "PRODUÇÃO", "NEGÓCIOS", "EQUIPE", "DADOS"]
 
 export function ModulosSection({ onChange }: ModulosSectionProps) {
   const { moduleStates, setModuleState, isModuleEnabled } = useModules()

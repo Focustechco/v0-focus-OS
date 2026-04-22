@@ -20,17 +20,9 @@ interface AparenciaSectionProps {
   onChange: () => void
 }
 
-const accentColors = [
-  { name: "Orange", hex: "#FF6B00" },
-  { name: "Cyan", hex: "#00D4FF" },
-  { name: "Green", hex: "#00FF88" },
-  { name: "Red", hex: "#FF3B3B" },
-  { name: "Purple", hex: "#9B59FF" },
-]
 
 export function AparenciaSection({ onChange }: AparenciaSectionProps) {
   const { theme, setTheme } = useTheme()
-  const [accentColor, setAccentColor] = useState("#FF6B00")
   const [density, setDensity] = useState<"compacta" | "normal" | "confortavel">("normal")
   const [sidebarMode, setSidebarMode] = useState<"expandida" | "mini">("expandida")
 
@@ -139,41 +131,6 @@ export function AparenciaSection({ onChange }: AparenciaSectionProps) {
         </div>
       </div>
 
-      {/* Accent Colors */}
-      <Card className="bg-secondary/20 border-border overflow-hidden">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-1">
-              <Label className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500 ml-1">Cor do Sistema</Label>
-              <div className="flex items-center gap-3">
-                {accentColors.map((color) => (
-                  <button
-                    key={color.hex}
-                    onClick={() => { setAccentColor(color.hex); onChange() }}
-                    className={cn(
-                      "w-8 h-8 rounded-full transition-all flex items-center justify-center relative",
-                      accentColor === color.hex ? "scale-110 shadow-lg shadow-orange-500/20" : "opacity-60 hover:opacity-100"
-                    )}
-                    style={{ backgroundColor: color.hex }}
-                  >
-                    {accentColor === color.hex && <Check className="w-4 h-4 text-white" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 bg-background/50 p-2 rounded-xl border border-border">
-              <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-xs font-bold text-white">#</div>
-              <Input
-                value={accentColor.replace("#", "")}
-                onChange={(e) => { setAccentColor(`#${e.target.value}`); onChange() }}
-                className="w-24 bg-transparent border-none text-foreground font-mono text-xs uppercase focus-visible:ring-0 h-8"
-                maxLength={6}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Switches Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
