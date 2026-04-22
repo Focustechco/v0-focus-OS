@@ -17,18 +17,20 @@ import { useAsaas } from "@/lib/hooks/use-asaas"
 import { Loader2, Search, UserPlus, DollarSign } from "lucide-react"
 
 export function ModalGerarCobranca({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
-  const { criarCobranca, clientes, isLoadingClientes } = useAsaas()
+  const { criarCobranca, atualizarCliente, clientes, isLoadingClientes } = useAsaas()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchCliente, setSearchCliente] = useState("")
   const [formData, setFormData] = useState({
     customer: "",
     customerName: "",
+    cpfCnpj: "",
     billingType: "BOLETO",
     value: "",
     dueDate: "",
     description: ""
   })
+  const [needsDocument, setNeedsDocument] = useState(false)
 
   const filteredClientes = clientes.filter((c: any) => 
     !searchCliente || 
@@ -55,6 +57,13 @@ export function ModalGerarCobranca({ open, onOpenChange }: { open: boolean, onOp
 
     setLoading(true)
     try {
+      // Se o cliente não tinha documento e agora tem, atualizar no Asaas primeiro
+      if (needsDocument && formData.cpfCnpj) {
+        await atualizarCliente(formData.customer, {
+          cpfCnpj: formData.cpfCnpj
+        })
+      }
+
       await criarCobranca({
         customer: formData.customer,
         billingType: formData.billingType,
@@ -63,7 +72,8 @@ export function ModalGerarCobranca({ open, onOpenChange }: { open: boolean, onOp
         description: formData.description || undefined,
       })
       onOpenChange(false)
-      setFormData({ customer: "", customerName: "", billingType: "BOLETO", value: "", dueDate: "", description: "" })
+      setFormData({ customer: "", customerName: "", cpfCnpj: "", billingType: "BOLETO", value: "", dueDate: "", description: "" })
+      setNeedsDocument(false)
     } catch (err: any) {
       setError(err.message || "Erro ao criar cobrança")
     } finally {
@@ -72,7 +82,13 @@ export function ModalGerarCobranca({ open, onOpenChange }: { open: boolean, onOp
   }
 
   const selectCliente = (cliente: any) => {
-    setFormData({ ...formData, customer: cliente.id, customerName: cliente.name })
+    setFormData({ 
+      ...formData, 
+      customer: cliente.id, 
+      customerName: cliente.name,
+      cpfCnpj: cliente.cpfCnpj || "" 
+    })
+    setNeedsDocument(!cliente.cpfCnpj)
     setSearchCliente("")
   }
 
@@ -142,6 +158,26 @@ export function ModalGerarCobranca({ open, onOpenChange }: { open: boolean, onOp
             )}
           </div>
 
+          {/* Documento (CPF/CNPJ) se necessário */}
+          {needsDocument && (
+            <div className="p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg space-y-2">
+              <div className="flex items-center gap-2 text-orange-500">
+                <UserPlus className="w-3 h-3" />
+                <span className="text-[10px] font-bold uppercase">Documento Necessário</span>
+              </div>
+              <p className="text-[9px] text-neutral-400">
+                Este cliente não possui CPF/CNPJ cadastrado. Informe abaixo para continuar:
+              </p>
+              <Input 
+                required
+                placeholder="CPF ou CNPJ (apenas números)"
+                className="bg-secondary border-border text-xs h-8 focus:border-orange-500"
+                value={formData.cpfCnpj}
+                onChange={e => setFormData({ ...formData, cpfCnpj: e.target.value })}
+              />
+            </div>
+          )}
+
           {/* Valor + Vencimento */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
@@ -201,7 +237,8 @@ export function ModalGerarCobranca({ open, onOpenChange }: { open: boolean, onOp
           {/* Error */}
           {error && (
             <div className="text-[10px] text-red-500 bg-red-500/5 border border-red-500/20 rounded-lg px-3 py-2">
-              {error}
+              <p className="font-bold">Erro ao criar cobrança:</p>
+              <p className="mt-1">{error}</p>
             </div>
           )}
 

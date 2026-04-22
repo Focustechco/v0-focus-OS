@@ -27,7 +27,10 @@ export function useAsaas() {
       body: JSON.stringify(dados)
     })
     const data = await res.json()
-    if (!res.ok) throw new Error(data.error || 'Erro ao criar cobrança')
+    if (!res.ok) {
+      const detail = data.details?.errors?.[0]?.description || data.error
+      throw new Error(detail || 'Erro ao criar cobrança')
+    }
     mutateCobrancas()
     return data
   }
@@ -79,6 +82,17 @@ export function useAsaas() {
     return data
   }
 
+  const atualizarCliente = async (id: string, dados: any) => {
+    const res = await fetch(`/api/asaas/clientes/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Erro ao atualizar cliente')
+    return data
+  }
+
   return {
     // Dados
     cobrancas: cobrancasData?.data || [],
@@ -99,6 +113,7 @@ export function useAsaas() {
     enviarBoletoEmail,
     anexarNF,
     criarCliente,
+    atualizarCliente,
     mutateCobrancas
   }
 }

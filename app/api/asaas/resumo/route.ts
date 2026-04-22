@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import asaasApi from "@/lib/asaas";
+import createAsaasClient from "@/lib/asaas";
 
 export const dynamic = "force-dynamic";
 
-// Resumo financeiro: busca saldo + estatísticas de cobranças
 export async function GET() {
   try {
-    // Buscar saldo da conta
+    const asaasApi = createAsaasClient();
+    
     const [balanceRes, pendingRes, overdueRes, receivedRes] = await Promise.allSettled([
       asaasApi.get("/finance/balance"),
       asaasApi.get("/payments", { params: { status: "PENDING", limit: 1 } }),

@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import asaasApi from "@/lib/asaas";
+import createAsaasClient from "@/lib/asaas";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    // Filtrar por cobranças recebidas (RECEIVED ou CONFIRMED)
+    const asaasApi = createAsaasClient();
     const response = await asaasApi.get("/payments", {
       params: {
-        status: "RECEIVED", // ou utilizar múltiplos status se a API permitir no filtro
+        status: "RECEIVED",
       },
     });
     return NextResponse.json(response.data);
