@@ -5,23 +5,16 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 // Mapeamento de modulos do sidebar para IDs das configuracoes
 const MODULE_MAPPING: Record<string, string[]> = {
   "command-center": ["command-center"],
-  "comercial": ["pipeline"],
-  "equipe": ["usuarios"],
   "projetos": ["projetos"],
-  "fluxo": ["projetos"],
-  "sprints": ["sprint-board"],
-  "tasks": ["projetos"],
-  "tarefas": ["projetos"],
-  "checklists": ["projetos"],
-  "aprovacoes": ["projetos"],
-  "prazos": ["projetos"],
-  "backlog": ["backlog"],
-  "setores": ["projetos"],
-  "intelligence": ["relatorios"],
+  "tarefas": ["tarefas"],
+  "agenda": ["agenda"],
+  "comercial": ["comercial"],
+  "equipe": ["equipe"],
+  "clientes": ["clientes"],
+  "intelligence": ["intelligence"],
   "relatorios": ["relatorios"],
-  "sistemas": ["configuracoes"],
+  "sistemas": ["sistemas"],
   "configuracoes": ["configuracoes"],
-  "focushub": ["focushub"],
 }
 
 // Modulos que sempre devem estar visiveis (essenciais)
@@ -31,23 +24,15 @@ const ESSENTIAL_MODULES = ["command-center", "configuracoes"]
 const DEFAULT_MODULE_STATES: Record<string, boolean> = {
   "command-center": true,
   "configuracoes": true,
-  "usuarios": true,
+  "sistemas": true,
   "projetos": true,
-  "backlog": true,
-  "sprint-board": true,
-  "time-tracker": false,
+  "tarefas": true,
+  "agenda": true,
+  "comercial": true,
+  "clientes": true,
+  "equipe": true,
+  "intelligence": true,
   "relatorios": true,
-  "pipeline": true,
-  "focushub": true,
-  "propostas": false,
-  "contratos": true,
-  "canal-interno": false,
-  "notificacoes": true,
-  "activity-log": true,
-  "google": true,
-  "github": true,
-  "slack": false,
-  "webhooks": false,
 }
 
 interface ModulesContextType {
@@ -69,6 +54,7 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
+        // Merge saved states with defaults to ensure new modules are included
         setModuleStates({ ...DEFAULT_MODULE_STATES, ...parsed })
       } catch {
         // Manter estado padrao se houver erro
