@@ -1,98 +1,48 @@
-import { useState, useEffect, useCallback } from "react"
-import { supabase } from "@/lib/supabase"
+"use client"
 
+import { useNotifications, Notification } from "@/contexts/notification-context"
+
+// Mantendo a interface para compatibilidade com o componente NotificationsPanel
 export interface Notificacao {
   id: string
   titulo: string
-  mensagem: string
-  tipo: "info" | "success" | "warning" | "error"
+  descricao: string
+  tipo: string
   lida: boolean
   created_at: string
+  referencia_tipo?: string
+  referencia_id?: string
 }
 
 export function useNotificacoes() {
-  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead, refresh } = useNotifications()
 
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return false
-    return true
-  }
-
-  const fetchNotificacoes = useCallback(async () => {
-    setIsLoading(true)
-    await checkAuth()
-    try {
-      const { data, error } = await supabase
-        .from("notificacoes")
-        .select("*")
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      setNotificacoes(data || [])
-    } catch (error) {
-      console.error("Erro ao carregar notificacoes:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchNotificacoes()
-
-    const channelId = `notifications_realtime_${Math.random().toString(36).substring(2, 9)}`
-    const channel = supabase.channel(channelId)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notificacoes' }, () => fetchNotificacoes())
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [fetchNotificacoes])
-
-  const marcarComoLida = async (id: string) => {
-    await checkAuth()
-    const { error } = await supabase
-      .from("notificacoes")
-      .update({ lida: true })
-      .eq("id", id)
-
-    if (error) {
-      console.error("Erro ao marcar como lida:", error)
-      return false
-    }
-
-    setNotificacoes(prev => 
-      prev.map(n => n.id === id ? { ...n, lida: true } : n)
-    )
-    return true
-  }
+  // Transformar as notificações do Contexto para o formato esperado pelo componente legado
+  const mappedNotifications: Notificacao[] = notifications.map(n => ({
+    id: n.id,
+    titulo: n.title,
+    descricao: n.body,
+    tipo: n.type,
+    lida: n.isRead,
+    created_at: n.createdAt,
+    referencia_tipo: n.relatedEntityType || undefined,
+    referencia_id: n.relatedEntityId || undefined
+  }))
 
   return {
-    notificacoes,
-    notifications: notificacoes, // Alias para compatibilidade legada
-    unreadCount: notificacoes.filter(n => !n.lida).length,
-    isLoading,
-    marcarComoLida,
-    markAsRead: marcarComoLida, // Alias para compatibilidade legada
-    refresh: fetchNotificacoes
+    notificacoes: mappedNotifications,
+    notifications: mappedNotifications,
+    unreadCount,
+    isLoading: loading,
+    markAsRead,
+    markAllAsRead,
+    refresh
   }
 }
 
-export async function criarNotificacao(titulo: string, mensagem: string, tipo: string = "info") {
-  const { error } = await supabase
-    .from("notificacoes")
-    .insert([{
-      titulo,
-      mensagem,
-      tipo,
-      lida: false
-    }])
-
-  if (error) {
-    console.error("Erro ao criar notificacao:", error)
-    return false
-  }
-  return true
+// Helper para criar notificações (opcional se for usar no lado do cliente, 
+// mas recomendado usar a API server-side para segurança)
+export async function criarNotificacao(titulo: string, corpo: string, tipo: string = "info") {
+  // Em uma aplicação real, você chamaria uma API server-side que verifica permissões
+  console.log("Criando notificação:", { titulo, corpo, tipo })
 }

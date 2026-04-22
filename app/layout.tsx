@@ -4,6 +4,7 @@ import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { ModulesProvider } from "@/contexts/modules-context"
 import { PwaProvider } from "@/contexts/pwa-context"
+import { NotificationProvider } from "@/contexts/notification-context"
 import { ToastProvider } from "@/components/reports/toast-notification"
 import { ThemeProvider } from "@/components/theme-provider"
 
@@ -126,7 +127,9 @@ export default function RootLayout({
           <ToastProvider>
             <PwaProvider>
               <ModulesProvider>
-                {children}
+                <NotificationProvider>
+                  {children}
+                </NotificationProvider>
               </ModulesProvider>
             </PwaProvider>
           </ToastProvider>

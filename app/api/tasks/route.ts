@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { requireUser } from "@/lib/api-auth"
+import { sendNotification } from "@/lib/notifications"
 export const dynamic = 'force-dynamic'
 
 /**
@@ -91,6 +92,18 @@ export async function POST(request: Request) {
     entity_id: data.id,
     entity_name: data.title,
   })
+
+  // Notificar o responsável se houver um
+  if (data.assignee_id) {
+    await sendNotification({
+      userId: data.assignee_id,
+      event: "nova_task",
+      title: "Nova tarefa atribuída",
+      body: `Você recebeu a tarefa: ${data.title}`,
+      relatedEntityType: "tarefas",
+      relatedEntityId: data.id
+    })
+  }
 
   return NextResponse.json({ task: data }, { status: 201 })
 }

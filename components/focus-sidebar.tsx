@@ -67,6 +67,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
     { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "Tasks" },
     { id: "agenda", href: "/agenda", icon: CalendarClock, label: "Agenda" },
     { id: "comercial", href: "/comercial", icon: Briefcase, label: "Comercial", badge: stats.comercial > 0 ? stats.comercial : null },
+    { id: "documentos", href: "/documentos", icon: Box, label: "Documentos" },
     { id: "equipe", href: "/equipe", icon: Grid, label: "Hub" },
     { id: "clientes", href: "/clientes", icon: Users, label: "Clientes" },
     { id: "relatorios", href: "/relatorios", icon: FileText, label: "Relatórios" },

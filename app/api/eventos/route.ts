@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { sendNotification } from "@/lib/notifications"
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -84,25 +85,60 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (dbError) {
-      console.error("[API Eventos POST] DB Error:", JSON.stringify(dbError))
-      return NextResponse.json({ error: dbError.message }, { status: 500 })
+      console.error("[API Eventos POST] DB Error inserindo evento:", JSON.stringify(dbError))
+      return NextResponse.json({ error: `Erro no banco de dados: ${dbError.message}` }, { status: 500 })
     }
 
-    const googleCalUrl = gerarLinkGoogleCalendar({
-      titulo: body.titulo,
-      descricao: body.descricao || "",
-      data: body.data,
-      hora_inicio: body.hora_inicio,
-      hora_fim,
-      emails: body.attendees_emails || [],
-    })
+    let googleCalUrl = ""
+    try {
+      googleCalUrl = gerarLinkGoogleCalendar({
+        titulo: body.titulo,
+        descricao: body.descricao || "",
+        data: body.data,
+        hora_inicio: body.hora_inicio,
+        hora_fim,
+        emails: body.attendees_emails || [],
+      })
+    } catch (gErr: any) {
+      console.error("[API Eventos POST] Erro ao gerar link do Google:", gErr)
+    }
+
+    // Disparar notificações para os membros convidados
+    if (body.membros_ids && Array.isArray(body.membros_ids)) {
+      await Promise.allSettled(
+        body.membros_ids.map(async (membroId: string) => {
+          try {
+            const { data: membro } = await supabase
+              .from("equipe")
+              .select("usuario_id, id")
+              .eq("id", membroId)
+              .single()
+
+            const destinatarioId = membro?.usuario_id || membroId
+
+            if (destinatarioId && destinatarioId !== body.criado_por) {
+              await sendNotification({
+                userId: destinatarioId,
+                event: "novo_membro",
+                title: "📅 Novo evento na Agenda",
+                body: `Você foi convidado para o evento: "${body.titulo}" no dia ${body.data} às ${body.hora_inicio}.`,
+                relatedEntityType: "agenda",
+                relatedEntityId: evento.id,
+              })
+            }
+          } catch (notifErr) {
+            console.error("Erro no processamento de notificacao para membro", membroId, notifErr)
+          }
+        })
+      )
+    }
 
     return NextResponse.json({
       evento: { ...evento, google_cal_url: googleCalUrl },
     }, { status: 201 })
   } catch (error: any) {
-    console.error("[API Eventos POST] catch:", error.message)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error("[API Eventos POST] erro fatal:", error)
+    return NextResponse.json({ error: `Erro interno: ${error.message}` }, { status: 500 })
   }
 }
 

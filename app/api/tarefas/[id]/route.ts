@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
+import { sendNotification } from "@/lib/notifications"
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +72,19 @@ export async function PATCH(
         // Não falha a request principal — apenas loga o erro de aprovação
         console.error("[PATCH tarefas] Erro ao criar aprovação automática:", aprovErr.message)
       }
+    }
+
+    // Notificar conclusão
+    if (status === 'concluida' && data && (data as any).responsavel_id) {
+      const tarefa = data as any
+      await sendNotification({
+        userId: tarefa.responsavel_id,
+        event: "task_concluida",
+        title: "Tarefa concluída",
+        body: `A tarefa "${tarefa.titulo}" foi marcada como concluída.`,
+        relatedEntityType: "tarefas",
+        relatedEntityId: id
+      })
     }
 
     return NextResponse.json({ task: data })

@@ -50,6 +50,9 @@ export async function middleware(request: NextRequest) {
                   pathname.includes(".") // Arquivos estáticos
 
   if (!user && !isPublic) {
+    if (pathname.startsWith("/api")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
     const url = request.nextUrl.clone()
     url.pathname = "/login"
     url.searchParams.set("redirectTo", pathname)

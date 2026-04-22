@@ -1,0 +1,17 @@
+const { createClient } = require('@supabase/supabase-js');
+
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://nmvupgurzfdwzsocsvyq.supabase.co";
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdnVwZ3VyemZkd3pzb2NzdnlxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTk0MzQ3NiwiZXhwIjoyMDkxNTE5NDc2fQ.N8-XT85QFolD8sQD0VzVm91Lv-BPi5-xc5eSSbo1emw";
+
+const supabase = createClient(url, key);
+
+async function run() {
+  const { data, error } = await supabase.from('push_subscriptions').select('*').limit(1);
+  if (error) {
+    console.log("Table error:", error.message);
+  } else {
+    console.log("Table push_subscriptions exists.");
+  }
+}
+
+run();

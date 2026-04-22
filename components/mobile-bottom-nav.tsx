@@ -45,6 +45,7 @@ const ALL_MODULES = [
   { id: "relatorios",     href: "/relatorios", icon: FileText,        label: "Relatórios" },
   { id: "sistemas",       href: "/sistemas",  icon: Settings,        label: "Sistemas" },
   { id: "configuracoes",  href: "/configuracoes", icon: Cog,          label: "Ajustes" },
+  { id: "documentos",     href: "/documentos", icon: Box,          label: "Documentos" },
 ]
 
 export function MobileBottomNav() {
