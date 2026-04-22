@@ -32,7 +32,7 @@ import { BackupSection } from "./sections/backup-section"
 import { SistemaSection } from "./sections/sistema-section"
 
 const sections = [
-  { id: "perfil-identidade", label: "Perfil & Identidade", icon: User, group: "SISTEMA" },
+  { id: "perfil-identidade", label: "Meu Perfil", icon: User, group: "SISTEMA" },
   { id: "modulos", label: "Modulos do Sistema", icon: LayoutGrid, group: "SISTEMA" },
   { id: "usuarios", label: "Usuarios & Permissoes", icon: Users, group: "EQUIPE" },
   { id: "aparencia", label: "Personalização", icon: Palette, group: "EQUIPE" },
@@ -100,8 +100,7 @@ export function ConfiguracoesModule() {
                     <button
                       key={section.id}
                       onClick={() => {
-                        const targetId = section.id === "perfil-identidade" ? "aparencia" : section.id
-                        setActiveSection(targetId)
+                        setActiveSection(section.id)
                         setMobileView("content")
                       }}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded text-left transition-all ${
@@ -144,7 +143,7 @@ export function ConfiguracoesModule() {
               <ChevronLeft className="w-5 h-5" />
             </Button>
             <p className="text-neutral-500 text-xs font-mono tracking-widest hidden sm:block">
-              CONFIGURACOES / <span className="text-orange-500">{currentSection?.label.toUpperCase()}</span>
+              CONFIGURACOES / <span className="text-orange-500">{activeSection === "perfil-identidade" ? "PERFIL" : currentSection?.label.toUpperCase()}</span>
             </p>
             <p className="text-neutral-500 text-xs font-mono tracking-widest sm:hidden">
               <span className="text-orange-500">{currentSection?.label.toUpperCase()}</span>
