@@ -31,7 +31,8 @@ const PRIMARY_NAV = [
   { id: "command-center", href: "/",         icon: LayoutDashboard, label: "Home" },
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
   { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tasks" },
-  { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "Comercial" },
+  { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "CRM" },
+  { id: "financeiro",     href: "/financeiro", icon: DollarSign,     label: "Finance" },
 ]
 
 const ALL_MODULES = [

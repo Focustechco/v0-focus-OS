@@ -98,42 +98,42 @@ export function ComercialModule() {
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex items-center justify-between mb-4">
-          <TabsList className="bg-card border border-border p-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <TabsList className="bg-card border border-border p-1 w-full sm:w-auto overflow-x-auto justify-start sm:justify-center no-scrollbar">
             <TabsTrigger 
               value="pipeline" 
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2 flex-shrink-0"
             >
               <Kanban className="w-4 h-4" />
-              <span className="hidden sm:inline">PIPELINE</span>
+              <span className="text-[10px] sm:text-xs">PIPELINE</span>
             </TabsTrigger>
             <TabsTrigger 
               value="clientes"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2 flex-shrink-0"
             >
               <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">CLIENTES</span>
+              <span className="text-[10px] sm:text-xs">CLIENTES</span>
             </TabsTrigger>
             <TabsTrigger 
               value="dashboard"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2 flex-shrink-0"
             >
               <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">DASHBOARD</span>
+              <span className="text-[10px] sm:text-xs">DASH</span>
             </TabsTrigger>
             <TabsTrigger 
               value="atividade"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2 flex-shrink-0"
             >
               <Activity className="w-4 h-4" />
-              <span className="hidden sm:inline">ATIVIDADE</span>
+              <span className="text-[10px] sm:text-xs">FEED</span>
             </TabsTrigger>
             <TabsTrigger 
               value="configurar"
-              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-foreground flex items-center gap-2 flex-shrink-0"
             >
               <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">CONFIGURAR</span>
+              <span className="text-[10px] sm:text-xs">SETUP</span>
             </TabsTrigger>
           </TabsList>
 

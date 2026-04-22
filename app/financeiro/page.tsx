@@ -28,30 +28,32 @@ export default function FinanceiroPage() {
 
   return (
     <PageWrapper title="FINANCEIRO" breadcrumb="FINANCEIRO">
-      <div className="space-y-6 font-mono bg-secondary p-6 -m-6 min-h-screen rounded-lg">
+      <div className="space-y-4 sm:space-y-6 font-mono bg-secondary p-4 sm:p-6 -m-4 sm:-m-6 min-h-screen rounded-lg">
 
         {/* Status Bar */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <DollarSign className="w-5 h-5 text-orange-500" />
-            <h1 className="text-lg font-bold text-foreground tracking-tight">Painel Financeiro</h1>
-            <Badge variant="outline" className="text-[9px] uppercase tracking-widest border-green-500/30 text-green-500">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-orange-500" />
+              <h1 className="text-base sm:text-lg font-bold text-foreground tracking-tight">Painel Financeiro</h1>
+            </div>
+            <Badge variant="outline" className="text-[8px] sm:text-[9px] uppercase tracking-widest border-green-500/30 text-green-500 w-fit">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-1.5" />
               ASAAS_CONNECTED
             </Badge>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button 
               variant="outline" 
               size="sm" 
-              className="border-border text-neutral-400 hover:text-foreground h-8 text-[10px]"
+              className="flex-1 sm:flex-none border-border text-neutral-400 hover:text-foreground h-8 text-[10px]"
               onClick={() => mutateCobrancas()}
             >
               <RefreshCw className="w-3 h-3 mr-1.5" /> SYNC
             </Button>
             <Button 
               onClick={() => setIsModalGerarOpen(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-black font-bold h-8 text-[10px]"
+              className="flex-1 sm:flex-none bg-orange-500 hover:bg-orange-600 text-black font-bold h-8 text-[10px]"
             >
               <Plus className="w-3.5 h-3.5 mr-1.5" />
               NOVA COBRANÇA
@@ -60,7 +62,7 @@ export default function FinanceiroPage() {
         </div>
 
         {/* Dashboard KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Saldo Previsto */}
           <div className="bg-card border border-border p-4 rounded-lg group hover:border-orange-500/30 transition-colors">
             <div className="flex items-center justify-between mb-3">
@@ -72,7 +74,7 @@ export default function FinanceiroPage() {
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
             ) : (
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-base sm:text-xl font-bold text-foreground">
                 {resumo ? formatBRL(resumo.saldoPrevisto) : 'R$ —'}
               </span>
             )}
@@ -92,7 +94,7 @@ export default function FinanceiroPage() {
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
             ) : (
-              <span className="text-xl font-bold text-green-500">
+              <span className="text-base sm:text-xl font-bold text-green-500">
                 {resumo ? formatBRL(resumo.totalRecebido) : 'R$ —'}
               </span>
             )}
@@ -112,7 +114,7 @@ export default function FinanceiroPage() {
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
             ) : (
-              <span className="text-xl font-bold text-yellow-500">
+              <span className="text-base sm:text-xl font-bold text-yellow-500">
                 {resumo ? formatBRL(resumo.totalPendente) : 'R$ —'}
               </span>
             )}
@@ -132,7 +134,7 @@ export default function FinanceiroPage() {
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-neutral-500" />
             ) : (
-              <span className="text-xl font-bold text-red-500">
+              <span className="text-base sm:text-xl font-bold text-red-500">
                 {resumo ? `${resumo.inadimplencia}%` : '—'}
               </span>
             )}

@@ -31,8 +31,11 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  FolderOpen
+  FolderOpen,
+  DollarSign,
+  CreditCard
 } from "lucide-react"
+import { ModalGerarCobranca } from "../financeiro/modal-gerar-cobranca"
 
 interface ClientesTableProps {
   deals: CRMDeal[]
@@ -50,6 +53,10 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 15
+  
+  // Integração Financeira
+  const [isFinanceiroOpen, setIsFinanceiroOpen] = useState(false)
+  const [selectedDeal, setSelectedDeal] = useState<CRMDeal | null>(null)
 
   // Get unique statuses and assignees
   const uniqueStatuses = useMemo(() => {
@@ -142,14 +149,10 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
     return filteredDeals.slice(start, start + itemsPerPage)
   }, [filteredDeals, currentPage])
 
-  // Handle sort
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortField(field)
-      setSortOrder('desc')
-    }
+  // Abrir financeiro pre-preenchido
+  const openFinanceiro = (deal: CRMDeal) => {
+    setSelectedDeal(deal)
+    setIsFinanceiroOpen(true)
   }
 
   // Export to CSV
@@ -252,12 +255,103 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="table-responsive bg-card border border-border rounded-lg">
+      {/* Mobile View: Cards */}
+      <div className="grid grid-cols-1 gap-3 md:hidden">
+        {paginatedDeals.length === 0 ? (
+          <div className="bg-card border border-border rounded-lg p-12 text-center">
+            <FolderOpen className="w-8 h-8 mb-2 mx-auto text-neutral-500" />
+            <span className="text-sm text-neutral-500">Nenhum deal encontrado</span>
+          </div>
+        ) : (
+          paginatedDeals.map(deal => {
+            const alertLevel = getDealAlertLevel(deal)
+            return (
+              <div key={deal.id} className="bg-card border border-border rounded-xl p-4 space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-neutral-500 font-mono">
+                      {deal.customId || `CL-${deal.id.slice(-4).toUpperCase()}`}
+                    </p>
+                    <h3 className="text-sm font-bold text-foreground leading-tight">
+                      {deal.empresa || deal.name}
+                    </h3>
+                  </div>
+                  <Badge 
+                    variant="outline"
+                    className="text-[8px] font-mono uppercase"
+                    style={{ 
+                      backgroundColor: `${deal.status.color}15`,
+                      borderColor: deal.status.color,
+                      color: deal.status.color
+                    }}
+                  >
+                    {deal.status.status}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/50">
+                  <div>
+                    <p className="text-[9px] text-neutral-500 uppercase tracking-wider mb-0.5">Valor</p>
+                    <p className="text-xs font-bold font-mono text-orange-500">{formatMRR(deal.valor)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-neutral-500 uppercase tracking-wider mb-0.5">Prazo</p>
+                    <p className={`text-xs font-bold font-mono ${alertLevel === 'deadline' ? 'text-blue-500' : 'text-foreground'}`}>
+                      {deal.dueDate ? formatDate(deal.dueDate) : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center gap-2">
+                    {deal.assignees.length > 0 && (
+                      <Avatar className="w-5 h-5">
+                        <AvatarImage src={deal.assignees[0].profilePicture || undefined} />
+                        <AvatarFallback className="text-[8px]" style={{ backgroundColor: deal.assignees[0].color }}>
+                          {deal.assignees[0].initials}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    <span className="text-[10px] text-neutral-500">{deal.assignees[0]?.username || 'Sem resp.'}</span>
+                  </div>
+                    <div className="flex gap-1">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 border-green-500/20 text-green-500 hover:bg-green-500/10"
+                        onClick={() => openFinanceiro(deal)}
+                        title="Gerar Cobrança Asaas"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="icon" className="h-8 w-8 border-border text-neutral-400">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 border-border text-neutral-400"
+                        onClick={() => window.open(deal.url, '_blank')}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="icon" className="h-8 w-8 border-orange-500/20 text-orange-500">
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                </div>
+              </div>
+            )
+          })
+        )}
+      </div>
+
+      {/* Desktop View: Table */}
+      <div className="hidden md:block bg-card border border-border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="text-neutral-500 font-mono text-xs hidden md:table-cell">ID</TableHead>
+              <TableHead className="text-neutral-500 font-mono text-xs hidden lg:table-cell">ID</TableHead>
               <TableHead 
                 className="text-neutral-500 font-mono text-xs cursor-pointer hover:text-foreground"
                 onClick={() => handleSort('empresa')}
@@ -326,7 +420,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
                     key={deal.id} 
                     className="border-border hover:bg-accent/10 transition-colors"
                   >
-                    <TableCell className="font-mono text-xs text-neutral-400 hidden md:table-cell">
+                    <TableCell className="font-mono text-xs text-neutral-400 hidden lg:table-cell">
                       {deal.customId || `CL-${deal.id.slice(-4).toUpperCase()}`}
                     </TableCell>
                     <TableCell>
@@ -419,6 +513,7 @@ export function ClientesTable({ deals, loading }: ClientesTableProps) {
             )}
           </TableBody>
         </Table>
+      </div>
 
         {/* Pagination */}
         {totalPages > 1 && (

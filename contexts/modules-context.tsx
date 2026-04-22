@@ -52,14 +52,20 @@ export function ModulesProvider({ children }: { children: ReactNode }) {
   const [moduleStates, setModuleStates] = useState<Record<string, boolean>>(DEFAULT_MODULE_STATES)
   const [isHydrated, setIsHydrated] = useState(false)
 
-  // Carregar estado do localStorage na inicializacao
   useEffect(() => {
     const saved = localStorage.getItem("focus-module-states")
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
-        // Merge saved states with defaults to ensure new modules are included
-        setModuleStates({ ...DEFAULT_MODULE_STATES, ...parsed })
+        
+        // Se o modulo financeiro nao existe no salvo, forcar um merge com os novos defaults
+        if (parsed.financeiro === undefined) {
+          const newState = { ...DEFAULT_MODULE_STATES, ...parsed, financeiro: true, comercial: true }
+          setModuleStates(newState)
+          localStorage.setItem("focus-module-states", JSON.stringify(newState))
+        } else {
+          setModuleStates({ ...DEFAULT_MODULE_STATES, ...parsed })
+        }
       } catch {
         // Manter estado padrao se houver erro
       }
