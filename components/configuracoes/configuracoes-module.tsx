@@ -22,7 +22,6 @@ import {
 
 import { PerfilIdentidadeSection } from "./sections/perfil-identidade-section"
 import { ModulosSection } from "./sections/modulos-section"
-import { PerfilEmpresaSection } from "./sections/perfil-empresa-section"
 import { UsuariosSection } from "./sections/usuarios-section"
 import { AparenciaSection } from "./sections/aparencia-section"
 import { NotificacoesSection } from "./sections/notificacoes-section"
@@ -35,9 +34,8 @@ import { SistemaSection } from "./sections/sistema-section"
 const sections = [
   { id: "perfil-identidade", label: "Perfil & Identidade", icon: User, group: "SISTEMA" },
   { id: "modulos", label: "Modulos do Sistema", icon: LayoutGrid, group: "SISTEMA" },
-  { id: "perfil", label: "Perfil da Empresa", icon: Building2, group: "SISTEMA" },
   { id: "usuarios", label: "Usuarios & Permissoes", icon: Users, group: "EQUIPE" },
-  { id: "aparencia", label: "Aparencia", icon: Palette, group: "EQUIPE" },
+  { id: "aparencia", label: "Personalização", icon: Palette, group: "EQUIPE" },
   { id: "notificacoes", label: "Notificacoes", icon: Bell, group: "EQUIPE" },
   { id: "seguranca", label: "Seguranca", icon: Shield, group: "SEGURANCA" },
   { id: "integracoes", label: "Integracoes", icon: Plug, group: "INTEGRACOES" },
@@ -63,8 +61,6 @@ export function ConfiguracoesModule() {
         return <PerfilIdentidadeSection />
       case "modulos":
         return <ModulosSection onChange={() => setHasChanges(true)} />
-      case "perfil":
-        return <PerfilEmpresaSection onChange={() => setHasChanges(true)} />
       case "usuarios":
         return <UsuariosSection onChange={() => setHasChanges(true)} />
       case "aparencia":
@@ -104,7 +100,8 @@ export function ConfiguracoesModule() {
                     <button
                       key={section.id}
                       onClick={() => {
-                        setActiveSection(section.id)
+                        const targetId = section.id === "perfil-identidade" ? "aparencia" : section.id
+                        setActiveSection(targetId)
                         setMobileView("content")
                       }}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded text-left transition-all ${
