@@ -7,9 +7,30 @@ import { StatsGrid } from '@/components/projetos/visao-geral/StatsGrid';
 import { ActiveSprintCard } from '@/components/projetos/visao-geral/ActiveSprintCard';
 import { ArrowRight, ListTodo, CheckCircle2 } from 'lucide-react';
 
+import { useClickUpSprints } from '@/hooks/useClickUpSprints';
+import { useClickUpTasks } from '@/hooks/useClickUpTasks';
+import { useApprovals } from '@/hooks/useApprovals';
+
 export default function ProjetosPage() {
+  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901323571867';
+  
+  const { sprints, isLoading: loadingSprints } = useClickUpSprints(LIST_ID);
+  const { tasks, isLoading: loadingTasks } = useClickUpTasks(LIST_ID);
+  const { approvals, isLoading: loadingApprovals } = useApprovals();
+
+  const activeSprint = sprints[0];
+  const pendingApprovals = approvals.filter(a => a.status === 'pending').length;
+  const completedTasks = tasks.filter(t => t.status.status.toLowerCase().includes('done') || t.status.status.toLowerCase().includes('complete')).length;
+
+  const stats = {
+    activeProjects: 1, // Logic to count projects/spaces if needed
+    activeSprints: sprints.length,
+    pendingApprovals,
+    completedTasks
+  };
+
   return (
-    <ProjectsLayout counts={{ sprints: 2, backlog: 45, approvals: 8 }}>
+    <ProjectsLayout counts={{ sprints: sprints.length, backlog: tasks.length, approvals: pendingApprovals }}>
       <div className="animate-in fade-in duration-500">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Visão Geral</h1>
@@ -18,12 +39,12 @@ export default function ProjetosPage() {
 
         <ClickUpSyncBar lastSync="há 2 minutos" />
         
-        <StatsGrid />
+        <StatsGrid stats={stats} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-8">
-            <ActiveSprintCard />
+            <ActiveSprintCard sprint={activeSprint} />
             
             <div className="bg-[#161616] border border-[#1f1f1f] rounded-xl overflow-hidden">
               <div className="p-6 border-b border-[#1f1f1f] flex items-center justify-between">

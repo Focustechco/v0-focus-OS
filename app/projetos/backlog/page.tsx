@@ -7,7 +7,7 @@ import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { ListTodo, Search, Filter, LayoutGrid, List } from 'lucide-react';
 
 export default function BacklogPage() {
-  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901201568444';
+  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901323571867';
   const { tasks, isLoading, error } = useClickUpTasks(LIST_ID);
 
   return (

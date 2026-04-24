@@ -8,7 +8,7 @@ import { Zap, Users, BarChart3, Clock } from 'lucide-react';
 
 export default function SprintsPage() {
   // Use a hardcoded list ID or fetch it from a project config/context
-  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901201568444'; 
+  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901323571867'; 
   const { sprints, isLoading, error } = useClickUpSprints(LIST_ID);
 
   return (

@@ -9,9 +9,13 @@ interface ActiveSprintCardProps {
 }
 
 export function ActiveSprintCard({ sprint }: ActiveSprintCardProps) {
-  // Placeholder data if no sprint provided
-  const sprintName = sprint?.name || 'Sprint 24 - Q2';
-  const progress = 65;
+  const sprintName = sprint?.name || 'Carregando Sprint...';
+  
+  const totalTasks = sprint?.tasks?.length || 0;
+  const closedTasks = sprint?.tasks?.filter(t => t.date_closed !== null || t.status.type === 'closed')?.length || 0;
+  const progress = totalTasks > 0 ? (closedTasks / totalTasks) * 100 : 0;
+  
+  const totalPoints = sprint?.tasks?.reduce((acc, t) => acc + (t.points || 0), 0) || 0;
 
   return (
     <div className="bg-[#161616] border border-[#1f1f1f] rounded-xl overflow-hidden hover:border-[#333] transition-colors group cursor-pointer">
@@ -29,11 +33,13 @@ export function ActiveSprintCard({ sprint }: ActiveSprintCardProps) {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-white">{sprintName}</span>
-            <span className="text-xs text-[#888888]">Termina em 4 dias</span>
+            <span className="text-xs text-[#888888]">
+              {totalTasks > 0 ? `${closedTasks} de ${totalTasks} concluídas` : 'Sem tarefas'}
+            </span>
           </div>
           <div className="h-2 w-full bg-[#1f1f1f] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-[#f97316] rounded-full"
+              className="h-full bg-[#f97316] rounded-full transition-all duration-1000"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -42,11 +48,11 @@ export function ActiveSprintCard({ sprint }: ActiveSprintCardProps) {
         <div className="grid grid-cols-2 gap-4">
           <div className="p-3 bg-[#0f0f0f] rounded-lg border border-[#1f1f1f]">
             <p className="text-[10px] text-[#888888] uppercase mb-1">Concluído</p>
-            <p className="text-lg font-bold text-white">24/38</p>
+            <p className="text-lg font-bold text-white">{closedTasks}/{totalTasks}</p>
           </div>
           <div className="p-3 bg-[#0f0f0f] rounded-lg border border-[#1f1f1f]">
             <p className="text-[10px] text-[#888888] uppercase mb-1">Pontos</p>
-            <p className="text-lg font-bold text-white">86</p>
+            <p className="text-lg font-bold text-white">{totalPoints}</p>
           </div>
         </div>
       </div>

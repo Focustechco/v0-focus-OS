@@ -31,13 +31,22 @@ function StatCard({ label, value, icon: Icon, trend }: StatCardProps) {
   );
 }
 
-export function StatsGrid() {
+interface StatsGridProps {
+  stats?: {
+    activeProjects?: number;
+    activeSprints?: number;
+    pendingApprovals?: number;
+    completedTasks?: number;
+  };
+}
+
+export function StatsGrid({ stats }: StatsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <StatCard label="Projetos Ativos" value="12" icon={Briefcase} />
-      <StatCard label="Sprints em Andamento" value="3" icon={Zap} trend="12%" />
-      <StatCard label="Aprovações Pendentes" value="8" icon={CheckCircle2} />
-      <StatCard label="Tarefas Concluídas" value="156" icon={ListTodo} trend="5%" />
+      <StatCard label="Projetos Ativos" value={stats?.activeProjects ?? 0} icon={Briefcase} />
+      <StatCard label="Sprints em Andamento" value={stats?.activeSprints ?? 0} icon={Zap} trend="12%" />
+      <StatCard label="Aprovações Pendentes" value={stats?.pendingApprovals ?? 0} icon={CheckCircle2} />
+      <StatCard label="Tarefas Concluídas" value={stats?.completedTasks ?? 0} icon={ListTodo} trend="5%" />
     </div>
   );
 }

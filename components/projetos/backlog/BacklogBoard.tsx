@@ -15,22 +15,28 @@ export function BacklogBoard({ tasks }: BacklogBoardProps) {
   const completedTasks = tasks.filter(t => t.status.status.toLowerCase().includes('done') || t.status.status.toLowerCase().includes('complete'));
 
   return (
-    <div className="flex space-x-6 overflow-x-auto pb-6 h-[calc(100vh-280px)]">
-      <BacklogColumn 
-        title="Aberto" 
-        tasks={openTasks} 
-        color="border-[#333]" 
-      />
-      <BacklogColumn 
-        title="Em Progresso" 
-        tasks={inProgressTasks} 
-        color="border-[#3b82f6]" 
-      />
-      <BacklogColumn 
-        title="Concluído" 
-        tasks={completedTasks} 
-        color="border-[#10b981]" 
-      />
+    <div className="flex space-x-4 overflow-x-auto pb-6 h-[calc(100vh-280px)] snap-x snap-mandatory no-scrollbar">
+      <div className="snap-center">
+        <BacklogColumn 
+          title="Aberto" 
+          tasks={openTasks} 
+          color="border-[#333]" 
+        />
+      </div>
+      <div className="snap-center">
+        <BacklogColumn 
+          title="Em Progresso" 
+          tasks={inProgressTasks} 
+          color="border-[#3b82f6]" 
+        />
+      </div>
+      <div className="snap-center">
+        <BacklogColumn 
+          title="Concluído" 
+          tasks={completedTasks} 
+          color="border-[#10b981]" 
+        />
+      </div>
     </div>
   );
 }

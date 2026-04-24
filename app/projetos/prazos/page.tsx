@@ -7,7 +7,7 @@ import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { Calendar, Filter, Download, Info } from 'lucide-react';
 
 export default function PrazosPage() {
-  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901201568444';
+  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901323571867';
   // Fetch tasks with due dates
   const { tasks, isLoading, error } = useClickUpTasks(LIST_ID);
 

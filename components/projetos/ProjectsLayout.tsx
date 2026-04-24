@@ -15,6 +15,8 @@ interface ProjectsLayoutProps {
   };
 }
 
+import { PageWrapper } from '@/components/page-wrapper';
+
 export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
   const pathname = usePathname();
 
@@ -27,43 +29,41 @@ export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white">
-      {/* Header / Tabs */}
-      <div className="sticky top-0 z-40 bg-[#0f0f0f]/80 backdrop-blur-md border-b border-[#1f1f1f]">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center space-x-8 h-16">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "relative flex items-center space-x-2 h-full px-1 text-sm font-medium transition-colors hover:text-white",
-                    isActive ? "text-white" : "text-[#888888]"
-                  )}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.name}</span>
-                  {item.count !== undefined && (
-                    <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-[#f97316] text-white rounded-full">
-                      {item.count}
-                    </span>
-                  )}
-                  {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f97316]" />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
+    <PageWrapper title="Projetos" breadcrumb="Módulo de Gestão">
+      <div className="flex flex-col space-y-4 sm:space-y-6">
+        {/* Navigation Tabs */}
+        <div className="flex items-center space-x-1 border-b border-[#1f1f1f] pb-px overflow-x-auto no-scrollbar snap-x snap-proximity">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "relative flex items-center space-x-2 py-4 px-4 text-xs sm:text-sm font-medium transition-colors hover:text-white whitespace-nowrap snap-start",
+                  isActive ? "text-white" : "text-[#888888]"
+                )}
+              >
+                <item.icon className="w-4 h-4" />
+                <span>{item.name}</span>
+                {item.count !== undefined && (
+                  <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-[#f97316] text-white rounded-full">
+                    {item.count}
+                  </span>
+                )}
+                {isActive && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f97316]" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1">
+          {children}
         </div>
       </div>
-
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {children}
-      </main>
-    </div>
+    </PageWrapper>
   );
 }
