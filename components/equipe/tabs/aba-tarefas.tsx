@@ -241,7 +241,7 @@ export function AbaTarefas({ userType }: { userType: string }) {
                         const comp = memberTasks.filter(t => t.concluida).length
                         const perc = memberTasks.length > 0 ? (comp / memberTasks.length) * 100 : 0
                         
-                        return (
+                        return
                             <Card key={member.id} className="bg-card border-border hover:bg-white/5 transition-colors">
                                 <CardContent className="p-4 space-y-4">
                                     <div className="flex items-center justify-between">
@@ -270,10 +270,9 @@ export function AbaTarefas({ userType }: { userType: string }) {
                                 </CardContent>
                             </Card>
                         )
-                    })}
+                    }}
                 </div>
             </div>
-        )}
       </div>
 
       {/* Modal Atribuir Tarefa */}

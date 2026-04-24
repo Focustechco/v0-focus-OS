@@ -548,3 +548,28 @@ INSERT INTO public.teams (id, name, description, color) VALUES
   ('00000000-0000-0000-0000-000000000001', 'Focus Core', 'Equipe principal de desenvolvimento', '#f97316'),
   ('00000000-0000-0000-0000-000000000002', 'Focus Comercial', 'Equipe comercial e vendas', '#22c55e')
 ON CONFLICT DO NOTHING;
+
+-- =====================================================
+-- DRIVE TOKENS (persist refresh tokens por usuário)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS public.drive_tokens (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
+  refresh_token TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Atualizar timestamp
+CREATE OR REPLACE FUNCTION update_drive_tokens_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_update_drive_tokens_updated_at ON public.drive_tokens;
+CREATE TRIGGER trigger_update_drive_tokens_updated_at
+BEFORE UPDATE ON public.drive_tokens
+FOR EACH ROW EXECUTE FUNCTION update_drive_tokens_updated_at();

@@ -1,6 +1,6 @@
 "use client"
 
-import { DriveModule } from "@/components/drive-module"
+import { DriveModule } from "@/components/drive/DriveModule"
 
 export default function DocumentosPage() {
   return (

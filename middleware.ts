@@ -42,12 +42,13 @@ export async function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname
-  const isPublic = pathname === "/login" || 
-                  pathname.startsWith("/auth") || 
+  const isPublic = pathname === "/login" ||
+                  pathname.startsWith("/auth") ||
                   pathname.startsWith("/api/auth") ||
+                  pathname.startsWith("/api/drive") ||
                   pathname === "/manifest.json" ||
                   pathname === "/logo.svg" ||
-                  pathname.includes(".") // Arquivos estáticos
+                  pathname.includes(".")
 
   if (!user && !isPublic) {
     if (pathname.startsWith("/api")) {

@@ -1,82 +1,82 @@
-"use client"
+'use client';
 
-import { useState, Suspense } from "react"
-import { PageWrapper } from "@/components/page-wrapper"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Loader2 } from "lucide-react"
-
-import { VisaoGeralTab } from "@/components/projetos/visao-geral-tab"
-import { SprintsTab } from "@/components/projetos/sprints-tab"
-import { TasksTab } from "@/components/projetos/tasks-tab"
-import { AprovacoesTab } from "@/components/projetos/aprovacoes-tab"
-import { PrazosTab } from "@/components/projetos/prazos-tab"
-import { useIntelligence } from "@/lib/hooks/use-intelligence"
+import React from 'react';
+import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
+import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
+import { StatsGrid } from '@/components/projetos/visao-geral/StatsGrid';
+import { ActiveSprintCard } from '@/components/projetos/visao-geral/ActiveSprintCard';
+import { ArrowRight, ListTodo, CheckCircle2 } from 'lucide-react';
 
 export default function ProjetosPage() {
-  const [activeTab, setActiveTab] = useState("visao-geral")
-  const { metrics, isLoading: intelLoading } = useIntelligence()
-
-  const tabs = [
-    { value: "visao-geral", label: "VISAO GERAL" },
-    { value: "sprints", label: "SPRINTS", badge: metrics?.kpis?.activeSprints || 0 },
-    { value: "tasks", label: "TAREFAS", badge: metrics?.activeTasksCount || 0 },
-    { value: "aprovacoes", label: "APROVACOES", badge: Number(metrics?.alerts?.approvalsCount || 0) },
-    { value: "prazos", label: "PRAZOS & ENTREGAS" },
-  ]
-
   return (
-    <PageWrapper title="PROJETOS" breadcrumb="PROJETOS">
-      <Suspense fallback={
-        <div className="flex items-center justify-center p-20 text-orange-500 font-mono">
-          <Loader2 className="w-6 h-6 animate-spin mr-2" />
-          INICIALIZANDO MODULO...
-        </div>
-      }>
-        <div className="min-h-full bg-secondary p-6 -m-6 rounded-lg overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-transparent border-b border-[#2a2a2a] rounded-none w-full justify-start gap-0 h-auto p-0 mb-6 flex-wrap">
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  className="relative px-4 sm:px-6 py-3 rounded-none bg-transparent text-neutral-500 font-mono text-xs tracking-widest data-[state=active]:text-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-orange-500 after:scale-x-0 data-[state=active]:after:scale-x-100 after:transition-transform flex items-center gap-2"
-                >
-                  {tab.label}
-                  {tab.badge && (
-                    <Badge
-                      variant="secondary"
-                      className={`text-[10px] px-1.5 py-0 h-5 ${
-                        activeTab === tab.value
-                          ? "bg-orange-500/20 text-orange-500"
-                          : "bg-neutral-800 text-neutral-400"
-                      }`}
-                    >
-                      {tab.badge}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+    <ProjectsLayout counts={{ sprints: 2, backlog: 45, approvals: 8 }}>
+      <div className="animate-in fade-in duration-500">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Visão Geral</h1>
+          <p className="text-[#888888]">Monitore o progresso global, sprints e entregas em tempo real.</p>
+        </header>
 
-            <TabsContent value="visao-geral" className="mt-0 outline-none">
-              <VisaoGeralTab />
-            </TabsContent>
-            <TabsContent value="sprints" className="mt-0 outline-none">
-              <SprintsTab />
-            </TabsContent>
-            <TabsContent value="tasks" className="mt-0 outline-none">
-              <TasksTab />
-            </TabsContent>
-            <TabsContent value="aprovacoes" className="mt-0 outline-none">
-              <AprovacoesTab />
-            </TabsContent>
-            <TabsContent value="prazos" className="mt-0 outline-none">
-              <PrazosTab />
-            </TabsContent>
-          </Tabs>
+        <ClickUpSyncBar lastSync="há 2 minutos" />
+        
+        <StatsGrid />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Column */}
+          <div className="lg:col-span-2 space-y-8">
+            <ActiveSprintCard />
+            
+            <div className="bg-[#161616] border border-[#1f1f1f] rounded-xl overflow-hidden">
+              <div className="p-6 border-b border-[#1f1f1f] flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <ListTodo className="w-5 h-5 text-[#f97316]" />
+                  <h3 className="font-bold text-white">Backlog Prioritário</h3>
+                </div>
+                <button className="text-xs text-[#f97316] font-medium flex items-center hover:underline">
+                  Ver tudo <ArrowRight className="w-3 h-3 ml-1" />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-[#0f0f0f] rounded-lg border border-[#1f1f1f]">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#f97316]" />
+                      <span className="text-sm text-white">Refatoração do módulo de autenticação</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-[#888888] uppercase">Épico: Core</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-8">
+            <div className="bg-[#161616] border border-[#1f1f1f] rounded-xl overflow-hidden">
+              <div className="p-6 border-b border-[#1f1f1f] flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <CheckCircle2 className="w-5 h-5 text-[#f97316]" />
+                  <h3 className="font-bold text-white">Aprovações</h3>
+                </div>
+                <span className="bg-[#f97316] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">8</span>
+              </div>
+              <div className="p-6 space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex flex-col space-y-2 pb-4 border-b border-[#1f1f1f] last:border-0 last:pb-0">
+                    <p className="text-sm font-medium text-white truncate">Solicitação de deploy #452</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-[#888888]">Há 2 horas</span>
+                      <div className="flex space-x-2">
+                        <button className="text-[10px] font-bold text-[#4ade80] hover:underline uppercase">Aprovar</button>
+                        <button className="text-[10px] font-bold text-[#888888] hover:underline uppercase">Ver</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </Suspense>
-    </PageWrapper>
-  )
+      </div>
+    </ProjectsLayout>
+  );
 }
