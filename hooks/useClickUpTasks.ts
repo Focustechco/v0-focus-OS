@@ -1,29 +1,63 @@
-import { useState, useEffect } from 'react';
-import { ClickUpTask } from '@/lib/clickup-types';
+'use client';
 
-export function useClickUpTasks(listId: string, params: Record<string, string> = {}) {
-  const [tasks, setTasks] = useState<ClickUpTask[]>([]);
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/lib/supabase';
+
+export function useClickUpTasks(listId: string) {
+  const [tasks,     setTasks]     = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [lastSync,  setLastSync]  = useState<string | null>(null);
+  const [error,     setError]     = useState<string | null>(null);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
+    if (!listId) return;
+    setIsLoading(true);
+    setError(null);
     try {
-      setIsLoading(true);
-      const query = new URLSearchParams({ listId, ...params }).toString();
-      const response = await fetch(`/api/clickup/tasks?${query}`);
-      if (!response.ok) throw new Error('Failed to fetch tasks');
-      const data = await response.json();
-      setTasks(data.tasks || []);
-    } catch (err: any) {
-      setError(err.message);
+      const res  = await fetch(`/api/clickup/tasks?listId=${listId}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setTasks(data.tasks ?? []);
+      setLastSync(new Date().toLocaleTimeString('pt-BR'));
+    } catch (e: any) {
+      setError(e.message);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [listId]);
 
   useEffect(() => {
-    if (listId) fetchTasks();
-  }, [listId, JSON.stringify(params)]);
+    if (!listId) {
+      setTasks([]);
+      setIsLoading(false);
+      return;
+    }
 
-  return { tasks, isLoading, error, refetch: fetchTasks };
+    fetchTasks();
+
+    // Realtime: quando o cache do Supabase mudar, refetch
+    const ch = supabase
+      .channel(`tasks-${listId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'clickup_tasks_cache',
+        filter: `list_id=eq.${listId}`,
+      }, fetchTasks)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [listId, fetchTasks]);
+
+  const updateStatus = async (taskId: string, status: string) => {
+    await fetch(`/api/clickup/task/${taskId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    });
+  };
+
+  return { tasks, isLoading, lastSync, error, refetch: fetchTasks, updateStatus };
 }

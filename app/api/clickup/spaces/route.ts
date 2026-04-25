@@ -1,22 +1,35 @@
-import { NextResponse } from "next/server"
-import { clickupFetch } from "@/lib/clickup-server"
-import { requireUser } from "@/lib/api-auth"
+import { NextRequest, NextResponse } from 'next/server';
+import { getSpaces, getFolders, getLists, getFolderlessLists } from '@/lib/clickup';
 
-export async function GET(request: Request) {
-  const auth = await requireUser()
-  if (auth instanceof NextResponse) return auth
-
-  const { searchParams } = new URL(request.url)
-  const teamId = searchParams.get('teamId')
-
-  if (!teamId) {
-    return NextResponse.json({ error: "teamId é obrigatório" }, { status: 400 })
-  }
-
+// Retorna toda a árvore: spaces > folders > lists
+export async function GET() {
   try {
-    const data = await clickupFetch<{ spaces: any[] }>(`/team/${teamId}/space`)
-    return NextResponse.json({ spaces: data.spaces })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const teamId = process.env.CLICKUP_TEAM_ID!;
+    const { spaces } = await getSpaces(teamId);
+
+    const tree = await Promise.all(
+      spaces.map(async (space: any) => {
+        const [{ folders }, { lists: folderless }] = await Promise.all([
+          getFolders(space.id),
+          getFolderlessLists(space.id),
+        ]);
+        const foldersWithLists = await Promise.all(
+          folders.map(async (folder: any) => {
+            const { lists } = await getLists(folder.id);
+            return { ...folder, lists };
+          })
+        );
+        return {
+          ...space,
+          folders: foldersWithLists,
+          folderless_lists: folderless,
+        };
+      })
+    );
+
+    return NextResponse.json({ spaces: tree });
+  } catch (err: any) {
+    console.error('ClickUp Spaces Error:', err.message);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

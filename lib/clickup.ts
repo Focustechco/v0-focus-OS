@@ -1,96 +1,64 @@
-import { 
-  ClickUpWorkspace, 
-  ClickUpSpace, 
-  ClickUpFolder, 
-  ClickUpList, 
-  ClickUpTask,
-  ClickUpSprint
-} from './clickup-types';
+const BASE  = 'https://api.clickup.com/api/v2';
+const TOKEN = process.env.CLICKUP_API_TOKEN!;
 
-const CLICKUP_API_URL = 'https://api.clickup.com/api/v2';
-const API_TOKEN = process.env.CLICKUP_API_TOKEN;
-
-async function clickupFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  if (!API_TOKEN) {
-    throw new Error('CLICKUP_API_TOKEN is not defined');
-  }
-
-  const response = await fetch(`${CLICKUP_API_URL}${endpoint}`, {
+async function cu(path: string, options?: RequestInit) {
+  const res = await fetch(`${BASE}${path}`, {
     ...options,
     headers: {
-      'Authorization': API_TOKEN,
+      Authorization: TOKEN,
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...options?.headers,
     },
-    next: { revalidate: 60 }, // Default revalidation
+    next: { revalidate: 60 },
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    console.error('ClickUp API Error:', error);
-    throw new Error(error.error || `ClickUp API error: ${response.statusText}`);
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(`ClickUp ${res.status}: ${msg}`);
   }
-
-  return response.json() as Promise<T>;
+  return res.json();
 }
 
-export const clickup = {
-  getWorkspaces: () => 
-    clickupFetch<{ teams: ClickUpWorkspace[] }>('/team'),
+// Espaços do workspace
+export const getSpaces = (teamId: string) =>
+  cu(`/team/${teamId}/space?archived=false`);
 
-  getSpaces: (teamId: string) => 
-    clickupFetch<{ spaces: ClickUpSpace[] }>(`/team/${teamId}/space`),
+// Pastas de um espaço
+export const getFolders = (spaceId: string) =>
+  cu(`/space/${spaceId}/folder?archived=false`);
 
-  getFolders: (spaceId: string) => 
-    clickupFetch<{ folders: ClickUpFolder[] }>(`/space/${spaceId}/folder`),
+// Listas de uma pasta (cada lista = sprint ou backlog)
+export const getLists = (folderId: string) =>
+  cu(`/folder/${folderId}/list?archived=false`);
 
-  getLists: (folderId: string) => 
-    clickupFetch<{ lists: ClickUpList[] }>(`/folder/${folderId}/list`),
+// Listas sem pasta (folderless)
+export const getFolderlessLists = (spaceId: string) =>
+  cu(`/space/${spaceId}/list?archived=false`);
 
-  getTasks: (listId: string, params: Record<string, string> = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return clickupFetch<{ tasks: ClickUpTask[] }>(`/list/${listId}/task?${query}`);
-  },
-
-  getTask: (taskId: string) => 
-    clickupFetch<ClickUpTask>(`/task/${taskId}`),
-
-  // Sprints are often implemented as folders or custom lists in ClickUp
-  // This helper assumes a folder-based sprint structure or direct list access
-  getSprints: async (listId: string): Promise<ClickUpSprint[]> => {
-    // Note: ClickUp Sprints API might vary based on how they are configured (Sprint Folders vs Custom)
-    // For now, we fetch tasks and group them, or use the specialized sprint endpoint if available
-    try {
-      const response = await clickupFetch<{ sprints: ClickUpSprint[] }>(`/list/${listId}/sprint`);
-      return response.sprints;
-    } catch (e) {
-      console.warn('Sprint endpoint failed, falling back to task list');
-      const { tasks } = await clickup.getTasks(listId);
-      // Logic to transform tasks into a sprint-like structure if needed
-      return []; 
-    }
-  },
-
-  getBacklog: async (folderId: string) => {
-    // Typically fetching all tasks in a folder that aren't in a specific sprint list
-    return clickupFetch<{ tasks: ClickUpTask[] }>(`/folder/${folderId}/task?include_closed=false`);
-  },
-
-  createTask: (listId: string, data: Partial<ClickUpTask>) => 
-    clickupFetch<ClickUpTask>(`/list/${listId}/task`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-
-  updateTask: (taskId: string, data: Partial<ClickUpTask>) => 
-    clickupFetch<ClickUpTask>(`/task/${taskId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
-
-  updateTaskStatus: (taskId: string, status: string) => 
-    clickupFetch<ClickUpTask>(`/task/${taskId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ status }),
-    }),
+// Tarefas de uma lista
+export const getTasks = (listId: string, extra?: Record<string, string>) => {
+  const qs = new URLSearchParams({
+    include_closed: 'true',
+    subtasks: 'true',
+    ...extra,
+  }).toString();
+  return cu(`/list/${listId}/task?${qs}`);
 };
+
+// Tarefa individual
+export const getTask = (taskId: string) => cu(`/task/${taskId}`);
+
+// Atualiza status de uma tarefa
+export const updateTaskStatus = (taskId: string, status: string) =>
+  cu(`/task/${taskId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+    next: undefined,
+  });
+
+// Cria comentário numa tarefa
+export const createComment = (taskId: string, text: string) =>
+  cu(`/task/${taskId}/comment`, {
+    method: 'POST',
+    body: JSON.stringify({ comment_text: text }),
+    next: undefined,
+  });

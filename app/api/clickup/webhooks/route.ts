@@ -1,56 +1,54 @@
-import { NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { createClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from 'next/server';
+import { createHmac } from 'crypto';
+import { getTask } from '@/lib/clickup';
+import { createServerClient } from '@/lib/supabase-server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export async function POST(req: NextRequest) {
+  const body = await req.text();
+  const sig  = req.headers.get('x-signature') ?? '';
 
-export async function POST(request: Request) {
-  const signature = request.headers.get('x-signature');
-  const body = await request.text();
-
-  // Validate webhook signature
+  // Validate signature if secret is configured
   if (process.env.CLICKUP_WEBHOOK_SECRET) {
-    const hash = crypto
-      .createHmac('sha256', process.env.CLICKUP_WEBHOOK_SECRET)
-      .update(body)
-      .digest('hex');
-
-    if (hash !== signature) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    const expected = createHmac('sha256', process.env.CLICKUP_WEBHOOK_SECRET)
+      .update(body).digest('hex');
+    if (sig !== expected) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   }
 
   const payload = JSON.parse(body);
-  const { event, task_id, webhook_id } = payload;
+  const supabase = createServerClient();
 
-  console.log(`Received ClickUp webhook: ${event} for task ${task_id}`);
+  const taskEvents = ['taskCreated', 'taskUpdated', 'taskStatusUpdated', 'taskDeleted'];
 
-  // Handle task events by updating the Supabase cache
-  if (event === 'taskCreated' || event === 'taskUpdated' || event === 'taskStatusUpdated') {
-    // We would typically fetch the full task details here or use the payload if it's sufficient
-    // For now, we'll mark it as needing sync or do a basic upsert if data is present
-    
-    // Example: Upsert into clickup_tasks_cache (Schema needs to be created in PASSO 3)
-    /*
-    await supabase.from('clickup_tasks_cache').upsert({
-      id: task_id,
-      // ... fill other fields from payload if available or fetch from ClickUp
-      synced_at: new Date().toISOString()
-    });
-    */
+  if (taskEvents.includes(payload.event) && payload.task_id) {
+    if (payload.event === 'taskDeleted') {
+      await supabase.from('clickup_tasks_cache').delete().eq('id', payload.task_id);
+    } else {
+      try {
+        const task = await getTask(payload.task_id);
+        await supabase.from('clickup_tasks_cache').upsert({
+          id:            task.id,
+          list_id:       task.list?.id ?? null,
+          folder_id:     task.folder?.id ?? null,
+          space_id:      task.space?.id ?? null,
+          name:          task.name,
+          status:        task.status?.status ?? null,
+          priority:      task.priority?.priority ?? null,
+          assignees:     task.assignees ?? [],
+          due_date:      task.due_date   ? new Date(Number(task.due_date)).toISOString()   : null,
+          start_date:    task.start_date ? new Date(Number(task.start_date)).toISOString() : null,
+          tags:          task.tags ?? [],
+          custom_fields: task.custom_fields ?? [],
+          parent_id:     task.parent ?? null,
+          raw:           task,
+          synced_at:     new Date().toISOString(),
+        }, { onConflict: 'id' });
+      } catch (err: any) {
+        console.error('Webhook task fetch error:', err.message);
+      }
+    }
   }
 
-  // Log the sync
-  await supabase.from('sync_logs').insert({
-    event_type: event,
-    external_id: task_id,
-    source: 'clickup_webhook',
-    status: 'success',
-    payload: payload
-  });
-
-  return NextResponse.json({ received: true });
+  return NextResponse.json({ ok: true });
 }

@@ -1,77 +1,210 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
-import { BacklogBoard } from '@/components/projetos/backlog/BacklogBoard';
+import { useClickUpSpaces } from '@/hooks/useClickUpSpaces';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
-import { ListTodo, Search, Filter, LayoutGrid, List } from 'lucide-react';
+import { ListTodo, Search, Filter, LayoutGrid, List, FolderKanban, Loader2, Plus, MoreHorizontal, Layers, MessageSquare } from 'lucide-react';
 
 export default function BacklogPage() {
-  const LIST_ID = process.env.NEXT_PUBLIC_CLICKUP_LIST_ID || '901323571867';
-  const { tasks, isLoading, error } = useClickUpTasks(LIST_ID);
+  const { spaces, isLoading: loadingSpaces } = useClickUpSpaces();
+  const [selectedListId, setSelectedListId] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const { tasks, isLoading, lastSync, error } = useClickUpTasks(selectedListId);
+
+  const allLists = spaces.flatMap((s: any) => [
+    ...(s.folderless_lists || []).map((l: any) => ({ ...l, spaceName: s.name })),
+    ...(s.folders || []).flatMap((f: any) =>
+      (f.lists || []).map((l: any) => ({ ...l, spaceName: s.name, folderName: f.name }))
+    ),
+  ]);
+
+  useEffect(() => {
+    if (allLists.length > 0 && !selectedListId) {
+      setSelectedListId(allLists[0].id);
+    }
+  }, [allLists.length]);
+
+  // Filter tasks by search
+  const filtered = tasks.filter((t: any) =>
+    !searchQuery || t.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Group by status type for kanban columns
+  const openTasks = filtered.filter((t: any) => {
+    const s = t.status?.status?.toLowerCase() || '';
+    const type = t.status?.type || '';
+    return type === 'open' || s.includes('open') || s.includes('to do') || s.includes('backlog') || s.includes('a fazer');
+  });
+  const inProgressTasks = filtered.filter((t: any) => {
+    const s = t.status?.status?.toLowerCase() || '';
+    const type = t.status?.type || '';
+    return type === 'custom' || s.includes('progress') || s.includes('andamento') || s.includes('review') || s.includes('revisão');
+  });
+  const closedTasks = filtered.filter((t: any) => {
+    const s = t.status?.status?.toLowerCase() || '';
+    const type = t.status?.type || '';
+    return type === 'closed' || type === 'done' || s.includes('done') || s.includes('complete') || s.includes('closed') || s.includes('concluíd');
+  });
+
+  // Tasks that don't match any group above
+  const ungrouped = filtered.filter((t: any) =>
+    !openTasks.includes(t) && !inProgressTasks.includes(t) && !closedTasks.includes(t)
+  );
+  // Merge ungrouped into open
+  const finalOpen = [...openTasks, ...ungrouped];
 
   return (
-    <ProjectsLayout counts={{ sprints: 2, backlog: tasks.length, approvals: 8 }}>
+    <ProjectsLayout counts={{ sprints: allLists.length, backlog: filtered.length, approvals: 0 }}>
       <div className="animate-in fade-in slide-in-from-right-4 duration-500 flex flex-col h-full">
-        <header className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+        <header className="mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
-                <ListTodo className="w-8 h-8 text-[#f97316] mr-3" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center">
+                <ListTodo className="w-7 h-7 text-[#f97316] mr-3" />
                 Backlog
               </h1>
-              <p className="text-[#888888]">Épicos, tarefas e dívida técnica pendentes.</p>
-            </div>
-            <div className="flex space-x-3">
-              <div className="flex bg-[#161616] p-1 rounded-lg border border-[#1f1f1f]">
-                <button className="p-1.5 bg-[#1f1f1f] text-white rounded-md">
-                  <LayoutGrid className="w-4 h-4" />
-                </button>
-                <button className="p-1.5 text-[#444] hover:text-[#888]">
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-              <button className="px-4 py-2 bg-[#f97316] text-white text-sm font-bold rounded-lg hover:bg-[#ea580c] transition-colors">
-                Criar Tarefa
-              </button>
+              <p className="text-sm text-[#888888]">Épicos, tarefas e dívida técnica pendentes.</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#444]" />
-              <input 
-                type="text" 
-                placeholder="Pesquisar tarefas..." 
-                className="w-full bg-[#161616] border border-[#1f1f1f] rounded-lg py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#f97316]/50 transition-colors"
-              />
+          {/* List Selector */}
+          <div className="mb-4 p-3 bg-[#161616] border border-[#1f1f1f] rounded-xl">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="flex items-center space-x-2 text-sm">
+                <FolderKanban className="w-4 h-4 text-[#f97316]" />
+                <span className="font-medium text-white">Lista:</span>
+              </div>
+              {loadingSpaces ? (
+                <div className="flex items-center space-x-2 text-sm text-[#888888]">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Carregando...</span>
+                </div>
+              ) : (
+                <select
+                  value={selectedListId}
+                  onChange={(e) => setSelectedListId(e.target.value)}
+                  className="flex-1 bg-[#0f0f0f] border border-[#333] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#f97316] transition-colors cursor-pointer"
+                >
+                  <option value="">Selecione...</option>
+                  {spaces.map((space: any) => (
+                    <optgroup key={space.id} label={`📂 ${space.name}`}>
+                      {(space.folderless_lists || []).map((l: any) => (
+                        <option key={l.id} value={l.id}>{l.name}</option>
+                      ))}
+                      {(space.folders || []).map((f: any) =>
+                        (f.lists || []).map((l: any) => (
+                          <option key={l.id} value={l.id}>{f.name} → {l.name}</option>
+                        ))
+                      )}
+                    </optgroup>
+                  ))}
+                </select>
+              )}
+              {lastSync && (
+                <span className="text-[10px] text-[#4ade80] font-mono">● {lastSync}</span>
+              )}
             </div>
-            <button className="flex items-center space-x-2 px-4 py-2 bg-[#161616] border border-[#1f1f1f] rounded-lg text-sm text-[#888888] hover:text-white transition-colors">
-              <Filter className="w-4 h-4" />
-              <span>Filtros</span>
-            </button>
-            <div className="flex items-center space-x-2 bg-[#161616] border border-[#1f1f1f] rounded-lg p-1">
-              <button className="px-3 py-1 text-[10px] font-bold text-white bg-[#1f1f1f] rounded-md uppercase">Por Status</button>
-              <button className="px-3 py-1 text-[10px] font-bold text-[#444] hover:text-[#888] uppercase">Por Épico</button>
-              <button className="px-3 py-1 text-[10px] font-bold text-[#444] hover:text-[#888] uppercase">Por Membro</button>
-            </div>
+          </div>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#444]" />
+            <input
+              type="text"
+              placeholder="Pesquisar tarefas..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#161616] border border-[#1f1f1f] rounded-lg py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#f97316]/50 transition-colors"
+            />
           </div>
         </header>
 
         {isLoading ? (
-          <div className="flex-1 grid grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-[#161616]/50 border border-[#1f1f1f] rounded-xl animate-pulse" />
-            ))}
+          <div className="flex-1 flex items-center justify-center p-16">
+            <Loader2 className="w-6 h-6 animate-spin text-[#f97316]" />
+            <span className="ml-3 text-[#888888]">Sincronizando backlog do ClickUp...</span>
           </div>
         ) : error ? (
           <div className="p-8 text-center bg-[#7f1d1d]/10 border border-[#7f1d1d]/20 rounded-xl">
-            <p className="text-[#fca5a5]">Erro ao carregar backlog: {error}</p>
+            <p className="text-[#fca5a5]">{error}</p>
+          </div>
+        ) : !selectedListId ? (
+          <div className="p-16 text-center border-2 border-dashed border-[#1f1f1f] rounded-2xl">
+            <FolderKanban className="w-12 h-12 text-[#333] mx-auto mb-4" />
+            <h3 className="text-white font-bold mb-1">Selecione uma Lista</h3>
+            <p className="text-[#444] text-sm">Escolha acima para exibir o Kanban.</p>
           </div>
         ) : (
-          <BacklogBoard tasks={tasks} />
+          /* Kanban Board */
+          <div className="flex space-x-4 overflow-x-auto pb-6 snap-x snap-mandatory no-scrollbar" style={{ minHeight: '400px' }}>
+            {/* Open Column */}
+            <KanbanColumn title="Aberto" color="border-[#888]" tasks={finalOpen} />
+            {/* In Progress Column */}
+            <KanbanColumn title="Em Progresso" color="border-[#3b82f6]" tasks={inProgressTasks} />
+            {/* Done Column */}
+            <KanbanColumn title="Concluído" color="border-[#10b981]" tasks={closedTasks} />
+          </div>
         )}
       </div>
     </ProjectsLayout>
+  );
+}
+
+function KanbanColumn({ title, color, tasks }: { title: string; color: string; tasks: any[] }) {
+  return (
+    <div className="flex flex-col min-w-[300px] w-[85vw] sm:w-[340px] snap-center flex-shrink-0">
+      <div className={`p-3 border-t-2 ${color} bg-[#161616] rounded-t-xl mb-3 flex items-center justify-between`}>
+        <div className="flex items-center space-x-3">
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider">{title}</h3>
+          <span className="bg-[#1f1f1f] text-[#888888] text-[10px] font-bold px-2 py-0.5 rounded-full">{tasks.length}</span>
+        </div>
+      </div>
+      <div className="flex-1 space-y-2 overflow-y-auto pr-1">
+        {tasks.map((task: any) => (
+          <div key={task.id} className="bg-[#161616] border border-[#1f1f1f] rounded-xl p-3 hover:border-[#f97316]/40 transition-all cursor-pointer group">
+            <div className="flex items-start justify-between mb-2">
+              {task.tags?.length > 0 && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#0f0f0f] border border-[#1f1f1f] text-[#888888]">
+                  {task.tags[0].name}
+                </span>
+              )}
+              <div className="flex -space-x-1.5 ml-auto">
+                {(task.assignees || []).slice(0, 2).map((a: any) => (
+                  <div key={a.id} className="w-5 h-5 rounded-full border border-[#161616] bg-[#1f1f1f] overflow-hidden flex items-center justify-center">
+                    {a.profilePicture ? (
+                      <img src={a.profilePicture} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[8px] font-bold text-white">{a.initials}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <h4 className="text-sm font-medium text-white mb-2 line-clamp-2 group-hover:text-[#f97316] transition-colors">
+              {task.name}
+            </h4>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono text-[#333]">#{task.id.slice(-6)}</span>
+              {task.priority && (
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                  task.priority.priority === 'urgent' ? 'bg-[#7f1d1d] text-[#fca5a5]' :
+                  task.priority.priority === 'high'   ? 'bg-[#451a03] text-[#fdba74]' :
+                  'bg-[#1f1f1f] text-[#888888]'
+                }`}>
+                  {task.priority.priority}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+        {tasks.length === 0 && (
+          <div className="border-2 border-dashed border-[#1f1f1f] rounded-xl p-6 text-center">
+            <p className="text-xs text-[#444]">Nenhuma tarefa</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

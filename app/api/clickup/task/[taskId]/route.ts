@@ -1,27 +1,15 @@
-import { NextResponse } from 'next/server';
-import { clickup } from '@/lib/clickup';
-
-export async function GET(
-  request: Request,
-  { params }: { params: { taskId: string } }
-) {
-  try {
-    const task = await clickup.getTask(params.taskId);
-    return NextResponse.json(task);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { updateTaskStatus } from '@/lib/clickup';
 
 export async function PATCH(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { taskId: string } }
 ) {
+  const { status } = await req.json();
   try {
-    const data = await request.json();
-    const updatedTask = await clickup.updateTask(params.taskId, data);
-    return NextResponse.json(updatedTask);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const updated = await updateTaskStatus(params.taskId, status);
+    return NextResponse.json({ task: updated });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

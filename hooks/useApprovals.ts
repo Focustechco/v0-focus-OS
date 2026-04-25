@@ -1,69 +1,59 @@
-import { useState, useEffect } from 'react';
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 
-
-export function useApprovals(projectId?: string) {
+export function useApprovals(projectName?: string) {
   const [approvals, setApprovals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error,     setError]     = useState<string | null>(null);
 
-  const fetchApprovals = async () => {
+  const fetchApprovals = useCallback(async () => {
     try {
-      setIsLoading(true);
-      let query = supabase
-        .from('approvals')
-        .select('*, clickup_tasks_cache(*)');
-      
-      if (projectId) {
-        query = query.eq('project_id', projectId);
-      }
-
-      const { data, error: err } = await query.order('created_at', { ascending: false });
-
-      if (err) throw err;
-      setApprovals(data || []);
-    } catch (err: any) {
-      setError(err.message);
+      const qs  = projectName ? `?project=${encodeURIComponent(projectName)}` : '';
+      const res = await fetch(`/api/aprovacoes${qs}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setApprovals(data.approvals ?? []);
+    } catch (e: any) {
+      setError(e.message);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const approve = async (id: string, notes?: string) => {
-    const { error: err } = await supabase
-      .from('approvals')
-      .update({ status: 'approved', notes, updated_at: new Date().toISOString() })
-      .eq('id', id);
-    
-    if (err) throw err;
-    // The realtime subscription will update the list
-  };
-
-  const reject = async (id: string, notes?: string) => {
-    const { error: err } = await supabase
-      .from('approvals')
-      .update({ status: 'rejected', notes, updated_at: new Date().toISOString() })
-      .eq('id', id);
-    
-    if (err) throw err;
-  };
+  }, [projectName]);
 
   useEffect(() => {
     fetchApprovals();
 
-    const channel = supabase
-      .channel('approvals_changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'approvals' },
-        () => fetchApprovals()
-      )
+    const ch = supabase
+      .channel('approvals-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'approvals',
+      }, fetchApprovals)
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(ch);
     };
-  }, [projectId]);
+  }, [fetchApprovals]);
 
-  return { approvals, approve, reject, isLoading, error, refetch: fetchApprovals };
+  const decide = async (
+    id: string,
+    status: 'approved' | 'rejected',
+    clickup_task_id?: string,
+    notes?: string
+  ) => {
+    await fetch('/api/aprovacoes', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status, notes, clickup_task_id }),
+    });
+  };
+
+  const approve = (id: string, tid?: string) => decide(id, 'approved', tid);
+  const reject  = (id: string, tid?: string, notes?: string) => decide(id, 'rejected', tid, notes);
+
+  return { approvals, isLoading, error, approve, reject, refetch: fetchApprovals };
 }
