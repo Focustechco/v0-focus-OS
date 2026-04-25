@@ -1,35 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSpaces, getFolders, getLists, getFolderlessLists } from '@/lib/clickup';
 
-// Retorna toda a árvore: spaces > folders > lists
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const teamId = req.nextUrl.searchParams.get('teamId');
+  if (!teamId) return NextResponse.json({ spaces: [] });
+  
   try {
-    const teamId = process.env.CLICKUP_TEAM_ID!;
-    const { spaces } = await getSpaces(teamId);
-
-    const tree = await Promise.all(
-      spaces.map(async (space: any) => {
-        const [{ folders }, { lists: folderless }] = await Promise.all([
-          getFolders(space.id),
-          getFolderlessLists(space.id),
-        ]);
-        const foldersWithLists = await Promise.all(
-          folders.map(async (folder: any) => {
-            const { lists } = await getLists(folder.id);
-            return { ...folder, lists };
-          })
-        );
-        return {
-          ...space,
-          folders: foldersWithLists,
-          folderless_lists: folderless,
-        };
-      })
+    const res = await fetch(
+      `https://api.clickup.com/api/v2/team/${teamId}/space?archived=false`,
+      { headers: { Authorization: process.env.CLICKUP_API_TOKEN! }, next: { revalidate: 60 } }
     );
-
-    return NextResponse.json({ spaces: tree });
-  } catch (err: any) {
-    console.error('ClickUp Spaces Error:', err.message);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const data = await res.json();
+    return NextResponse.json({ spaces: data.spaces ?? [] });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

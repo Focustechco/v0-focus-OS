@@ -2,15 +2,49 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
-import { useProjectsContext } from '@/contexts/ProjectsContext';
+import { useProjectsConfig } from '@/hooks/useProjectsConfig';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { ListTodo, Search, Filter, LayoutGrid, List, FolderKanban, Loader2, Plus, MoreHorizontal, Layers, MessageSquare } from 'lucide-react';
+import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
 
 export default function BacklogPage() {
-  const { selectedListId, allLists } = useProjectsContext();
+  const { config, isLoading: loadingConfig } = useProjectsConfig();
+  const selectedListId = config?.list_id ?? '';
   const [searchQuery, setSearchQuery] = useState('');
 
   const { tasks, isLoading, lastSync, error } = useClickUpTasks(selectedListId);
+
+  if (loadingConfig) {
+    return (
+      <ProjectsLayout>
+        <div className="flex items-center justify-center p-16">
+          <Loader2 className="w-6 h-6 animate-spin text-[#f97316]" />
+          <span className="ml-3 text-[#888888]">Carregando configurações...</span>
+        </div>
+      </ProjectsLayout>
+    );
+  }
+
+  if (!selectedListId) {
+    return (
+      <ProjectsLayout>
+        <div className="animate-in fade-in slide-in-from-right-4 duration-500 flex flex-col h-full">
+          <header className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center">
+              <ListTodo className="w-7 h-7 text-[#f97316] mr-3" />
+              Backlog
+            </h1>
+          </header>
+          <ClickUpSyncBar />
+          <div className="p-16 text-center border-2 border-dashed border-[#1f1f1f] rounded-2xl mt-6">
+            <FolderKanban className="w-12 h-12 text-[#333] mx-auto mb-4" />
+            <h3 className="text-white font-bold mb-1">Nenhuma Lista Configurada</h3>
+            <p className="text-[#444] text-sm">Clique em "Configurar" na barra de sincronização acima para selecionar a lista do ClickUp.</p>
+          </div>
+        </div>
+      </ProjectsLayout>
+    );
+  }
 
   // Filter tasks by search
   const filtered = tasks.filter((t: any) =>
@@ -42,7 +76,7 @@ export default function BacklogPage() {
   const finalOpen = [...openTasks, ...ungrouped];
 
   return (
-    <ProjectsLayout counts={{ sprints: allLists.length, backlog: filtered.length, approvals: 0 }}>
+    <ProjectsLayout counts={{ sprints: config?.list_id ? 1 : 0, backlog: filtered.length, approvals: 0 }}>
       <div className="animate-in fade-in slide-in-from-right-4 duration-500 flex flex-col h-full">
         <header className="mb-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
@@ -54,6 +88,8 @@ export default function BacklogPage() {
               <p className="text-sm text-[#888888]">Épicos, tarefas e dívida técnica pendentes.</p>
             </div>
           </div>
+
+          <ClickUpSyncBar lastSync={lastSync} />
 
           {/* Search */}
           <div className="relative">

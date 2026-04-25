@@ -2,14 +2,48 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
-import { useProjectsContext } from '@/contexts/ProjectsContext';
+import { useProjectsConfig } from '@/hooks/useProjectsConfig';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { Calendar, Filter, Download, Info, FolderKanban, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
 
 export default function PrazosPage() {
-  const { selectedListId, allLists } = useProjectsContext();
+  const { config, isLoading: loadingConfig } = useProjectsConfig();
+  const selectedListId = config?.list_id ?? '';
 
   const { tasks, isLoading, lastSync, error } = useClickUpTasks(selectedListId);
+
+  if (loadingConfig) {
+    return (
+      <ProjectsLayout>
+        <div className="flex items-center justify-center p-16">
+          <Loader2 className="w-6 h-6 animate-spin text-[#f97316]" />
+          <span className="ml-3 text-[#888888]">Carregando configurações...</span>
+        </div>
+      </ProjectsLayout>
+    );
+  }
+
+  if (!selectedListId) {
+    return (
+      <ProjectsLayout>
+        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <header className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center">
+              <Calendar className="w-7 h-7 text-[#f97316] mr-3" />
+              Prazos & Entregas
+            </h1>
+          </header>
+          <ClickUpSyncBar />
+          <div className="p-16 text-center border-2 border-dashed border-[#1f1f1f] rounded-2xl mt-6">
+            <FolderKanban className="w-12 h-12 text-[#333] mx-auto mb-4" />
+            <h3 className="text-white font-bold mb-1">Nenhuma Lista Configurada</h3>
+            <p className="text-[#444] text-sm">Clique em "Configurar" na barra de sincronização acima para selecionar a lista do ClickUp.</p>
+          </div>
+        </div>
+      </ProjectsLayout>
+    );
+  }
 
   // Tasks with due dates, sorted
   const tasksWithDates = tasks
@@ -33,7 +67,7 @@ export default function PrazosPage() {
     : 100;
 
   return (
-    <ProjectsLayout counts={{ sprints: allLists.length, backlog: tasks.length, approvals: 0 }}>
+    <ProjectsLayout counts={{ sprints: config?.list_id ? 1 : 0, backlog: tasks.length, approvals: 0 }}>
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
         <header className="mb-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
@@ -45,6 +79,8 @@ export default function PrazosPage() {
               <p className="text-sm text-[#888888]">Visualize a linha do tempo e prazos críticos do projeto.</p>
             </div>
           </div>
+          
+          <ClickUpSyncBar lastSync={lastSync} />
         </header>
 
         {isLoading ? (

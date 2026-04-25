@@ -5,13 +5,16 @@ import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
 import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
 import { StatsGrid } from '@/components/projetos/visao-geral/StatsGrid';
 import { ActiveSprintCard } from '@/components/projetos/visao-geral/ActiveSprintCard';
-import { useProjectsContext } from '@/contexts/ProjectsContext';
+import { useProjectsConfig } from '@/hooks/useProjectsConfig';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { useApprovals } from '@/hooks/useApprovals';
-import { ArrowRight, ListTodo, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowRight, ListTodo, CheckCircle2, Loader2, FolderKanban } from 'lucide-react';
 
 export default function ProjetosPage() {
-  const { selectedListId, selectedListName, spaces, allLists } = useProjectsContext();
+  const { config, isLoading: loadingConfig } = useProjectsConfig();
+  
+  const selectedListId = config?.list_id ?? '';
+  const selectedListName = config?.list_name ?? '';
 
   const { tasks, isLoading: loadingTasks, lastSync, error: tasksError } = useClickUpTasks(selectedListId);
   const { approvals } = useApprovals();
@@ -24,14 +27,25 @@ export default function ProjetosPage() {
   const openTasks = tasks.length - completedTasks;
 
   const stats = {
-    activeProjects: spaces.length,
-    activeSprints: allLists.length,
+    activeProjects: config?.space_id ? 1 : 0, // Since it's synced to one space
+    activeSprints: config?.list_id ? 1 : 0,
     pendingApprovals,
     completedTasks,
   };
 
+  if (loadingConfig) {
+    return (
+      <ProjectsLayout>
+        <div className="flex items-center justify-center p-16">
+          <Loader2 className="w-6 h-6 animate-spin text-[#f97316]" />
+          <span className="ml-3 text-[#888888]">Carregando configurações...</span>
+        </div>
+      </ProjectsLayout>
+    );
+  }
+
   return (
-    <ProjectsLayout counts={{ sprints: allLists.length, backlog: openTasks, approvals: pendingApprovals }}>
+    <ProjectsLayout counts={{ sprints: config?.list_id ? 1 : 0, backlog: openTasks, approvals: pendingApprovals }}>
       <div className="animate-in fade-in duration-500">
         <header className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Visão Geral</h1>
@@ -40,7 +54,15 @@ export default function ProjetosPage() {
 
         <ClickUpSyncBar lastSync={lastSync || 'Aguardando...'} />
 
-        <StatsGrid stats={stats} />
+        {!selectedListId ? (
+          <div className="p-16 text-center border-2 border-dashed border-[#1f1f1f] rounded-2xl">
+            <FolderKanban className="w-12 h-12 text-[#333] mx-auto mb-4" />
+            <h3 className="text-white font-bold mb-1">Nenhuma Lista Configurada</h3>
+            <p className="text-[#444] text-sm">Clique em "Configurar" na barra acima para selecionar a lista do ClickUp.</p>
+          </div>
+        ) : (
+          <>
+            <StatsGrid stats={stats} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Column */}
@@ -157,6 +179,8 @@ export default function ProjetosPage() {
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
     </ProjectsLayout>
   );

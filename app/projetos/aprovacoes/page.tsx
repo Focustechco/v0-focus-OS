@@ -3,16 +3,18 @@
 import React, { useState } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
 import { useApprovals } from '@/hooks/useApprovals';
-import { useProjectsContext } from '@/contexts/ProjectsContext';
+import { useProjectsConfig } from '@/hooks/useProjectsConfig';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { CheckCircle2, XCircle, Clock, ExternalLink, MessageSquare, Loader2 } from 'lucide-react';
+import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
 
 export default function AprovacoesPage() {
   const { approvals, approve, reject, isLoading, error } = useApprovals();
   const [filter, setFilter] = useState<'pending' | 'approved' | 'rejected' | 'all'>('pending');
 
-  const { selectedListId, allLists } = useProjectsContext();
-  const { tasks } = useClickUpTasks(selectedListId);
+  const { config, isLoading: loadingConfig } = useProjectsConfig();
+  const selectedListId = config?.list_id ?? '';
+  const { tasks, lastSync } = useClickUpTasks(selectedListId);
 
   const filteredApprovals = approvals.filter((a: any) => filter === 'all' ? true : a.status === filter);
 
@@ -34,8 +36,19 @@ export default function AprovacoesPage() {
     'rejected': 'REJEITADO',
   };
 
+  if (loadingConfig) {
+    return (
+      <ProjectsLayout>
+        <div className="flex items-center justify-center p-16">
+          <Loader2 className="w-6 h-6 animate-spin text-[#f97316]" />
+          <span className="ml-3 text-[#888888]">Carregando configurações...</span>
+        </div>
+      </ProjectsLayout>
+    );
+  }
+
   return (
-    <ProjectsLayout counts={{ sprints: allLists?.length || 0, backlog: tasks?.length || 0, approvals: stats.pending }}>
+    <ProjectsLayout counts={{ sprints: config?.list_id ? 1 : 0, backlog: tasks?.length || 0, approvals: stats.pending }}>
       <div className="animate-in fade-in slide-in-from-left-4 duration-500">
         <header className="mb-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
@@ -47,6 +60,8 @@ export default function AprovacoesPage() {
               <p className="text-sm text-[#888888]">Garanta a qualidade técnica e comercial antes do deploy.</p>
             </div>
           </div>
+
+          <ClickUpSyncBar lastSync={lastSync} />
 
           {/* Filters */}
           <div className="flex items-center space-x-4 sm:space-x-6 border-b border-[#1f1f1f] pb-4 overflow-x-auto no-scrollbar">

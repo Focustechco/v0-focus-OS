@@ -2,13 +2,48 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
-import { useProjectsContext } from '@/contexts/ProjectsContext';
+import { useProjectsConfig } from '@/hooks/useProjectsConfig';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { Zap, Users, BarChart3, Clock, Loader2, FolderKanban, ChevronDown } from 'lucide-react';
+import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
 
 export default function SprintsPage() {
-  const { selectedListId, allLists } = useProjectsContext();
+  const { config, isLoading: loadingConfig } = useProjectsConfig();
+  const selectedListId = config?.list_id ?? '';
+
   const { tasks, isLoading, lastSync, error, updateStatus } = useClickUpTasks(selectedListId);
+
+  if (loadingConfig) {
+    return (
+      <ProjectsLayout>
+        <div className="flex items-center justify-center p-16">
+          <Loader2 className="w-6 h-6 animate-spin text-[#f97316]" />
+          <span className="ml-3 text-[#888888]">Carregando configurações...</span>
+        </div>
+      </ProjectsLayout>
+    );
+  }
+
+  if (!selectedListId) {
+    return (
+      <ProjectsLayout>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <header className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center">
+              <Zap className="w-7 h-7 text-[#f97316] mr-3" />
+              Sprints
+            </h1>
+          </header>
+          <ClickUpSyncBar />
+          <div className="p-16 text-center border-2 border-dashed border-[#1f1f1f] rounded-2xl mt-6">
+            <FolderKanban className="w-12 h-12 text-[#333] mx-auto mb-4" />
+            <h3 className="text-white font-bold mb-1">Nenhuma Lista Configurada</h3>
+            <p className="text-[#444] text-sm">Clique em "Configurar" na barra de sincronização acima para selecionar a lista do ClickUp.</p>
+          </div>
+        </div>
+      </ProjectsLayout>
+    );
+  }
 
   // Group tasks by status
   const statusGroups = tasks.reduce((acc: any, task: any) => {
@@ -25,7 +60,7 @@ export default function SprintsPage() {
   const progress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
 
   return (
-    <ProjectsLayout counts={{ sprints: allLists.length, backlog: tasks.length, approvals: 0 }}>
+    <ProjectsLayout counts={{ sprints: config?.list_id ? 1 : 0, backlog: tasks.length, approvals: 0 }}>
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
         <header className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -36,6 +71,8 @@ export default function SprintsPage() {
             <p className="text-sm text-[#888888]">Gerencie ciclos de entrega e produtividade da equipe.</p>
           </div>
         </header>
+
+        <ClickUpSyncBar lastSync={lastSync} />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Column: Task List by Status */}

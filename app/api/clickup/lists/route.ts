@@ -1,35 +1,33 @@
-import { NextResponse } from "next/server"
-import { clickupFetch } from "@/lib/clickup-server"
-import { requireUser } from "@/lib/api-auth"
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
-  const auth = await requireUser()
-  if (auth instanceof NextResponse) return auth
-
-  const { searchParams } = new URL(request.url)
-  const spaceId = searchParams.get('spaceId')
-
-  if (!spaceId) {
-    return NextResponse.json({ error: "spaceId é obrigatório" }, { status: 400 })
-  }
+export async function GET(req: NextRequest) {
+  const spaceId = req.nextUrl.searchParams.get('spaceId');
+  if (!spaceId) return NextResponse.json({ lists: [] });
+  
+  const h = { Authorization: process.env.CLICKUP_API_TOKEN!, 'Content-Type': 'application/json' };
+  const opts = { headers: h, next: { revalidate: 60 } };
 
   try {
-    // Busca listas diretas no space
-    const spaceListsData = await clickupFetch<{ lists: any[] }>(`/space/${spaceId}/list`)
-    
-    // Busca folders no space para pegar listas dentro deles
-    const foldersData = await clickupFetch<{ folders: any[] }>(`/space/${spaceId}/folder`)
-    
-    let allLists = [...(spaceListsData.lists || [])]
-    
-    // Para cada folder, busca as listas
-    for (const folder of foldersData.folders || []) {
-      const folderListsData = await clickupFetch<{ lists: any[] }>(`/folder/${folder.id}/list`)
-      allLists = [...allLists, ...(folderListsData.lists || [])]
-    }
+    const [foldersRes, folderlessRes] = await Promise.all([
+      fetch(`https://api.clickup.com/api/v2/space/${spaceId}/folder?archived=false`, opts),
+      fetch(`https://api.clickup.com/api/v2/space/${spaceId}/list?archived=false`, opts),
+    ]);
+    const { folders }  = await foldersRes.json();
+    const { lists: fl } = await folderlessRes.json();
 
-    return NextResponse.json({ lists: allLists })
+    const folderLists = await Promise.all(
+      (folders ?? []).map(async (f: any) => {
+        const r = await fetch(
+          `https://api.clickup.com/api/v2/folder/${f.id}/list?archived=false`, opts
+        );
+        const d = await r.json();
+        return (d.lists ?? []).map((l: any) => ({ ...l, folder_name: f.name }));
+      })
+    );
+    
+    const all = [...(fl ?? []), ...folderLists.flat()];
+    return NextResponse.json({ lists: all });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
