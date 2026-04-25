@@ -2,29 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
-import { useClickUpSpaces } from '@/hooks/useClickUpSpaces';
+import { useProjectsContext } from '@/contexts/ProjectsContext';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { ListTodo, Search, Filter, LayoutGrid, List, FolderKanban, Loader2, Plus, MoreHorizontal, Layers, MessageSquare } from 'lucide-react';
 
 export default function BacklogPage() {
-  const { spaces, isLoading: loadingSpaces } = useClickUpSpaces();
-  const [selectedListId, setSelectedListId] = useState<string>('');
+  const { selectedListId, allLists } = useProjectsContext();
   const [searchQuery, setSearchQuery] = useState('');
 
   const { tasks, isLoading, lastSync, error } = useClickUpTasks(selectedListId);
-
-  const allLists = spaces.flatMap((s: any) => [
-    ...(s.folderless_lists || []).map((l: any) => ({ ...l, spaceName: s.name })),
-    ...(s.folders || []).flatMap((f: any) =>
-      (f.lists || []).map((l: any) => ({ ...l, spaceName: s.name, folderName: f.name }))
-    ),
-  ]);
-
-  useEffect(() => {
-    if (allLists.length > 0 && !selectedListId) {
-      setSelectedListId(allLists[0].id);
-    }
-  }, [allLists.length]);
 
   // Filter tasks by search
   const filtered = tasks.filter((t: any) =>
@@ -66,45 +52,6 @@ export default function BacklogPage() {
                 Backlog
               </h1>
               <p className="text-sm text-[#888888]">Épicos, tarefas e dívida técnica pendentes.</p>
-            </div>
-          </div>
-
-          {/* List Selector */}
-          <div className="mb-4 p-3 bg-[#161616] border border-[#1f1f1f] rounded-xl">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <div className="flex items-center space-x-2 text-sm">
-                <FolderKanban className="w-4 h-4 text-[#f97316]" />
-                <span className="font-medium text-white">Lista:</span>
-              </div>
-              {loadingSpaces ? (
-                <div className="flex items-center space-x-2 text-sm text-[#888888]">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Carregando...</span>
-                </div>
-              ) : (
-                <select
-                  value={selectedListId}
-                  onChange={(e) => setSelectedListId(e.target.value)}
-                  className="flex-1 bg-[#0f0f0f] border border-[#333] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#f97316] transition-colors cursor-pointer"
-                >
-                  <option value="">Selecione...</option>
-                  {spaces.map((space: any) => (
-                    <optgroup key={space.id} label={`📂 ${space.name}`}>
-                      {(space.folderless_lists || []).map((l: any) => (
-                        <option key={l.id} value={l.id}>{l.name}</option>
-                      ))}
-                      {(space.folders || []).map((f: any) =>
-                        (f.lists || []).map((l: any) => (
-                          <option key={l.id} value={l.id}>{f.name} → {l.name}</option>
-                        ))
-                      )}
-                    </optgroup>
-                  ))}
-                </select>
-              )}
-              {lastSync && (
-                <span className="text-[10px] text-[#4ade80] font-mono">● {lastSync}</span>
-              )}
             </div>
           </div>
 

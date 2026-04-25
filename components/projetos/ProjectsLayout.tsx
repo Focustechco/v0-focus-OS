@@ -3,8 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Zap, ListTodo, CheckCircle2, Calendar } from 'lucide-react';
+import { LayoutDashboard, Zap, ListTodo, CheckCircle2, Calendar, FolderKanban, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PageWrapper } from '@/components/page-wrapper';
+import { useProjectsContext } from '@/contexts/ProjectsContext';
 
 interface ProjectsLayoutProps {
   children: React.ReactNode;
@@ -15,10 +17,15 @@ interface ProjectsLayoutProps {
   };
 }
 
-import { PageWrapper } from '@/components/page-wrapper';
-
 export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
   const pathname = usePathname();
+  const { 
+    selectedListId, 
+    setSelectedListId, 
+    spaces, 
+    isLoadingSpaces, 
+    spacesError 
+  } = useProjectsContext();
 
   const navItems = [
     { name: 'Visão Geral', href: '/projetos', icon: LayoutDashboard },
@@ -31,6 +38,57 @@ export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
   return (
     <PageWrapper title="Projetos" breadcrumb="Módulo de Gestão">
       <div className="flex flex-col space-y-4 sm:space-y-6">
+        
+        {/* Global Space / List Selector */}
+        <div className="p-4 bg-[#161616] border border-[#1f1f1f] rounded-xl flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-[#f97316]/10 rounded-lg">
+              <FolderKanban className="w-5 h-5 text-[#f97316]" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white">Selecione o Projeto / Lista</h2>
+              <p className="text-xs text-[#888888]">Os dados abaixo serão sincronizados com a lista selecionada</p>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-auto min-w-[250px]">
+            {isLoadingSpaces ? (
+              <div className="flex items-center space-x-2 text-sm text-[#888888] bg-[#0f0f0f] border border-[#333] rounded-lg px-3 py-2.5">
+                <Loader2 className="w-4 h-4 animate-spin text-[#f97316]" />
+                <span>Carregando espaços do ClickUp...</span>
+              </div>
+            ) : spacesError ? (
+              <div className="text-sm text-red-400 bg-[#7f1d1d]/10 border border-[#7f1d1d]/20 px-3 py-2.5 rounded-lg">
+                Erro: {spacesError}
+              </div>
+            ) : (
+              <select
+                value={selectedListId}
+                onChange={(e) => setSelectedListId(e.target.value)}
+                className="w-full bg-[#0f0f0f] border border-[#333] rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#f97316] transition-colors cursor-pointer appearance-none"
+              >
+                <option value="">Selecione uma lista...</option>
+                {spaces.map((space: any) => (
+                  <optgroup key={space.id} label={`📂 ${space.name}`}>
+                    {(space.folderless_lists || []).map((l: any) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                      </option>
+                    ))}
+                    {(space.folders || []).map((f: any) =>
+                      (f.lists || []).map((l: any) => (
+                        <option key={l.id} value={l.id}>
+                          {f.name} → {l.name}
+                        </option>
+                      ))
+                    )}
+                  </optgroup>
+                ))}
+              </select>
+            )}
+          </div>
+        </div>
+
         {/* Navigation Tabs */}
         <div className="flex items-center space-x-1 border-b border-[#1f1f1f] pb-px overflow-x-auto no-scrollbar snap-x snap-proximity">
           {navItems.map((item) => {

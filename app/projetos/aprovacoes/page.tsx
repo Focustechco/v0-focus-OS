@@ -3,11 +3,16 @@
 import React, { useState } from 'react';
 import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
 import { useApprovals } from '@/hooks/useApprovals';
+import { useProjectsContext } from '@/contexts/ProjectsContext';
+import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { CheckCircle2, XCircle, Clock, ExternalLink, MessageSquare, Loader2 } from 'lucide-react';
 
 export default function AprovacoesPage() {
   const { approvals, approve, reject, isLoading, error } = useApprovals();
   const [filter, setFilter] = useState<'pending' | 'approved' | 'rejected' | 'all'>('pending');
+
+  const { selectedListId, allLists } = useProjectsContext();
+  const { tasks } = useClickUpTasks(selectedListId);
 
   const filteredApprovals = approvals.filter((a: any) => filter === 'all' ? true : a.status === filter);
 
@@ -30,7 +35,7 @@ export default function AprovacoesPage() {
   };
 
   return (
-    <ProjectsLayout counts={{ sprints: 0, backlog: 0, approvals: stats.pending }}>
+    <ProjectsLayout counts={{ sprints: allLists?.length || 0, backlog: tasks?.length || 0, approvals: stats.pending }}>
       <div className="animate-in fade-in slide-in-from-left-4 duration-500">
         <header className="mb-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">

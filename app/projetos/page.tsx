@@ -5,34 +5,16 @@ import { ProjectsLayout } from '@/components/projetos/ProjectsLayout';
 import { ClickUpSyncBar } from '@/components/projetos/ClickUpSyncBar';
 import { StatsGrid } from '@/components/projetos/visao-geral/StatsGrid';
 import { ActiveSprintCard } from '@/components/projetos/visao-geral/ActiveSprintCard';
-import { useClickUpSpaces } from '@/hooks/useClickUpSpaces';
+import { useProjectsContext } from '@/contexts/ProjectsContext';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { useApprovals } from '@/hooks/useApprovals';
-import { ArrowRight, ListTodo, CheckCircle2, ChevronDown, FolderKanban, Loader2 } from 'lucide-react';
+import { ArrowRight, ListTodo, CheckCircle2 } from 'lucide-react';
 
 export default function ProjetosPage() {
-  const { spaces, isLoading: loadingSpaces, error: spacesError } = useClickUpSpaces();
-  const [selectedListId, setSelectedListId] = useState<string>('');
-  const [selectedListName, setSelectedListName] = useState<string>('');
+  const { selectedListId, selectedListName, spaces, allLists } = useProjectsContext();
 
   const { tasks, isLoading: loadingTasks, lastSync, error: tasksError } = useClickUpTasks(selectedListId);
   const { approvals } = useApprovals();
-
-  // Flatten all lists from all spaces
-  const allLists = spaces.flatMap((s: any) => [
-    ...(s.folderless_lists || []).map((l: any) => ({ ...l, spaceName: s.name, folderName: null })),
-    ...(s.folders || []).flatMap((f: any) =>
-      (f.lists || []).map((l: any) => ({ ...l, spaceName: s.name, folderName: f.name }))
-    ),
-  ]);
-
-  // Auto-select first list when spaces load
-  useEffect(() => {
-    if (allLists.length > 0 && !selectedListId) {
-      setSelectedListId(allLists[0].id);
-      setSelectedListName(allLists[0].name);
-    }
-  }, [allLists.length]);
 
   const pendingApprovals = approvals.filter((a: any) => a.status === 'pending').length;
   const completedTasks = tasks.filter((t: any) => {
@@ -57,52 +39,6 @@ export default function ProjetosPage() {
         </header>
 
         <ClickUpSyncBar lastSync={lastSync || 'Aguardando...'} />
-
-        {/* Space / List Selector */}
-        <div className="mb-6 p-4 bg-[#161616] border border-[#1f1f1f] rounded-xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="flex items-center space-x-2 text-sm text-[#888888]">
-              <FolderKanban className="w-4 h-4 text-[#f97316]" />
-              <span className="font-medium text-white">Lista ativa:</span>
-            </div>
-            {loadingSpaces ? (
-              <div className="flex items-center space-x-2 text-sm text-[#888888]">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Carregando espaços do ClickUp...</span>
-              </div>
-            ) : spacesError ? (
-              <span className="text-sm text-red-400">Erro: {spacesError}</span>
-            ) : (
-              <select
-                value={selectedListId}
-                onChange={(e) => {
-                  const list = allLists.find((l: any) => l.id === e.target.value);
-                  setSelectedListId(e.target.value);
-                  setSelectedListName(list?.name || '');
-                }}
-                className="flex-1 bg-[#0f0f0f] border border-[#333] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#f97316] transition-colors cursor-pointer"
-              >
-                <option value="">Selecione uma lista...</option>
-                {spaces.map((space: any) => (
-                  <optgroup key={space.id} label={`📂 ${space.name}`}>
-                    {(space.folderless_lists || []).map((l: any) => (
-                      <option key={l.id} value={l.id}>
-                        {l.name} ({l.task_count ?? '?'} tarefas)
-                      </option>
-                    ))}
-                    {(space.folders || []).map((f: any) =>
-                      (f.lists || []).map((l: any) => (
-                        <option key={l.id} value={l.id}>
-                          {f.name} → {l.name} ({l.task_count ?? '?'} tarefas)
-                        </option>
-                      ))
-                    )}
-                  </optgroup>
-                ))}
-              </select>
-            )}
-          </div>
-        </div>
 
         <StatsGrid stats={stats} />
 
