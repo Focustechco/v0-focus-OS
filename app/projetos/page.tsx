@@ -8,7 +8,7 @@ import { ActiveSprintCard } from '@/components/projetos/visao-geral/ActiveSprint
 import { useProjectsContext } from '@/contexts/ProjectsContext';
 import { useClickUpTasks } from '@/hooks/useClickUpTasks';
 import { useApprovals } from '@/hooks/useApprovals';
-import { ArrowRight, ListTodo, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ListTodo, CheckCircle2, Loader2 } from 'lucide-react';
 
 export default function ProjetosPage() {
   const { selectedListId, selectedListName, spaces, allLists } = useProjectsContext();
