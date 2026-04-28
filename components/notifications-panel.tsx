@@ -113,7 +113,7 @@ export function NotificationsPanel() {
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-[380px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed sm:absolute inset-x-4 top-16 sm:inset-auto sm:right-0 sm:mt-2 sm:w-[380px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="p-4 border-b border-border flex items-center justify-between bg-card">
             <h3 className="text-xs font-mono font-bold tracking-widest text-foreground">NOTIFICAÇÕES</h3>
             <Button 
