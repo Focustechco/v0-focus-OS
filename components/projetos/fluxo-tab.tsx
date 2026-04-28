@@ -8,6 +8,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   ChevronDown,
   ChevronRight,
   CheckCircle2,
@@ -22,6 +29,18 @@ import {
   Rocket,
   HeadphonesIcon,
 } from "lucide-react"
+
+const MOCK_PROJETOS = [
+  { id: "1", name: "Projeto Focus Hub" },
+  { id: "2", name: "App Mobile Beta" },
+  { id: "3", name: "Plataforma E-commerce" },
+]
+
+const MOCK_FLUXOS = [
+  { id: "1", name: "Desenvolvimento de Software" },
+  { id: "2", name: "Design UI/UX" },
+  { id: "3", name: "Manutencao e Suporte" },
+]
 
 const flowStages = [
   {
@@ -324,6 +343,8 @@ function StageCard({ stage, isExpanded, onToggle }: { stage: typeof flowStages[0
 export function FluxoTab() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [expandedStages, setExpandedStages] = useState<number[]>([1])
+  const [selectedProjeto, setSelectedProjeto] = useState<string>("1")
+  const [selectedFluxo, setSelectedFluxo] = useState<string>("1")
 
   const toggleStage = (stageId: number) => {
     setExpandedStages((prev) =>
@@ -339,7 +360,31 @@ export function FluxoTab() {
               <h1 className="text-xl font-display font-bold text-foreground">Fluxo de Etapas</h1>
               <p className="text-sm text-neutral-500">Pipeline das 6 etapas do processo Focus</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="w-[200px]">
+                <Select value={selectedProjeto} onValueChange={setSelectedProjeto}>
+                  <SelectTrigger className="bg-background border-border h-9">
+                    <SelectValue placeholder="Selecione o Projeto" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOCK_PROJETOS.map(p => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-[240px]">
+                <Select value={selectedFluxo} onValueChange={setSelectedFluxo}>
+                  <SelectTrigger className="bg-background border-border h-9">
+                    <SelectValue placeholder="Selecione o Fluxo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOCK_FLUXOS.map(f => (
+                      <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <Button
                 variant="outline"
                 className="border-border bg-card text-neutral-400 hover:text-foreground"

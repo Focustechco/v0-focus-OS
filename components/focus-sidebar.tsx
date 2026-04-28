@@ -21,6 +21,7 @@ import {
   Users,
   Box,
   Grid,
+  LayoutGrid,
   DollarSign,
   Download,
 } from "lucide-react"
@@ -41,6 +42,12 @@ const intelligenceSubItems = [
   { id: "comercial-intel", href: "/intelligence/comercial", icon: Briefcase, label: "Setor Comercial" },
 ]
 
+const backofficeSubItems = [
+  { id: "clientes", href: "/clientes", icon: Users, label: "Clientes" },
+  { id: "documentos", href: "/documentos", icon: Box, label: "Documentos" },
+  { id: "financeiro", href: "/financeiro", icon: DollarSign, label: "Financeiro" },
+]
+
 interface FocusSidebarProps {
   collapsed: boolean
   onCollapse: (collapsed: boolean) => void
@@ -51,6 +58,7 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   const [uptime, setUptime] = useState("00:00:00")
   const [projetosExpanded, setProjetosExpanded] = useState(false)
   const [intelligenceExpanded, setIntelligenceExpanded] = useState(false)
+  const [backofficeExpanded, setBackofficeExpanded] = useState(false)
   const { isSidebarItemVisible } = useModules()
   const { metrics } = useIntelligence()
   const { isInstallable, handleInstall } = usePwa()
@@ -63,10 +71,8 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
     { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "Tasks" },
     { id: "agenda", href: "/agenda", icon: CalendarClock, label: "Agenda" },
     { id: "comercial", href: "/comercial", icon: Briefcase, label: "Comercial", badge: stats.comercial > 0 ? stats.comercial : null },
-    { id: "documentos", href: "/documentos", icon: Box, label: "Documentos" },
-    { id: "financeiro", href: "/financeiro", icon: DollarSign, label: "Financeiro" },
+    { id: "backoffice", href: "/backoffice", icon: LayoutGrid, label: "Backoffice", hasSubmenu: "backoffice" },
     { id: "equipe", href: "/equipe", icon: Grid, label: "Hub" },
-    { id: "clientes", href: "/clientes", icon: Users, label: "Clientes" },
     { id: "relatorios", href: "/relatorios", icon: FileText, label: "Relatórios" },
     { id: "intelligence", href: "/intelligence", icon: BarChart3, label: "Inteligence", hasSubmenu: "intelligence" },
     { id: "sistemas", href: "/sistemas", icon: Settings, label: "Sistemas" },
@@ -76,10 +82,12 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
   const visibleNavigation = navigation.filter(item => isSidebarItemVisible(item.id))
   const visibleProjetosSubItems = projetosSubItems.filter(item => isSidebarItemVisible(item.id))
   const visibleIntelligenceSubItems = intelligenceSubItems.filter(item => isSidebarItemVisible(item.id))
+  const visibleBackofficeSubItems = backofficeSubItems.filter(item => isSidebarItemVisible(item.id))
 
   // Auto-expand Projetos if a subitem is active
   const isProjetosSubItemActive = projetosSubItems.some(item => pathname.startsWith(item.href))
   const isIntelligenceSubItemActive = intelligenceSubItems.some(item => pathname.startsWith(item.href))
+  const isBackofficeSubItemActive = backofficeSubItems.some(item => pathname.startsWith(item.href))
   
   useEffect(() => {
     if (isProjetosSubItemActive) {
@@ -88,7 +96,10 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
     if (isIntelligenceSubItemActive) {
       setIntelligenceExpanded(true)
     }
-  }, [isProjetosSubItemActive, isIntelligenceSubItemActive])
+    if (isBackofficeSubItemActive) {
+      setBackofficeExpanded(true)
+    }
+  }, [isProjetosSubItemActive, isIntelligenceSubItemActive, isBackofficeSubItemActive])
 
   useEffect(() => {
     const startTime = Date.now()
@@ -143,10 +154,11 @@ export function FocusSidebar({ collapsed, onCollapse }: FocusSidebarProps) {
           {visibleNavigation.map((item: any) => {
             const isProjetos = item.hasSubmenu === "projetos"
             const isIntelligence = item.hasSubmenu === "intelligence"
-            const subItems: any[] = isProjetos ? visibleProjetosSubItems : isIntelligence ? visibleIntelligenceSubItems : []
-            const isExpanded = isProjetos ? projetosExpanded : isIntelligence ? intelligenceExpanded : false
-            const setExpanded = isProjetos ? setProjetosExpanded : isIntelligence ? setIntelligenceExpanded : () => {}
-            const isSubItemActive = isProjetos ? isProjetosSubItemActive : isIntelligence ? isIntelligenceSubItemActive : false
+            const isBackoffice = item.hasSubmenu === "backoffice"
+            const subItems: any[] = isProjetos ? visibleProjetosSubItems : isIntelligence ? visibleIntelligenceSubItems : isBackoffice ? visibleBackofficeSubItems : []
+            const isExpanded = isProjetos ? projetosExpanded : isIntelligence ? intelligenceExpanded : isBackoffice ? backofficeExpanded : false
+            const setExpanded = isProjetos ? setProjetosExpanded : isIntelligence ? setIntelligenceExpanded : isBackoffice ? setBackofficeExpanded : () => {}
+            const isSubItemActive = isProjetos ? isProjetosSubItemActive : isIntelligence ? isIntelligenceSubItemActive : isBackoffice ? isBackofficeSubItemActive : false
 
           return (
           <div key={item.id}>

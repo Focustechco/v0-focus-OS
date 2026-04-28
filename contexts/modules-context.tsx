@@ -17,6 +17,7 @@ const MODULE_MAPPING: Record<string, string[]> = {
   "configuracoes": ["configuracoes"],
   "documentos": ["documentos"],
   "financeiro": ["financeiro"],
+  "backoffice": ["clientes", "documentos", "financeiro"],
 }
 
 // Modulos que sempre devem estar visiveis (essenciais)

@@ -31,8 +31,10 @@ export function useProjectsConfig() {
   useEffect(() => {
     load();
     
-    // Realtime: propaga mudança de config para todos os clientes abertos
-    const ch = supabase.channel('projects-config')
+    // Usamos um ID único para o canal para evitar erro de "subscribe() already called"
+    // quando o React Strict Mode renderiza o componente duas vezes no dev.
+    const channelId = `projects-config-${Math.random().toString(36).substring(7)}`;
+    const ch = supabase.channel(channelId)
       .on('postgres_changes', {
         event: 'UPDATE', 
         schema: 'public', 

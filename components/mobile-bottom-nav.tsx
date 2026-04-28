@@ -15,6 +15,7 @@ import {
   BarChart3,
   FileText,
   Box,
+  LayoutGrid,
   DollarSign,
 } from "lucide-react"
 import {
@@ -32,7 +33,7 @@ const PRIMARY_NAV = [
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
   { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tasks" },
   { id: "comercial",      href: "/comercial", icon: Briefcase,       label: "CRM" },
-  { id: "financeiro",     href: "/financeiro", icon: DollarSign,     label: "Finance" },
+  { id: "backoffice",     href: "/backoffice", icon: LayoutGrid,      label: "Backoffice" },
 ]
 
 const ALL_MODULES = [
