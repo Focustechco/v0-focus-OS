@@ -1,8 +1,46 @@
 "use client"
 
-import { Search, LayoutGrid, LayoutList, Folder, Download, FolderPlus } from "lucide-react"
+import {
+  Search, LayoutGrid, LayoutList, Folder, FolderPlus,
+  ChevronRight, MoreVertical, ExternalLink, Copy, RefreshCw,
+  FileText, FileSpreadsheet, Presentation, Image, File as FileIcon
+} from "lucide-react"
 import type { DriveFile } from "@/lib/types/drive"
 import { formatDriveSize, formatDriveDate, isDriveFolder } from "@/lib/utils/drive-utils"
+
+// ─── MIME TYPE HELPERS ──────────────────────────────────────────────────────
+
+function getMimeLabel(mime: string): string {
+  if (mime === "application/vnd.google-apps.folder") return "Pasta"
+  if (mime === "application/vnd.google-apps.document") return "Doc"
+  if (mime === "application/vnd.google-apps.spreadsheet") return "Sheet"
+  if (mime === "application/vnd.google-apps.presentation") return "Slides"
+  if (mime === "application/pdf") return "PDF"
+  if (mime.startsWith("image/")) return "Imagem"
+  if (mime.startsWith("video/")) return "Vídeo"
+  return "Arquivo"
+}
+
+function getMimeIcon(mime: string) {
+  if (mime === "application/vnd.google-apps.folder") return Folder
+  if (mime === "application/vnd.google-apps.document") return FileText
+  if (mime === "application/vnd.google-apps.spreadsheet") return FileSpreadsheet
+  if (mime === "application/vnd.google-apps.presentation") return Presentation
+  if (mime.startsWith("image/")) return Image
+  return FileIcon
+}
+
+function getMimeColor(mime: string): { bg: string; text: string; dot: string } {
+  if (mime === "application/vnd.google-apps.folder") return { bg: "bg-amber-500/10", text: "text-amber-400", dot: "bg-amber-400" }
+  if (mime === "application/vnd.google-apps.document") return { bg: "bg-blue-500/10", text: "text-blue-400", dot: "bg-blue-400" }
+  if (mime === "application/vnd.google-apps.spreadsheet") return { bg: "bg-green-500/10", text: "text-green-400", dot: "bg-green-400" }
+  if (mime === "application/vnd.google-apps.presentation") return { bg: "bg-yellow-500/10", text: "text-yellow-400", dot: "bg-yellow-400" }
+  if (mime === "application/pdf") return { bg: "bg-red-500/10", text: "text-red-400", dot: "bg-red-400" }
+  if (mime.startsWith("image/")) return { bg: "bg-purple-500/10", text: "text-purple-400", dot: "bg-purple-400" }
+  return { bg: "bg-neutral-500/10", text: "text-neutral-400", dot: "bg-neutral-400" }
+}
+
+// ─── INTERFACES ─────────────────────────────────────────────────────────────
 
 interface DriveFileBrowserProps {
   files: DriveFile[]
@@ -17,7 +55,82 @@ interface DriveFileBrowserProps {
   onFileOpen: (file: DriveFile) => void
   onCreateFolder: () => Promise<void>
   onRefresh: () => Promise<void>
+  mimeFilter: string
+  setMimeFilter: (v: string) => void
+  mimeFilters: readonly { id: string; label: string }[]
 }
+
+// ─── FOLDER CARD ────────────────────────────────────────────────────────────
+
+function FolderCard({ file, onClick }: { file: DriveFile; onClick: () => void }) {
+  const isShared = file.shared
+  return (
+    <button
+      onClick={onClick}
+      className="group flex items-center gap-3 p-4 rounded-xl border border-[#222] bg-[#161616] hover:border-[#e87c2a]/50 transition-all text-left w-full"
+    >
+      <div className={`p-2.5 rounded-xl ${isShared ? "bg-green-500/10" : "bg-[#111]"}`}>
+        <Folder className={`w-5 h-5 ${isShared ? "text-green-400" : "text-neutral-500"}`} />
+      </div>
+      <span className="flex-1 text-[13px] font-medium text-neutral-200 uppercase tracking-wide truncate group-hover:text-white transition-colors">
+        {file.name}
+      </span>
+      <ChevronRight className="w-4 h-4 text-neutral-600 group-hover:text-[#e87c2a] transition-colors" />
+    </button>
+  )
+}
+
+// ─── FILE CARD ──────────────────────────────────────────────────────────────
+
+function FileCard({ file, onOpen }: { file: DriveFile; onOpen: () => void }) {
+  const Icon = getMimeIcon(file.mimeType)
+  const colors = getMimeColor(file.mimeType)
+  const label = getMimeLabel(file.mimeType)
+
+  return (
+    <div className="group rounded-xl border border-[#222] bg-[#161616] overflow-hidden hover:border-[#e87c2a]/40 transition-all">
+      {/* Thumbnail area */}
+      <div className={`relative h-28 ${colors.bg} flex items-center justify-center`}>
+        <Icon className={`w-10 h-10 ${colors.text} opacity-60`} />
+        <span className={`absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-md ${colors.bg} ${colors.text} border border-white/5 uppercase tracking-wider`}>
+          {label}
+        </span>
+        <span className="absolute top-2 right-2 text-[9px] font-bold px-2 py-0.5 rounded-md bg-green-500/10 text-green-400 border border-green-500/20">
+          Drive
+        </span>
+      </div>
+      {/* Info */}
+      <div className="p-3 space-y-2">
+        <p className="text-xs font-medium text-neutral-200 truncate" title={file.name}>{file.name}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-neutral-500 font-mono">{formatDriveDate(file.modifiedTime)}</span>
+          <button
+            onClick={onOpen}
+            className="text-[10px] font-bold text-[#e87c2a] hover:underline flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            Abrir <ExternalLink className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── SKELETON LOADERS ───────────────────────────────────────────────────────
+
+function SkeletonCard() {
+  return (
+    <div className="rounded-xl border border-[#222] bg-[#161616] overflow-hidden animate-pulse">
+      <div className="h-28 bg-[#1a1a1a]" />
+      <div className="p-3 space-y-2">
+        <div className="h-3 bg-[#222] rounded w-3/4" />
+        <div className="h-2 bg-[#1a1a1a] rounded w-1/2" />
+      </div>
+    </div>
+  )
+}
+
+// ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
 
 export function DriveFileBrowser({
   files,
@@ -32,154 +145,200 @@ export function DriveFileBrowser({
   onFileOpen,
   onCreateFolder,
   onRefresh,
+  mimeFilter,
+  setMimeFilter,
+  mimeFilters,
 }: DriveFileBrowserProps) {
-  return (
-    <div className="flex flex-col h-full bg-[#080808] text-sm text-neutral-100">
-      <div className="flex flex-col gap-3 p-4 border-b border-neutral-800">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 uppercase tracking-[0.18em] font-semibold">
-              {breadcrumbs.map((crumb, index) => (
-                <button
-                  key={crumb.id}
-                  onClick={() => onBreadcrumbClick(index)}
-                  className={`transition-colors hover:text-[#FF6B00] ${index === breadcrumbs.length - 1 ? "text-white font-bold" : "text-neutral-500"}`}
-                >
-                  {crumb.name}
-                  {index < breadcrumbs.length - 1 && <span className="mx-1">/</span>}
-                </button>
-              ))}
-            </div>
-            <div className="text-xs text-neutral-400">Navegue nas pastas e arquivos do Google Drive conectado.</div>
-          </div>
+  const folders = files.filter(f => isDriveFolder(f))
+  const documents = files.filter(f => !isDriveFolder(f))
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={onRefresh}
-              className="px-3 py-2 rounded-lg border border-neutral-700 text-xs text-neutral-200 hover:border-[#FF6B00] hover:text-[#FF6B00] transition"
-            >
-              Atualizar
-            </button>
-            <button
-              onClick={onCreateFolder}
-              className="px-3 py-2 rounded-lg border border-neutral-700 text-xs text-neutral-200 hover:border-[#FF6B00] hover:text-[#FF6B00] transition flex items-center gap-2"
-            >
-              <FolderPlus className="w-4 h-4" /> Nova pasta
-            </button>
-          </div>
+  return (
+    <div className="flex flex-col h-full bg-[#0f0f0f] text-sm text-neutral-100">
+      {/* ─── TOOLBAR ─── */}
+      <div className="flex flex-col gap-3 p-4 border-b border-[#222]">
+        {/* Breadcrumb */}
+        <div className="flex flex-wrap items-center gap-1 text-[11px] font-semibold uppercase tracking-widest">
+          <span className="text-neutral-500">Documentos</span>
+          {breadcrumbs.map((crumb, index) => (
+            <span key={crumb.id} className="flex items-center gap-1">
+              <ChevronRight className="w-3 h-3 text-neutral-600" />
+              <button
+                onClick={() => onBreadcrumbClick(index)}
+                className={`transition-colors hover:text-[#e87c2a] ${index === breadcrumbs.length - 1 ? "text-white" : "text-neutral-500"}`}
+              >
+                {crumb.name}
+              </button>
+            </span>
+          ))}
         </div>
 
+        {/* Search + filters + view toggle */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-            <input
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Buscar arquivos..."
-              className="w-full rounded-xl border border-neutral-800 bg-[#101014] py-2 pl-10 pr-3 text-sm text-neutral-100 outline-none focus:border-[#FF6B00]"
-            />
+          <div className="flex items-center gap-2 flex-1">
+            <div className="relative w-full md:w-72">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+              <input
+                type="text"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar arquivos..."
+                className="w-full rounded-xl border border-[#222] bg-[#161616] py-2 pl-10 pr-3 text-sm text-neutral-100 outline-none focus:border-[#e87c2a] transition-colors"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {/* Mime type filters */}
+            {mimeFilters.map(f => (
+              <button
+                key={f.id}
+                onClick={() => setMimeFilter(f.id)}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-medium border transition-all flex-shrink-0 ${
+                  mimeFilter === f.id
+                    ? "bg-[#e87c2a]/10 border-[#e87c2a]/30 text-[#e87c2a]"
+                    : "bg-[#161616] border-[#222] text-neutral-400 hover:border-neutral-500"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+
+            <div className="w-px h-6 bg-[#222] mx-1 flex-shrink-0" />
+
+            {/* View toggle */}
             <button
               onClick={() => setViewMode("list")}
-              className={`rounded-xl p-2 border ${viewMode === "list" ? "border-[#FF6B00] bg-[#161616] text-[#FF6B00]" : "border-neutral-800 text-neutral-400 hover:border-neutral-600"}`}
-              aria-label="Modo lista"
+              className={`rounded-lg p-2 border ${viewMode === "list" ? "border-[#e87c2a] bg-[#161616] text-[#e87c2a]" : "border-[#222] text-neutral-500 hover:border-neutral-500"}`}
             >
               <LayoutList className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode("grid")}
-              className={`rounded-xl p-2 border ${viewMode === "grid" ? "border-[#FF6B00] bg-[#161616] text-[#FF6B00]" : "border-neutral-800 text-neutral-400 hover:border-neutral-600"}`}
-              aria-label="Modo grade"
+              className={`rounded-lg p-2 border ${viewMode === "grid" ? "border-[#e87c2a] bg-[#161616] text-[#e87c2a]" : "border-[#222] text-neutral-500 hover:border-neutral-500"}`}
             >
               <LayoutGrid className="w-4 h-4" />
+            </button>
+
+            <div className="w-px h-6 bg-[#222] mx-1 flex-shrink-0" />
+
+            <button
+              onClick={onCreateFolder}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#222] bg-[#161616] text-neutral-400 text-[11px] hover:border-[#e87c2a] hover:text-[#e87c2a] transition flex-shrink-0"
+            >
+              <FolderPlus className="w-3.5 h-3.5" /> Nova pasta
             </button>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto relative">
+      {/* ─── FILE LISTING ─── */}
+      <div className="flex-1 overflow-auto p-4">
         {loading ? (
-          <div className="flex h-full items-center justify-center py-20">
-            <span className="text-sm text-[#FF6B00]">Carregando arquivos...</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : files.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 py-20 text-center text-neutral-500">
-            <Folder className="w-12 h-12" />
-            <p className="text-sm font-medium text-neutral-200">Nenhum arquivo encontrado nesta pasta.</p>
-            <p className="text-xs">Use o botão “Nova pasta” ou arraste um arquivo para enviar.</p>
+          <div className="flex h-full flex-col items-center justify-center gap-4 py-20 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#161616] border border-[#222] flex items-center justify-center">
+              <Folder className="w-8 h-8 text-neutral-600" />
+            </div>
+            <p className="text-sm font-medium text-neutral-300">Nenhum arquivo nesta pasta</p>
+            <p className="text-xs text-neutral-500 max-w-sm">Esta pasta está vazia. Adicione arquivos pelo Google Drive ou use o botão "Nova pasta".</p>
+            {breadcrumbs.length > 1 && (
+              <button
+                onClick={() => onBreadcrumbClick(breadcrumbs.length - 2)}
+                className="px-4 py-2 rounded-xl border border-[#222] bg-[#161616] text-xs text-neutral-300 hover:border-[#e87c2a] transition"
+              >
+                ← Voltar
+              </button>
+            )}
           </div>
-        ) : viewMode === "list" ? (
+        ) : viewMode === "grid" ? (
+          <div className="space-y-6">
+            {/* Folders section */}
+            {folders.length > 0 && (
+              <section>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-3">Pastas ({folders.length})</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {folders.map(f => (
+                    <FolderCard key={f.id} file={f} onClick={() => onFolderClick(f)} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Files section */}
+            {documents.length > 0 && (
+              <section>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-3">Arquivos ({documents.length})</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {documents.map(f => (
+                    <FileCard key={f.id} file={f} onOpen={() => onFileOpen(f)} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        ) : (
+          /* List view */
           <div className="overflow-x-auto">
             <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
-              <thead className="bg-[#0D0D0D] text-neutral-400 text-[11px] uppercase tracking-[0.18em]">
+              <thead className="bg-[#161616] text-neutral-500 text-[10px] uppercase tracking-widest">
                 <tr>
-                  <th className="p-3">Nome</th>
+                  <th className="p-3 rounded-tl-xl">Nome</th>
                   <th className="p-3 w-24">Tipo</th>
                   <th className="p-3 w-28">Tamanho</th>
-                  <th className="p-3 w-40">Última modificação</th>
-                  <th className="p-3 w-24 text-right">Ações</th>
+                  <th className="p-3 w-40">Modificado</th>
+                  <th className="p-3 w-24 text-right rounded-tr-xl">Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {files.map((file) => (
-                  <tr key={file.id} className="border-b border-neutral-800 hover:bg-[#101014] cursor-pointer">
-                    <td className="p-3" onClick={() => (isDriveFolder(file) ? onFolderClick(file) : onFileOpen(file))}>
-                      <div className="flex items-center gap-3">
-                        <span className="text-neutral-200 font-medium">{file.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-3 text-neutral-400">{isDriveFolder(file) ? "Pasta" : "Arquivo"}</td>
-                    <td className="p-3 text-neutral-400">{formatDriveSize(file.size)}</td>
-                    <td className="p-3 text-neutral-400">{formatDriveDate(file.modifiedTime)}</td>
-                    <td className="p-3 text-right">
-                      {!isDriveFolder(file) && (
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            onFileOpen(file)
-                          }}
-                          className="text-neutral-400 hover:text-[#FF6B00]"
-                          aria-label="Abrir arquivo"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {files.map((file) => {
+                  const Icon = getMimeIcon(file.mimeType)
+                  const colors = getMimeColor(file.mimeType)
+                  const isFolder = isDriveFolder(file)
+                  return (
+                    <tr
+                      key={file.id}
+                      onClick={() => isFolder ? onFolderClick(file) : onFileOpen(file)}
+                      className="border-b border-[#1a1a1a] hover:bg-[#161616] cursor-pointer transition-colors"
+                    >
+                      <td className="p-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-1.5 rounded-lg ${colors.bg}`}>
+                            <Icon className={`w-4 h-4 ${colors.text}`} />
+                          </div>
+                          <span className="text-neutral-200 font-medium truncate">{file.name}</span>
+                          {file.shared && <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Compartilhado</span>}
+                        </div>
+                      </td>
+                      <td className="p-3 text-neutral-500 text-xs">{getMimeLabel(file.mimeType)}</td>
+                      <td className="p-3 text-neutral-500 text-xs font-mono">{formatDriveSize(file.size)}</td>
+                      <td className="p-3 text-neutral-500 text-xs font-mono">{formatDriveDate(file.modifiedTime)}</td>
+                      <td className="p-3 text-right">
+                        {!isFolder && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onFileOpen(file) }}
+                            className="text-[11px] font-bold text-[#e87c2a] hover:underline"
+                          >
+                            Abrir →
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-4">
-            {files.map((file) => (
-              <button
-                key={file.id}
-                onClick={() => (isDriveFolder(file) ? onFolderClick(file) : onFileOpen(file))}
-                className="group rounded-3xl border border-neutral-800 bg-[#0B0B0B] p-4 text-left transition hover:border-[#FF6B00]"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="rounded-2xl bg-[#141414] p-3">
-                    <Folder className="w-5 h-5 text-[#FF6B00]" />
-                  </div>
-                  <div className="space-y-1 text-sm">
-                    <p className="font-semibold text-neutral-100">{file.name}</p>
-                    <p className="text-neutral-500">{isDriveFolder(file) ? "Pasta" : "Arquivo"}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-xs text-neutral-500">
-                  <span>{formatDriveSize(file.size)}</span>
-                  <span>{formatDriveDate(file.modifiedTime)}</span>
-                </div>
-              </button>
-            ))}
-          </div>
         )}
       </div>
+
+      {/* Global scrollbar hide */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   )
 }

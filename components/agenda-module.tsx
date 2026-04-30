@@ -1,42 +1,56 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { useEventos, type Evento } from "@/lib/hooks/use-eventos"
 import { useEquipe } from "@/lib/hooks/use-equipe"
+import { useClientes } from "@/lib/hooks/use-clientes"
 import {
   ChevronLeft, ChevronRight, Plus, Calendar, Clock,
-  Trash2, Loader2, X, CheckCircle2, ExternalLink
+  Users, User, Briefcase, Info, X, Filter,
+  CheckCircle2, Loader2, ChevronDown, MoreHorizontal
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-// ─── HELPERS ────────────────────────────────────────────────────────────────
-const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
-const DIAS_SEMANA = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"]
-const TIPOS = [
-  { value: "reuniao",   label: "Reunião" },
-  { value: "tarefa",    label: "Tarefa" },
-  { value: "lembrete",  label: "Lembrete" },
-  { value: "outro",     label: "Outro" },
-]
-const DURACOES = [
-  { label: "30 min", value: 30 },
-  { label: "1 hora", value: 60 },
-  { label: "1h30",   value: 90 },
-  { label: "2 horas",value: 120 },
-  { label: "3 horas",value: 180 },
-]
-const CORES_TIPO: Record<string, string> = {
-  reuniao: "#3b82f6", tarefa: "#f59e0b", lembrete: "#8b5cf6", outro: "#6b7280"
+// ─── CONSTANTES DE DESIGN ───────────────────────────────────────────────────
+
+const TIPO_CONFIG = {
+  reuniao:  { label: "Reunião",  bg: "bg-[#1a2a3a]", text: "text-[#85B7EB]", dot: "bg-[#85B7EB]" },
+  captacao: { label: "Captação", bg: "bg-[#2e1a10]", text: "text-[#F0997B]", dot: "bg-[#F0997B]" },
+  deploy:   { label: "Deploy",   bg: "bg-[#1a2e1a]", text: "text-[#97C459]", dot: "bg-[#97C459]" },
+  sprint:   { label: "Sprint",   bg: "bg-[#2e2010]", text: "text-[#EF9F27]", dot: "bg-[#EF9F27]" },
+  outro:    { label: "Outro",    bg: "bg-[#1e1e1e]", text: "text-muted-foreground", dot: "bg-muted-foreground" },
 }
 
-function getDiasDoMes(ano: number, mes: number) {
-  const primeiroDia = new Date(ano, mes, 1)
-  const ultimoDia = new Date(ano, mes + 1, 0)
-  const dias: (Date | null)[] = []
-  for (let i = 0; i < primeiroDia.getDay(); i++) dias.push(null)
-  for (let d = 1; d <= ultimoDia.getDate(); d++) dias.push(new Date(ano, mes, d))
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+const DIAS_SEMANA = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"]
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+
+function getDiasDoMesCompleto(ano: number, mes: number) {
+  const primeiroDiaDoMes = new Date(ano, mes, 1)
+  const ultimoDiaDoMes = new Date(ano, mes + 1, 0)
+  
+  const dias = []
+  
+  // Dias do mês anterior para completar a primeira semana
+  const primeiroDiaSemana = primeiroDiaDoMes.getDay()
+  for (let i = primeiroDiaSemana; i > 0; i--) {
+    dias.push(new Date(ano, mes, 1 - i))
+  }
+  
+  // Dias do mês atual
+  for (let d = 1; d <= ultimoDiaDoMes.getDate(); d++) {
+    dias.push(new Date(ano, mes, d))
+  }
+  
+  // Dias do próximo mês para completar 42 células (6 semanas)
+  const diasRestantes = 42 - dias.length
+  for (let i = 1; i <= diasRestantes; i++) {
+    dias.push(new Date(ano, mes + 1, i))
+  }
+  
   return dias
 }
 
@@ -53,321 +67,51 @@ function getInitials(nome: string) {
   return nome.split(" ").map(n=>n[0]).slice(0,2).join("").toUpperCase()
 }
 
-// Gera link Google Calendar no frontend (fallback caso a API não retorne)
-function gerarGoogleCalLink(ev: { titulo: string, data: string, hora_inicio: string, hora_fim?: string, descricao?: string }) {
-  const dataLimpa = ev.data.replace(/-/g, "")
-  const inicio = `${dataLimpa}T${(ev.hora_inicio || "10:00").replace(":", "")}00`
-  const fim = `${dataLimpa}T${(ev.hora_fim || "11:00").replace(":", "")}00`
-  return `https://calendar.google.com/calendar/event?action=TEMPLATE&text=${encodeURIComponent(ev.titulo)}&dates=${inicio}/${fim}&ctz=America/Fortaleza&details=${encodeURIComponent(ev.descricao || "")}`
-}
+// ─── COMPONENTES AUXILIARES ────────────────────────────────────────────────
 
-// ─── MODAL NOVO EVENTO ─────────────────────────────────────────────────────
-function NovoEventoModal({
-  onClose, onSave, dataSelecionada
-}: {
-  onClose: () => void
-  onSave: (data: any) => Promise<any>
-  dataSelecionada: string
-}) {
-  const { equipe } = useEquipe()
-  const [loading, setLoading] = useState(false)
-  const [resultado, setResultado] = useState<{ sucesso: boolean; googleUrl?: string } | null>(null)
-  const [form, setForm] = useState({
-    titulo: "",
-    data: dataSelecionada,
-    hora_inicio: "10:00",
-    duracao_minutos: 60,
-    tipo: "reuniao",
-    descricao: "",
-    membros_ids: [] as string[],
-    criar_no_google: true,
-  })
-
-  const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }))
-
-  const toggleMembro = (id: string) => {
-    setForm(f => ({
-      ...f,
-      membros_ids: f.membros_ids.includes(id)
-        ? f.membros_ids.filter(m => m !== id)
-        : [...f.membros_ids, id]
-    }))
+function StatusBadge({ status }: { status: string }) {
+  const colors: any = {
+    ativo: "bg-green-500/10 text-green-500 border-green-500/20",
+    inativo: "bg-red-500/10 text-red-500 border-red-500/20",
+    ferias: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   }
-
-  const handleSave = async () => {
-    if (!form.titulo.trim()) return
-    setLoading(true)
-    try {
-      const membrosComEmail = equipe
-        .filter(m => form.membros_ids.includes(m.id))
-        .map(m => m.email)
-        .filter(Boolean)
-
-      const result = await onSave({
-        ...form,
-        cor: CORES_TIPO[form.tipo] || "#FF6B00",
-        attendees_emails: membrosComEmail,
-      })
-
-      const googleUrl = result?.evento?.google_cal_url || null
-
-      setResultado({ sucesso: true, googleUrl })
-
-      // Abre o Google Calendar automaticamente se toggle ativo
-      if (form.criar_no_google && googleUrl) {
-        window.open(googleUrl, "_blank")
-      }
-
-      // Fecha em 2s
-      setTimeout(onClose, 2000)
-    } catch (e: any) {
-      console.error("Erro ao criar evento:", e)
-      setResultado({ sucesso: false })
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground text-sm">Novo Evento</span>
-            <Badge variant="outline" className="text-[9px] font-mono px-2 border-blue-500/30 text-blue-400 gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
-              Google Calendar
-            </Badge>
-          </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-5 space-y-4 overflow-y-auto flex-1 max-h-[60vh]">
-          {/* Título */}
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Título do evento</label>
-            <input
-              value={form.titulo}
-              onChange={e => set("titulo", e.target.value)}
-              placeholder="Ex: Reunião de alinhamento"
-              className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 transition-colors"
-              autoFocus
-            />
-          </div>
-
-          {/* Data + Hora */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Data</label>
-              <input
-                type="date"
-                value={form.data}
-                onChange={e => set("data", e.target.value)}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Horário início</label>
-              <input
-                type="time"
-                value={form.hora_inicio}
-                onChange={e => set("hora_inicio", e.target.value)}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50"
-              />
-            </div>
-          </div>
-
-          {/* Duração + Tipo */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Duração</label>
-              <select
-                value={form.duracao_minutos}
-                onChange={e => set("duracao_minutos", Number(e.target.value))}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none"
-              >
-                {DURACOES.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Tipo</label>
-              <select
-                value={form.tipo}
-                onChange={e => set("tipo", e.target.value)}
-                className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none"
-              >
-                {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-              </select>
-            </div>
-          </div>
-
-          {/* Descrição */}
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Descrição</label>
-            <textarea
-              value={form.descricao}
-              onChange={e => set("descricao", e.target.value)}
-              placeholder="Pauta, links, observações..."
-              rows={2}
-              className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 resize-none"
-            />
-          </div>
-
-          {/* Membros */}
-          {equipe.length > 0 && (
-            <div className="space-y-2">
-              <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                Membros convidados <span className="normal-case text-muted-foreground/60">(serão notificados pelo Google Calendar)</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {equipe.map(m => {
-                  const selected = form.membros_ids.includes(m.id)
-                  return (
-                    <button
-                      key={m.id}
-                      onClick={() => toggleMembro(m.id)}
-                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all border ${
-                        selected
-                          ? "border-primary/50 bg-primary/10 text-primary"
-                          : "border-border bg-secondary text-muted-foreground hover:border-border/80"
-                      }`}
-                    >
-                      <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold text-primary">
-                        {getInitials(m.nome || "?")}
-                      </div>
-                      {m.nome?.split(" ")[0]}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Toggle Google Calendar */}
-          <div className="flex items-center justify-between py-2 border-t border-border">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-blue-400" />
-              <span className="text-xs text-foreground">Criar automaticamente no Google Calendar e convidar membros</span>
-            </div>
-            <Switch
-              checked={form.criar_no_google}
-              onCheckedChange={v => set("criar_no_google", v)}
-            />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-4 border-t border-border">
-          {resultado?.sucesso ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-center gap-2 py-1.5 text-green-500 text-sm font-medium">
-                <CheckCircle2 className="w-4 h-4" /> Evento criado com sucesso!
-              </div>
-              {resultado.googleUrl && (
-                <a
-                  href={resultado.googleUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-2 border border-blue-500/30 rounded-lg text-xs text-blue-400 hover:bg-blue-500/10 transition-colors"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" /> Abrir no Google Calendar
-                </a>
-              )}
-            </div>
-          ) : resultado?.sucesso === false ? (
-            <div className="flex items-center justify-center gap-2 py-2 text-red-400 text-sm">
-              Erro ao criar evento. Tente novamente.
-            </div>
-          ) : (
-            <Button
-              onClick={handleSave}
-              disabled={loading || !form.titulo.trim()}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-            >
-              {loading ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Criando...</>
-              ) : (
-                <><Plus className="w-4 h-4 mr-2" /> Criar evento</>
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
+    <span className={`text-[9px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-tighter ${colors[status] || colors.ativo}`}>
+      {status || "Ativo"}
+    </span>
   )
 }
 
-// ─── CARD DO EVENTO ─────────────────────────────────────────────────────────
-function EventoCard({ evento, onDelete }: { evento: Evento; onDelete: (id: string) => void }) {
-  const cor = CORES_TIPO[evento.tipo] || evento.cor || "#FF6B00"
-  const [deleting, setDeleting] = useState(false)
-  const googleUrl = gerarGoogleCalLink(evento)
+// ─── MAIN MODULE ────────────────────────────────────────────────────────────
 
-  return (
-    <div className="flex items-start gap-3 py-3 group transition-colors">
-      {/* Barra de cor */}
-      <div className="w-1 h-10 rounded-full flex-shrink-0 mt-0.5" style={{ backgroundColor: cor }} />
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">{evento.titulo}</p>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-[11px] text-muted-foreground font-mono flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {evento.hora_inicio}{evento.hora_fim ? ` – ${evento.hora_fim}` : ""}
-              </span>
-              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 capitalize border-border text-muted-foreground">
-                {TIPOS.find(t => t.value === evento.tipo)?.label || evento.tipo}
-              </Badge>
-            </div>
-            {evento.descricao && (
-              <p className="text-[11px] text-muted-foreground mt-1 truncate max-w-[250px]">{evento.descricao}</p>
-            )}
-          </div>
-
-          {/* Ações */}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-            <a
-              href={googleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-blue-500/10 text-blue-400 transition-colors"
-              title="Abrir no Google Calendar"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-            </a>
-            <button
-              onClick={async () => { setDeleting(true); await onDelete(evento.id); setDeleting(false) }}
-              disabled={deleting}
-              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-              title="Excluir evento"
-            >
-              {deleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
 export function AgendaModule() {
   const hoje = new Date()
   const [mesAtual, setMesAtual] = useState({ ano: hoje.getFullYear(), mes: hoje.getMonth() })
-  const [diaSelecionado, setDiaSelecionado] = useState<Date>(hoje)
   const [showModal, setShowModal] = useState(false)
+  
+  // Filtros
+  const [tiposAtivos, setTiposAtivos] = useState<string[]>(["reuniao", "captacao", "deploy", "sprint"])
+  const [membroFiltro, setMembroFiltro] = useState("Todos")
+  const [clienteFiltro, setClienteFiltro] = useState("Todos")
 
-  const dataInicio = `${mesAtual.ano}-${String(mesAtual.mes + 1).padStart(2, "0")}-01`
-  const dataFim = `${mesAtual.ano}-${String(mesAtual.mes + 1).padStart(2, "0")}-${new Date(mesAtual.ano, mesAtual.mes + 1, 0).getDate()}`
+  const { equipe } = useEquipe()
+  const { clientes } = useClientes()
+  
+  const dataInicio = fmtData(new Date(mesAtual.ano, mesAtual.mes, -7))
+  const dataFim = fmtData(new Date(mesAtual.ano, mesAtual.mes + 1, 14))
+  const { eventos, isLoading } = useEventos(dataInicio, dataFim)
 
-  const { eventos, isLoading, criarEvento, deletarEvento } = useEventos(dataInicio, dataFim)
+  const dias = useMemo(() => getDiasDoMesCompleto(mesAtual.ano, mesAtual.mes), [mesAtual])
 
-  const dias = getDiasDoMes(mesAtual.ano, mesAtual.mes)
+  // Filtragem Local
+  const eventosFiltrados = useMemo(() => {
+    return eventos.filter(ev => {
+      const matchTipo = tiposAtivos.includes(ev.tipo)
+      const matchMembro = membroFiltro === "Todos" || ev.criado_por === membroFiltro // Simplificação: assume criado_por como referência ou poderia ser uma relação
+      const matchCliente = clienteFiltro === "Todos" || ev.descricao?.includes(clienteFiltro) // Busca no texto se não houver ID explícito
+      return matchTipo && matchMembro && matchCliente
+    })
+  }, [eventos, tiposAtivos, membroFiltro, clienteFiltro])
 
   const irParaMes = (delta: number) => {
     setMesAtual(prev => {
@@ -376,132 +120,235 @@ export function AgendaModule() {
     })
   }
 
-  const eventosDoDia = useMemo(() =>
-    eventos.filter(e => e.data === fmtData(diaSelecionado))
-      .sort((a, b) => (a.hora_inicio || "").localeCompare(b.hora_inicio || "")),
-    [eventos, diaSelecionado]
-  )
+  const toggleTipo = (tipo: string) => {
+    setTiposAtivos(prev => prev.includes(tipo) ? prev.filter(t => t !== tipo) : [...prev, tipo])
+  }
 
-  const diasComEventos = useMemo(() =>
-    new Set(eventos.map(e => e.data)),
-    [eventos]
-  )
+  const proximosEventos = useMemo(() => {
+    const nowStr = fmtData(hoje)
+    return eventosFiltrados
+      .filter(ev => ev.data >= nowStr)
+      .sort((a, b) => `${a.data}${a.hora_inicio}`.localeCompare(`${b.data}${b.hora_inicio}`))
+      .slice(0, 5)
+  }, [eventosFiltrados])
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-primary" />
-          <span className="text-sm font-bold text-foreground">Agenda</span>
-          {isLoading && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
-        </div>
-        <Button
-          size="sm"
-          onClick={() => setShowModal(true)}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground h-8 text-xs font-semibold"
-        >
-          <Plus className="w-3.5 h-3.5 mr-1" /> Novo evento
-        </Button>
-      </div>
-
-      {/* Calendário */}
-      <div className="px-4 py-3 flex-shrink-0">
-        <div className="flex items-center justify-between mb-3">
-          <button
-            onClick={() => irParaMes(-1)}
-            className="text-xs font-mono text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border hover:border-primary/30 transition-colors"
-          >
-            ‹ Anterior
-          </button>
-          <span className="text-sm font-bold text-foreground capitalize">
-            {MESES[mesAtual.mes]} {mesAtual.ano}
-          </span>
-          <button
-            onClick={() => irParaMes(1)}
-            className="text-xs font-mono text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border hover:border-primary/30 transition-colors"
-          >
-            Próximo ›
-          </button>
-        </div>
-
-        {/* Cabeçalho dias */}
-        <div className="grid grid-cols-7 mb-1">
-          {DIAS_SEMANA.map(d => (
-            <div key={d} className="text-center text-[10px] font-mono text-muted-foreground py-1">{d}</div>
-          ))}
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-7 gap-y-0.5">
-          {dias.map((dia, i) => {
-            if (!dia) return <div key={`empty-${i}`} />
-            const dStr = fmtData(dia)
-            const selecionado = fmtData(diaSelecionado) === dStr
-            const temEvento = diasComEventos.has(dStr)
-            const ehHoje = isHoje(dia)
-
-            return (
-              <button
-                key={dStr}
-                onClick={() => setDiaSelecionado(dia)}
-                className={`relative flex flex-col items-center justify-center py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  selecionado
-                    ? "bg-primary text-primary-foreground"
-                    : ehHoje
-                    ? "bg-primary/20 text-primary font-bold"
-                    : "text-foreground hover:bg-secondary"
-                }`}
+    <div className="flex flex-col h-full bg-[#111] text-foreground font-sans overflow-hidden">
+      
+      {/* ─── HEADER & FILTROS ─── */}
+      <header className="flex flex-col gap-4 p-4 lg:p-6 border-b border-[#1e1e1e]">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Agenda</h1>
+            <p className="text-xs text-muted-foreground mt-1">Gerencie reuniões, captações e datas importantes</p>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 mr-4">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Cliente</span>
+              <select 
+                value={clienteFiltro}
+                onChange={e => setClienteFiltro(e.target.value)}
+                className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-3 py-1.5 text-xs outline-none focus:border-[#e87c2a]/50 transition-colors"
               >
-                {dia.getDate()}
-                {temEvento && !selecionado && (
-                  <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-primary" />
-                )}
-              </button>
-            )
-          })}
+                <option value="Todos">Todos</option>
+                {clientes.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
+              </select>
+            </div>
+            
+            <Button className="bg-[#e87c2a] hover:bg-[#e87c2a]/90 text-white font-bold text-xs px-4 h-9 rounded-xl shadow-lg shadow-[#e87c2a]/10">
+              <Plus className="w-4 h-4 mr-2" /> Novo Evento
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Eventos do dia */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
-        <div className="border-t border-border pt-3">
-          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
-            Eventos — {diaSelecionado.getDate()} {MESES[diaSelecionado.getMonth()].slice(0, 3)}
-          </p>
+        {/* Chips de Tipo (Scrollable no mobile) */}
+        <div className="flex items-center gap-4 overflow-hidden">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mb-1">
+            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest mr-2 flex-shrink-0">Filtros:</span>
+            {Object.entries(TIPO_CONFIG).map(([key, cfg]) => {
+              const active = tiposAtivos.includes(key)
+              return (
+                <button
+                  key={key}
+                  onClick={() => toggleTipo(key)}
+                  className={`
+                    flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all flex-shrink-0
+                    ${active ? `${cfg.bg} ${cfg.text} border-transparent` : "bg-transparent border-[#2a2a2a] text-muted-foreground opacity-50 hover:opacity-80"}
+                  `}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                  <span className="text-xs font-medium">{cfg.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </header>
 
-          {eventosDoDia.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-6">
-              Nenhum evento neste dia.
-            </p>
-          ) : (
-            <div className="divide-y divide-border/50">
-              {eventosDoDia.map(ev => (
-                <EventoCard key={ev.id} evento={ev} onDelete={deletarEvento} />
+      {/* ─── MAIN CONTENT AREA ─── */}
+      <div className="flex flex-1 overflow-hidden">
+        
+        {/* CALENDÁRIO */}
+        <div className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col p-4 lg:p-6">
+          
+          {/* Navegação do Mês */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-1">
+              <button onClick={() => irParaMes(-1)} className="p-2 hover:bg-[#1e1e1e] rounded-lg transition-colors text-muted-foreground"><ChevronLeft className="w-5 h-5"/></button>
+              <h2 className="text-lg font-bold min-w-[140px] text-center capitalize">{MESES[mesAtual.mes]} {mesAtual.ano}</h2>
+              <button onClick={() => irParaMes(1)} className="p-2 hover:bg-[#1e1e1e] rounded-lg transition-colors text-muted-foreground"><ChevronRight className="w-5 h-5"/></button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button className="px-3 py-1.5 text-xs bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg hover:border-muted-foreground transition-all">Hoje</button>
+            </div>
+          </div>
+
+          {/* Grid de Dias */}
+          <div className="flex-1 flex flex-col border border-[#1e1e1e] rounded-2xl overflow-hidden bg-[#161616]">
+            {/* Header Dias da Semana */}
+            <div className="grid grid-cols-7 bg-[#1a1a1a] border-b border-[#1e1e1e]">
+              {DIAS_SEMANA.map(d => (
+                <div key={d} className="py-3 text-center text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{d}</div>
               ))}
             </div>
-          )}
+
+            {/* Grid 7x6 */}
+            <div className="flex-1 grid grid-cols-7 grid-rows-6">
+              {dias.map((dia, idx) => {
+                const ehMêsAtual = dia.getMonth() === mesAtual.mes
+                const ehHoje = isHoje(dia)
+                const dStr = fmtData(dia)
+                const evs = eventosFiltrados.filter(e => e.data === dStr)
+                
+                return (
+                  <div 
+                    key={idx} 
+                    className={`
+                      relative p-1 lg:p-2 border-r border-b border-[#1e1e1e] min-h-[80px] lg:min-h-0
+                      ${!ehMêsAtual ? "bg-[#111] opacity-30" : "bg-transparent"}
+                      ${ehHoje ? "bg-[#e87c2a]/5" : ""}
+                    `}
+                  >
+                    <span className={`
+                      text-xs font-mono mb-2 inline-block px-1.5 py-0.5 rounded
+                      ${ehHoje ? "text-[#e87c2a] font-bold" : "text-muted-foreground"}
+                    `}>
+                      {dia.getDate()}
+                    </span>
+
+                    {/* Eventos na Célula */}
+                    <div className="space-y-1 overflow-y-auto max-h-[80px] lg:max-h-[100px] no-scrollbar">
+                      {evs.map(ev => {
+                        const cfg = (TIPO_CONFIG as any)[ev.tipo] || TIPO_CONFIG.outro
+                        return (
+                          <div 
+                            key={ev.id}
+                            className={`
+                              ${cfg.bg} ${cfg.text}
+                              text-[9px] lg:text-[10px] px-2 py-1 rounded-md border border-white/5 truncate cursor-pointer hover:brightness-110 transition-all
+                            `}
+                          >
+                            <span className="hidden lg:inline mr-1 font-mono opacity-80">{ev.hora_inicio}</span>
+                            {ev.titulo}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         </div>
+
+        {/* SIDEBAR DIREITA (Desktop) */}
+        <aside className="hidden lg:flex flex-col w-[320px] border-l border-[#1e1e1e] bg-[#111] p-6 space-y-8 overflow-y-auto">
+          
+          {/* Seção Equipe */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Users className="w-3.5 h-3.5"/> Equipe
+              </h3>
+            </div>
+            <div className="space-y-3">
+              {equipe.slice(0, 6).map(m => (
+                <button 
+                  key={m.id}
+                  onClick={() => setMembroFiltro(m.id)}
+                  className={`w-full flex items-center justify-between p-2 rounded-xl border transition-all group ${membroFiltro === m.id ? "bg-[#1a1a1a] border-[#2a2a2a]" : "bg-transparent border-transparent hover:bg-[#161616]"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-8 h-8 border border-[#2a2a2a]">
+                      <AvatarImage src={m.foto_url} />
+                      <AvatarFallback className="bg-[#222] text-[10px] font-bold text-muted-foreground">
+                        {getInitials(m.nome)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium text-foreground/80 group-hover:text-foreground">{m.nome.split(" ")[0]} {m.nome.split(" ").slice(-1)}</span>
+                  </div>
+                  <StatusBadge status={m.status || "ativo"} />
+                </button>
+              ))}
+              <Button variant="ghost" className="w-full text-[10px] text-muted-foreground h-8 hover:bg-[#161616]">Ver todos os membros</Button>
+            </div>
+          </section>
+
+          {/* Seção Próximos Eventos */}
+          <section>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 mb-4">
+              <Clock className="w-3.5 h-3.5"/> Próximos Eventos
+            </h3>
+            <div className="space-y-4">
+              {proximosEventos.length === 0 ? (
+                <p className="text-[11px] text-muted-foreground text-center py-4 italic">Sem eventos agendados</p>
+              ) : (
+                proximosEventos.map(ev => {
+                  const cfg = (TIPO_CONFIG as any)[ev.tipo] || TIPO_CONFIG.outro
+                  const d = new Date(ev.data + "T00:00:00")
+                  return (
+                    <div key={ev.id} className="relative pl-4 group cursor-pointer">
+                      <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-full ${cfg.dot}`} />
+                      <p className="text-xs font-bold text-foreground group-hover:text-[#e87c2a] transition-colors">{ev.titulo}</p>
+                      <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground font-mono">
+                        <span>{d.getDate()}/{MESES[d.getMonth()].slice(0,3)}</span>
+                        <span>•</span>
+                        <span>{ev.hora_inicio}</span>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </section>
+
+          {/* Seção Google Calendar Integration */}
+          <section className="mt-auto">
+            <div className="p-4 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-[#4285F4]/5 rounded-full -mr-8 -mt-8 transition-all group-hover:scale-150 duration-500" />
+              <h4 className="text-[11px] font-bold text-foreground mb-1 flex items-center gap-2">
+                <Calendar className="w-3.5 h-3.5 text-[#4285F4]"/> Google Calendar
+              </h4>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">Sincronização ativa. Todos os eventos são espelhados automaticamente.</p>
+            </div>
+          </section>
+
+        </aside>
+
       </div>
 
-      {/* Quick add */}
-      <div className="px-4 pb-4 flex-shrink-0">
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-border rounded-xl text-xs text-muted-foreground hover:border-primary/40 hover:text-primary/80 transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" /> Adicionar evento
-        </button>
-      </div>
-
-      {/* Modal */}
-      {showModal && (
-        <NovoEventoModal
-          onClose={() => setShowModal(false)}
-          onSave={criarEvento}
-          dataSelecionada={fmtData(diaSelecionado)}
-        />
-      )}
+      {/* Estilo Customizado para Scrollbar */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   )
 }

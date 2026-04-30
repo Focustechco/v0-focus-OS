@@ -6,6 +6,8 @@ export interface DriveFile {
   modifiedTime?: string;
   webViewLink?: string;
   thumbnailLink?: string;
+  iconLink?: string;
+  shared?: boolean;
   parents?: string[];
 }
 

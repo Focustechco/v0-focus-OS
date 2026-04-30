@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { CheckCircle2, RefreshCw } from "lucide-react"
+import { RefreshCw, FolderIcon, FileText, Clock, Share2, Plus, Wifi, WifiOff } from "lucide-react"
 import { DriveFileBrowser } from "@/components/drive/DriveFileBrowser"
 import { DriveUploadPanel } from "@/components/drive/DriveUploadPanel"
 import { DriveReportPanel } from "@/components/drive/DriveReportPanel"
@@ -9,25 +9,26 @@ import { useDriveAuth } from "@/lib/hooks/use-drive-auth"
 import { useDriveFiles } from "@/lib/hooks/use-drive-files"
 import { useDriveUpload } from "@/lib/hooks/use-drive-upload"
 import { getDriveDownloadUrl, createDriveFolder } from "@/lib/services/drive-api"
-import { buildDriveReportCsv } from "@/lib/utils/drive-utils"
+import { buildDriveReportCsv, isDriveFolder } from "@/lib/utils/drive-utils"
 import { useToast } from "@/hooks/use-toast"
 import type { DriveFile } from "@/lib/types/drive"
 
-const TABS = [
-  { id: "files", label: "Arquivos" },
-  { id: "upload", label: "Upload" },
-  { id: "report", label: "Relatório" },
+const MIME_FILTERS = [
+  { id: "all", label: "Todos" },
+  { id: "folder", label: "Pastas", mime: "application/vnd.google-apps.folder" },
+  { id: "doc", label: "Docs", mime: "application/vnd.google-apps.document" },
+  { id: "sheet", label: "Sheets", mime: "application/vnd.google-apps.spreadsheet" },
+  { id: "pdf", label: "PDF", mime: "application/pdf" },
+  { id: "image", label: "Imagens", mime: "image/" },
 ] as const
-
-type TabId = (typeof TABS)[number]["id"]
 
 export function DriveModule() {
   const { isAuthenticated, isLoading: authLoading, connect, disconnect, refresh: refreshAuth } = useDriveAuth()
-  const [activeTab, setActiveTab] = useState<TabId>("files")
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list")
+  const [viewMode, setViewMode] = useState<"list" | "grid">("grid")
   const [currentFolderId, setCurrentFolderId] = useState("root")
   const [breadcrumbs, setBreadcrumbs] = useState([{ id: "root", name: "Meu Drive" }])
-  const { rawFiles, files, search, setSearch, isLoading, refresh: refreshFiles } = useDriveFiles(currentFolderId)
+  const [mimeFilter, setMimeFilter] = useState("all")
+  const { rawFiles, files: searchedFiles, search, setSearch, isLoading, refresh: refreshFiles } = useDriveFiles(currentFolderId)
   const { queue, addFiles, uploadAll, removeItem, clearCompleted, hasPending } = useDriveUpload()
   const { toast } = useToast()
 
@@ -36,10 +37,31 @@ export function DriveModule() {
     [breadcrumbs],
   )
 
+  // Filtered files by mimeType
+  const files = useMemo(() => {
+    if (mimeFilter === "all") return searchedFiles
+    const filter = MIME_FILTERS.find(f => f.id === mimeFilter)
+    if (!filter || !("mime" in filter)) return searchedFiles
+    return searchedFiles.filter(f =>
+      mimeFilter === "image" ? f.mimeType.startsWith("image/") : f.mimeType === filter.mime
+    )
+  }, [searchedFiles, mimeFilter])
+
+  // Dynamic metrics
+  const metrics = useMemo(() => {
+    const folders = rawFiles.filter(f => isDriveFolder(f)).length
+    const totalFiles = rawFiles.filter(f => !isDriveFolder(f)).length
+    const today = new Date().toDateString()
+    const modifiedToday = rawFiles.filter(f => f.modifiedTime && new Date(f.modifiedTime).toDateString() === today).length
+    const shared = rawFiles.filter(f => f.shared).length
+    return { folders, totalFiles, modifiedToday, shared }
+  }, [rawFiles])
+
   const handleFolderClick = useCallback(
     (file: DriveFile) => {
       setCurrentFolderId(file.id)
       setBreadcrumbs((current) => [...current, { id: file.id, name: file.name }])
+      setMimeFilter("all")
     },
     [],
   )
@@ -48,16 +70,16 @@ export function DriveModule() {
     const nextBreadcrumbs = breadcrumbs.slice(0, index + 1)
     setBreadcrumbs(nextBreadcrumbs)
     setCurrentFolderId(nextBreadcrumbs[index]?.id || "root")
+    setMimeFilter("all")
   }, [breadcrumbs])
 
   const handleCreateFolder = useCallback(async () => {
     const folderName = window.prompt("Nome da nova pasta:")
     if (!folderName) return
-
     try {
       await createDriveFolder(currentFolderId, folderName)
       await refreshFiles()
-      toast({ type: "success", title: `Pasta “${folderName}” criada com sucesso.` })
+      toast({ type: "success", title: `Pasta "${folderName}" criada com sucesso.` })
     } catch (error: any) {
       toast({ type: "error", title: error?.message || "Falha ao criar pasta no Drive" })
     }
@@ -69,7 +91,6 @@ export function DriveModule() {
         handleFolderClick(file)
         return
       }
-
       try {
         const result = await getDriveDownloadUrl(file.id)
         window.open(result.viewUrl ?? result.downloadUrl, "_blank")
@@ -110,118 +131,117 @@ export function DriveModule() {
 
   const isConnected = isAuthenticated && !authLoading
 
-  // When connection becomes active, refresh file list
   useEffect(() => {
     if (isConnected) refreshFiles()
   }, [isConnected, refreshFiles])
 
   return (
-    <div className="flex flex-col h-full bg-[#080808] text-neutral-100">
-      <div className="flex flex-col gap-4 border-b border-neutral-800 px-4 py-4 sm:px-6 sm:py-5">
+    <div className="flex flex-col h-full bg-[#0f0f0f] text-neutral-100">
+
+      {/* ─── HEADER ─── */}
+      <div className="flex flex-col gap-4 border-b border-[#222] px-4 py-4 sm:px-6 sm:py-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-lg font-semibold text-white">Google Drive</p>
-            <p className="text-sm text-neutral-400">Acesse, gerencie e envie arquivos diretamente para o seu Drive conectado.</p>
+            <h1 className="text-xl font-bold text-white tracking-tight">Biblioteca de Documentos</h1>
+            <p className="text-xs text-neutral-500 mt-1">Navegue pelas pastas e arquivos do Google Drive conectado.</p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              onClick={isConnected ? disconnect : connect}
-              className="rounded-2xl bg-[#FF6B00] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#ff9a32]"
-            >
-              {isConnected ? "Desconectar" : authLoading ? "Verificando..." : "Conectar ao Drive"}
-            </button>
+          <div className="flex items-center gap-3">
+            {/* Connection status chip */}
             {isConnected ? (
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[11px] font-medium">
+                <Wifi className="w-3 h-3" /> Drive conectado
+              </span>
+            ) : (
               <button
-                type="button"
-                onClick={refreshAuth}
-                className="inline-flex items-center gap-2 rounded-2xl border border-neutral-700 bg-[#111111] px-4 py-2 text-sm text-neutral-100 hover:border-[#FF6B00] transition"
+                onClick={connect}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e87c2a]/10 border border-[#e87c2a]/30 text-[#e87c2a] text-[11px] font-bold hover:bg-[#e87c2a]/20 transition"
               >
-                <RefreshCw className="w-4 h-4" /> Recarregar status
+                <WifiOff className="w-3 h-3" /> Conectar Drive
               </button>
-            ) : null}
+            )}
+
+            {isConnected && (
+              <>
+                <button
+                  onClick={handleRefreshFiles}
+                  className="p-2 rounded-xl border border-[#222] bg-[#161616] text-neutral-400 hover:border-[#e87c2a] hover:text-[#e87c2a] transition"
+                  title="Sincronizar"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={disconnect}
+                  className="px-3 py-1.5 rounded-xl border border-[#222] bg-[#161616] text-neutral-400 text-xs hover:border-red-500/50 hover:text-red-400 transition"
+                >
+                  Desconectar
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-3xl border border-neutral-800 bg-[#0B0B0B] p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">Conexão</p>
-            <p className="mt-3 text-lg font-semibold text-white">{isConnected ? "Ativado" : "Desconectado"}</p>
+        {/* ─── METRIC CARDS ─── */}
+        {isConnected && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { icon: FolderIcon, label: "Pastas", value: metrics.folders, color: "text-amber-400" },
+              { icon: FileText, label: "Arquivos", value: metrics.totalFiles, color: "text-blue-400" },
+              { icon: Clock, label: "Modificados hoje", value: metrics.modifiedToday, color: "text-green-400" },
+              { icon: Share2, label: "Compartilhados", value: metrics.shared, color: "text-purple-400" },
+            ].map(m => (
+              <div key={m.label} className="rounded-2xl border border-[#222] bg-[#161616] p-4 flex items-center gap-3">
+                <div className={`p-2 rounded-xl bg-[#111] ${m.color}`}>
+                  <m.icon className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-white">{m.value}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-neutral-500">{m.label}</p>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="rounded-3xl border border-neutral-800 bg-[#0B0B0B] p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">Pasta ativa</p>
-            <p className="mt-3 text-lg font-semibold text-white">{currentFolderName}</p>
-          </div>
-          <div className="rounded-3xl border border-neutral-800 bg-[#0B0B0B] p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">Arquivo(s)</p>
-            <p className="mt-3 text-lg font-semibold text-white">{rawFiles.length}</p>
-          </div>
-        </div>
+        )}
       </div>
 
-      <div className="flex items-center gap-3 border-b border-neutral-800 bg-[#080808] px-4 py-3">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`rounded-full px-4 py-2 text-sm transition ${activeTab === tab.id ? "bg-[#FF6B00] text-black" : "bg-[#111111] text-neutral-300 hover:bg-[#1B1B1B]"}`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
+      {/* ─── MAIN CONTENT ─── */}
       <div className="flex-1 overflow-hidden">
         {!isConnected ? (
-          <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center text-neutral-400">
-            <CheckCircle2 className="h-14 w-14 text-[#FF6B00]" />
-            <p className="text-lg font-semibold text-white">Conecte seu Google Drive para começar</p>
-            <p className="max-w-xl text-sm text-neutral-500">
-              Depois de conectado, você poderá navegar pelas pastas, enviar arquivos e gerar relatórios diretamente do Drive.
-            </p>
+          <div className="flex h-full flex-col items-center justify-center gap-5 p-6 text-center">
+            <div className="w-20 h-20 rounded-3xl bg-[#161616] border border-[#222] flex items-center justify-center">
+              <FolderIcon className="w-10 h-10 text-[#e87c2a]" />
+            </div>
+            <div>
+              <p className="text-lg font-bold text-white mb-2">Conecte seu Google Drive</p>
+              <p className="max-w-md text-sm text-neutral-500">
+                Para acessar os documentos da sua empresa, conecte sua conta do Google Drive. Seus arquivos serão listados automaticamente.
+              </p>
+            </div>
             <button
-              type="button"
               onClick={connect}
-              className="rounded-2xl bg-[#FF6B00] px-6 py-3 text-sm font-semibold text-black"
+              className="rounded-2xl bg-[#e87c2a] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#e87c2a]/10 hover:bg-[#e87c2a]/90 transition"
             >
-              Conectar ao Drive
+              Conectar ao Google Drive
             </button>
           </div>
         ) : (
-          <div className="h-full overflow-hidden">
-            {activeTab === "files" && (
-              <DriveFileBrowser
-                files={files}
-                loading={isLoading}
-                search={search}
-                setSearch={setSearch}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-                breadcrumbs={breadcrumbs}
-                onBreadcrumbClick={handleBreadcrumbClick}
-                onFolderClick={handleFolderClick}
-                onFileOpen={handleFileOpen}
-                onCreateFolder={handleCreateFolder}
-                onRefresh={handleRefreshFiles}
-              />
-            )}
-
-            {activeTab === "upload" && (
-              <DriveUploadPanel
-                queue={queue}
-                addFiles={addFiles}
-                uploadAll={handleUploadAll}
-                clearCompleted={clearCompleted}
-                hasPending={hasPending}
-                currentFolderName={currentFolderName}
-                currentFolderId={currentFolderId}
-              />
-            )}
-
-            {activeTab === "report" && <DriveReportPanel files={rawFiles} onDownloadCsv={handleDownloadReport} />}
-          </div>
+          <DriveFileBrowser
+            files={files}
+            loading={isLoading}
+            search={search}
+            setSearch={setSearch}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            breadcrumbs={breadcrumbs}
+            onBreadcrumbClick={handleBreadcrumbClick}
+            onFolderClick={handleFolderClick}
+            onFileOpen={handleFileOpen}
+            onCreateFolder={handleCreateFolder}
+            onRefresh={handleRefreshFiles}
+            mimeFilter={mimeFilter}
+            setMimeFilter={setMimeFilter}
+            mimeFilters={MIME_FILTERS}
+          />
         )}
       </div>
     </div>
