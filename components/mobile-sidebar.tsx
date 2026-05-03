@@ -70,6 +70,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
     { id: "command-center", href: "/", icon: LayoutDashboard, label: "DASHBOARD" },
     { id: "projetos", href: "/projetos", icon: FolderKanban, label: "PROJETOS", badge: stats.projects > 0 ? stats.projects : null },
     { id: "tarefas", href: "/tarefas", icon: CheckSquare, label: "TAREFAS" },
+    { id: "agenda", href: "/agenda", icon: CalendarClock, label: "AGENDA" },
     { id: "comercial", href: "/comercial", icon: Briefcase, label: "COMERCIAL / CRM", badge: stats.comercial > 0 ? stats.comercial : null },
     { id: "backoffice", href: "/backoffice", icon: LayoutGrid, label: "BACKOFFICE", hasSubmenu: "backoffice" },
     { id: "equipe", href: "/equipe", icon: Users, label: "EQUIPE" },
