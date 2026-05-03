@@ -1,6 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { PageWrapper } from "@/components/page-wrapper"
+
 import { RefreshCw, FolderIcon, FileText, Clock, Share2, Plus, Wifi, WifiOff } from "lucide-react"
 import { DriveFileBrowser } from "@/components/drive/DriveFileBrowser"
 import { DriveUploadPanel } from "@/components/drive/DriveUploadPanel"
@@ -28,7 +30,7 @@ export function DriveModule() {
   const [currentFolderId, setCurrentFolderId] = useState("root")
   const [breadcrumbs, setBreadcrumbs] = useState([{ id: "root", name: "Meu Drive" }])
   const [mimeFilter, setMimeFilter] = useState("all")
-  const { rawFiles, files: searchedFiles, search, setSearch, isLoading, refresh: refreshFiles } = useDriveFiles(currentFolderId)
+  const { rawFiles, files: searchedFiles, search, setSearch, isLoading, isError, error, refresh: refreshFiles } = useDriveFiles(currentFolderId)
   const { queue, addFiles, uploadAll, removeItem, clearCompleted, hasPending } = useDriveUpload()
   const { toast } = useToast()
 
@@ -136,114 +138,138 @@ export function DriveModule() {
   }, [isConnected, refreshFiles])
 
   return (
-    <div className="flex flex-col h-full bg-[#0f0f0f] text-neutral-100">
+    <PageWrapper title="Documentos">
+      <div className="flex flex-col h-full bg-[#0f0f0f] text-neutral-100">
 
-      {/* ─── HEADER ─── */}
-      <div className="flex flex-col gap-4 border-b border-[#222] px-4 py-4 sm:px-6 sm:py-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Biblioteca de Documentos</h1>
-            <p className="text-xs text-neutral-500 mt-1">Navegue pelas pastas e arquivos do Google Drive conectado.</p>
-          </div>
+        {/* ─── BARRA DE AÇÕES E MÉTRICAS ─── */}
+        <div className="flex flex-col gap-4 border-b border-[#222] px-4 py-4 sm:px-6 sm:py-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Status de Conexão */}
+            <div className="flex items-center gap-3">
+              {isConnected ? (
+                <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[11px] font-medium">
+                  <Wifi className="w-3 h-3" /> Drive conectado
+                </span>
+              ) : (
+                <button
+                  onClick={connect}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e87c2a]/10 border border-[#e87c2a]/30 text-[#e87c2a] text-[11px] font-bold hover:bg-[#e87c2a]/20 transition"
+                >
+                  <WifiOff className="w-3 h-3" /> Conectar Drive
+                </button>
+              )}
 
-          <div className="flex items-center gap-3">
-            {/* Connection status chip */}
-            {isConnected ? (
-              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[11px] font-medium">
-                <Wifi className="w-3 h-3" /> Drive conectado
-              </span>
-            ) : (
-              <button
-                onClick={connect}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e87c2a]/10 border border-[#e87c2a]/30 text-[#e87c2a] text-[11px] font-bold hover:bg-[#e87c2a]/20 transition"
-              >
-                <WifiOff className="w-3 h-3" /> Conectar Drive
-              </button>
-            )}
-
+              {isConnected && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleRefreshFiles}
+                    className="p-2 rounded-xl border border-[#222] bg-[#161616] text-neutral-400 hover:border-[#e87c2a] hover:text-[#e87c2a] transition"
+                    title="Sincronizar"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={disconnect}
+                    className="px-3 py-1.5 rounded-xl border border-[#222] bg-[#161616] text-neutral-400 text-xs hover:border-red-500/50 hover:text-red-400 transition"
+                  >
+                    Desconectar
+                  </button>
+                </div>
+              )}
+            </div>
+            
             {isConnected && (
-              <>
-                <button
-                  onClick={handleRefreshFiles}
-                  className="p-2 rounded-xl border border-[#222] bg-[#161616] text-neutral-400 hover:border-[#e87c2a] hover:text-[#e87c2a] transition"
-                  title="Sincronizar"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={disconnect}
-                  className="px-3 py-1.5 rounded-xl border border-[#222] bg-[#161616] text-neutral-400 text-xs hover:border-red-500/50 hover:text-red-400 transition"
-                >
-                  Desconectar
-                </button>
-              </>
+              <div className="flex items-center gap-2 text-[11px] text-neutral-500 uppercase tracking-widest font-mono">
+                Pasta atual: <span className="text-white font-bold ml-1">{currentFolderName}</span>
+              </div>
             )}
           </div>
+
+          {/* ─── METRIC CARDS ─── */}
+          {isConnected && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { icon: FolderIcon, label: "Pastas", value: metrics.folders, color: "text-amber-400" },
+                { icon: FileText, label: "Arquivos", value: metrics.totalFiles, color: "text-blue-400" },
+                { icon: Clock, label: "Modificados hoje", value: metrics.modifiedToday, color: "text-green-400" },
+                { icon: Share2, label: "Compartilhados", value: metrics.shared, color: "text-purple-400" },
+              ].map(m => (
+                <div key={m.label} className="rounded-2xl border border-[#222] bg-[#161616] p-4 flex items-center gap-3">
+                  <div className={`p-2 rounded-xl bg-[#111] ${m.color}`}>
+                    <m.icon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-white">{m.value}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-neutral-500">{m.label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* ─── METRIC CARDS ─── */}
-        {isConnected && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { icon: FolderIcon, label: "Pastas", value: metrics.folders, color: "text-amber-400" },
-              { icon: FileText, label: "Arquivos", value: metrics.totalFiles, color: "text-blue-400" },
-              { icon: Clock, label: "Modificados hoje", value: metrics.modifiedToday, color: "text-green-400" },
-              { icon: Share2, label: "Compartilhados", value: metrics.shared, color: "text-purple-400" },
-            ].map(m => (
-              <div key={m.label} className="rounded-2xl border border-[#222] bg-[#161616] p-4 flex items-center gap-3">
-                <div className={`p-2 rounded-xl bg-[#111] ${m.color}`}>
-                  <m.icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-white">{m.value}</p>
-                  <p className="text-[10px] uppercase tracking-widest text-neutral-500">{m.label}</p>
-                </div>
+        {/* ─── MAIN CONTENT ─── */}
+        <div className="flex-1 overflow-hidden">
+          {!isConnected ? (
+            <div className="flex h-full flex-col items-center justify-center gap-5 p-6 text-center">
+              <div className="w-20 h-20 rounded-3xl bg-[#161616] border border-[#222] flex items-center justify-center">
+                <FolderIcon className="w-10 h-10 text-[#e87c2a]" />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ─── MAIN CONTENT ─── */}
-      <div className="flex-1 overflow-hidden">
-        {!isConnected ? (
-          <div className="flex h-full flex-col items-center justify-center gap-5 p-6 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-[#161616] border border-[#222] flex items-center justify-center">
-              <FolderIcon className="w-10 h-10 text-[#e87c2a]" />
+              <div>
+                <p className="text-lg font-bold text-white mb-2">Conecte seu Google Drive</p>
+                <p className="max-w-md text-sm text-neutral-500">
+                  Para acessar os documentos da sua empresa, conecte sua conta do Google Drive. Seus arquivos serão listados automaticamente.
+                </p>
+              </div>
+              <button
+                onClick={connect}
+                className="rounded-2xl bg-[#e87c2a] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#e87c2a]/10 hover:bg-[#e87c2a]/90 transition"
+              >
+                Conectar ao Google Drive
+              </button>
             </div>
-            <div>
-              <p className="text-lg font-bold text-white mb-2">Conecte seu Google Drive</p>
-              <p className="max-w-md text-sm text-neutral-500">
-                Para acessar os documentos da sua empresa, conecte sua conta do Google Drive. Seus arquivos serão listados automaticamente.
-              </p>
+          ) : isError ? (
+            <div className="flex h-full flex-col items-center justify-center gap-5 p-6 text-center">
+              <div className="w-20 h-20 rounded-3xl bg-[#161616] border border-[#222] flex items-center justify-center">
+                <WifiOff className="w-10 h-10 text-red-500" />
+              </div>
+              <div>
+                <p className="text-lg font-bold text-red-400 mb-2">Erro de Conexão com o Drive</p>
+                <p className="max-w-md text-sm text-neutral-500">
+                  A conexão com o Google Drive falhou. O seu token pode ter expirado ou as credenciais (.env) estão inválidas.
+                </p>
+                <p className="mt-2 text-xs text-neutral-600 bg-[#111] p-2 rounded-lg border border-[#222] inline-block">
+                  Erro: {error?.message || "Não autorizado"}
+                </p>
+              </div>
+              <button
+                onClick={disconnect}
+                className="rounded-2xl bg-red-500/10 border border-red-500/20 px-6 py-3 text-sm font-bold text-red-500 hover:bg-red-500/20 transition mt-2"
+              >
+                Desconectar e Tentar Novamente
+              </button>
             </div>
-            <button
-              onClick={connect}
-              className="rounded-2xl bg-[#e87c2a] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#e87c2a]/10 hover:bg-[#e87c2a]/90 transition"
-            >
-              Conectar ao Google Drive
-            </button>
-          </div>
-        ) : (
-          <DriveFileBrowser
-            files={files}
-            loading={isLoading}
-            search={search}
-            setSearch={setSearch}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            breadcrumbs={breadcrumbs}
-            onBreadcrumbClick={handleBreadcrumbClick}
-            onFolderClick={handleFolderClick}
-            onFileOpen={handleFileOpen}
-            onCreateFolder={handleCreateFolder}
-            onRefresh={handleRefreshFiles}
-            mimeFilter={mimeFilter}
-            setMimeFilter={setMimeFilter}
-            mimeFilters={MIME_FILTERS}
-          />
-        )}
+          ) : (
+            <DriveFileBrowser
+              files={files}
+              loading={isLoading}
+              search={search}
+              setSearch={setSearch}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              breadcrumbs={breadcrumbs}
+              onBreadcrumbClick={handleBreadcrumbClick}
+              onFolderClick={handleFolderClick}
+              onFileOpen={handleFileOpen}
+              onCreateFolder={handleCreateFolder}
+              onRefresh={handleRefreshFiles}
+              mimeFilter={mimeFilter}
+              setMimeFilter={setMimeFilter}
+              mimeFilters={MIME_FILTERS}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </PageWrapper>
   )
 }

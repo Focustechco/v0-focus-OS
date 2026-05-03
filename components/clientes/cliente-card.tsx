@@ -28,7 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: any) {
+export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete, viewMode = "grid" }: any) {
   
   // Extrai iniciais
   const getInitials = (name: string) => {
@@ -41,6 +41,109 @@ export function ClienteCard({ cliente, projectCount, onViewDetails, onDelete }: 
   }
 
   const initials = getInitials(cliente.empresa || cliente.nome)
+
+  if (viewMode === "list") {
+    return (
+      <Card className="bg-card border-border hover:border-orange-500/30 transition-all group overflow-hidden relative">
+        <div className="absolute left-0 top-0 h-full w-1 bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <CardContent className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          <div className="flex items-center gap-3 md:w-[250px] shrink-0">
+            {cliente.logo_url ? (
+              <img 
+                src={cliente.logo_url} 
+                alt="Logo do cliente"
+                className="w-10 h-10 rounded-lg object-cover bg-white"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-[#1A1A1A] flex items-center justify-center border border-border shrink-0">
+                <span className="text-orange-500 font-bold font-mono text-xs uppercase">{initials}</span>
+              </div>
+            )}
+            <div className="min-w-0">
+              <h3 className="text-foreground font-medium text-sm group-hover:text-orange-400 transition-colors uppercase tracking-tight truncate">
+                {cliente.empresa || "Sem Empresa"}
+              </h3>
+              <p className="text-neutral-500 text-xs truncate">{cliente.nome}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1 text-xs text-neutral-400 md:w-[200px] shrink-0">
+            <div className="flex items-center gap-2">
+              <Mail className="w-3 h-3 text-neutral-600 shrink-0" />
+              <span className="truncate">{cliente.email || "N/A"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Phone className="w-3 h-3 text-neutral-600 shrink-0" />
+              <span className="truncate">{cliente.telefone || "N/A"}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1 text-xs text-neutral-400 md:w-[150px] shrink-0">
+            <div className="flex items-center gap-2 font-mono">
+              <FileText className="w-3 h-3 text-neutral-600 shrink-0" />
+              <span className="truncate">{cliente.cnpj || "N/A"}</span>
+            </div>
+            <Badge variant="outline" className="w-fit bg-orange-500/5 border-orange-500/20 text-orange-500 text-[10px] py-0 px-2 h-5 flex items-center gap-1">
+              <FolderKanban className="w-3 h-3" />
+              {projectCount} {projectCount === 1 ? "Projeto" : "Projetos"}
+            </Badge>
+          </div>
+
+          <div className="flex items-center gap-2 ml-auto shrink-0 mt-4 md:mt-0">
+            {cliente.contract_url && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-neutral-500 hover:text-foreground shrink-0"
+                      onClick={() => window.open(cliente.contract_url, '_blank')}
+                    >
+                      <Paperclip className="w-4 h-4 text-orange-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-[#1A1A1A] border-border text-foreground">
+                    <p>Contrato anexado</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
+            <Button 
+              variant="ghost" 
+              onClick={onViewDetails}
+              className="h-8 text-xs bg-[#1A1A1A] hover:bg-orange-500 hover:text-foreground transition-all text-neutral-400 font-mono tracking-widest uppercase"
+            >
+              Detalhes
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-500 hover:text-foreground shrink-0">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-[#1A1A1A] border-border text-foreground">
+                <DropdownMenuItem onClick={onViewDetails} className="focus:bg-[#2A2A2A] focus:text-orange-500 cursor-pointer">
+                  Ver Detalhes
+                </DropdownMenuItem>
+                <DropdownMenuItem className="focus:bg-[#2A2A2A] focus:text-foreground cursor-pointer">
+                  Editar
+                </DropdownMenuItem>
+                {onDelete && (
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete(cliente.id); }} className="focus:bg-red-500/10 focus:text-red-500 text-red-500 cursor-pointer">
+                    Excluir
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="bg-card border-border hover:border-orange-500/30 transition-all group overflow-hidden relative">

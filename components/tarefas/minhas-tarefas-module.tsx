@@ -30,7 +30,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { LayoutGrid, List, Calendar as CalendarIcon } from "lucide-react"
 import { KanbanBoard } from "./kanban-board"
+import { TaskListView } from "./task-list-view"
+import { NewTaskModal } from "./new-task-modal"
 import { useTarefas } from "@/lib/hooks/use-tarefas"
 import { useEquipe } from "@/lib/hooks/use-equipe"
 import { useProjetos } from "@/lib/hooks/use-projetos"
@@ -348,72 +351,194 @@ export function MinhasTarefasModule() {
     setIsModalOpen(true)
   }
 
-  const handleSaveTask = async () => {
-    if (!formData.titulo) return alert("Título é obrigatório!")
+  const handleSaveTask = async (modalData: any) => {
+    if (!modalData.titulo) return
     setIsSubmitting(true)
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      
       const payload: any = {
-        titulo: formData.titulo,
-        descricao: formData.descricao,
-        status: formData.status,
-        prioridade: formData.prioridade,
-        responsavel_id: formData.responsavel_id === "none" ? null : formData.responsavel_id,
-        prazo: formData.prazo || null,
-        // Enviar os novos campos caso o bd suporte (se não suportar, a sdk pode ignorar ou lançar erro, mas como eles nao existem, melhor silenciar no script anterior e agora mockar)
-        // Como o script falhou, não vou enviar tempo e meta para a tabela principal nativamente, ou enviarei no mutate local, mas aqui vamos tentar e se der erro removemos.
-        // O supabase insert ignora colunas não existentes as vezes, mas as vezes dá erro. Vamos enviar apenas os seguros, mais tempo_estimado para testar.
+        titulo: modalData.titulo,
+        descricao: modalData.descricao,
+        status: modalData.status,
+        prioridade: modalData.prioridade,
+        responsavel_id: modalData.responsavel_id || null,
+        prazo: modalData.prazo || null,
+        projeto_id: modalData.projeto_id || null,
       }
-      if (formData.tempo_estimado) payload.tempo_estimado = parseInt(formData.tempo_estimado)
+      if (modalData.tempo_estimado) payload.tempo_estimado = modalData.tempo_estimado
 
-      if (isEditMode) {
-        await fetch(`/api/tarefas/${formData.id}`, {
+      let shouldNotifyAssign = false
+      let statusChanged = false
+      let oldStatus = ""
+      let assignedUserId = payload.responsavel_id
+      let finalTaskId = modalData.id || ""
+
+      if (isEditMode && modalData.id) {
+        const { data: oldTask } = await supabase.from("tarefas").select("responsavel_id, status").eq("id", modalData.id).single()
+        if (oldTask) {
+          if (oldTask.responsavel_id !== assignedUserId) shouldNotifyAssign = true
+          if (oldTask.status !== payload.status) {
+            statusChanged = true
+            oldStatus = oldTask.status
+          }
+        }
+
+        await fetch(`/api/tarefas/${modalData.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         })
       } else {
-        const fallBackProject = projects[0]?.id || ""
-        await addTask({ ...payload, projeto_id: fallBackProject })
+        shouldNotifyAssign = !!assignedUserId
+        const fallBackProject = modalData.projeto_id || projects[0]?.id || ""
+        const res = await addTask({ ...payload, projeto_id: fallBackProject })
+        if (res.data) {
+          finalTaskId = res.data.id
+          // Salvar itens do checklist se houver
+          if (modalData.checklist && modalData.checklist.length > 0) {
+            const checkItems = modalData.checklist.map((title: string) => ({
+              task_id: finalTaskId,
+              title,
+              is_done: false
+            }))
+            const { error } = await supabase.from("checklist_items").insert(checkItems)
+            if (error) console.error("Erro ao salvar checklist:", error)
+          }
+        }
       }
       
+      // Disparar Notificação de ATRIBUIÇÃO
+      if (shouldNotifyAssign && assignedUserId && user) {
+        try {
+          await fetch('/api/notifications/dispatch', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: assignedUserId,
+              triggeredBy: user.id,
+              eventType: 'nova_task',
+              data: {
+                title: 'Nova task atribuída a você',
+                message: `${payload.titulo} — Prioridade ${payload.prioridade.charAt(0).toUpperCase() + payload.prioridade.slice(1)}`,
+                ref_type: 'tarefas',
+                ref_id: finalTaskId,
+                ref_title: payload.titulo
+              }
+            })
+          })
+        } catch (e) {
+          console.error("Erro no dispatch assign:", e)
+        }
+      }
+
+      // Disparar Notificação de STATUS
+      if (statusChanged && assignedUserId && user) {
+        try {
+          const statusLabels: Record<string, string> = {
+            a_fazer: "Pendente", em_progresso: "Em Progresso", em_andamento: "Em Progresso",
+            em_revisao: "Em Revisão", concluida: "Concluída",
+          }
+          const evType = payload.status === "concluida" ? "task_concluida" : "task_status_changed"
+          const evTitle = payload.status === "concluida" ? "Task concluída ✓" : "Status da sua task foi atualizado"
+          
+          await fetch('/api/notifications/dispatch', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: assignedUserId,
+              triggeredBy: user.id,
+              eventType: evType,
+              data: {
+                title: evTitle,
+                message: `${payload.titulo}: ${statusLabels[oldStatus] || oldStatus} → ${statusLabels[payload.status] || payload.status}`,
+                ref_type: 'tarefas',
+                ref_id: finalTaskId,
+                ref_title: payload.titulo
+              }
+            })
+          })
+        } catch (e) {
+          console.error("Erro no dispatch status:", e)
+        }
+      }
+
       mutate()
       setIsModalOpen(false)
     } catch (e) {
       console.error(e)
-      alert("Erro ao salvar a tarefa. Verifique se o BD possui todas as colunas de Kanban.")
+      alert("Erro ao salvar a tarefa.")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="space-y-6 flex flex-col h-full">
-      {/* HEADER KANBAN */}
-      <div>
-        <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground tracking-tight">Gerenciador de Tasks</h1>
-        <p className="text-sm text-neutral-500 mt-1">Organize, delegue e acompanhe o progresso da sua equipe.</p>
+    <div className="space-y-6 flex flex-col h-full bg-[#0f0f0f] relative pb-20">
+      {/* ─── CABEÇALHO DA PÁGINA ─── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-1">
+        <div>
+          <h1 className="text-2xl font-bold text-white tracking-tight leading-none">Gerenciador de Tasks</h1>
+          <p className="text-[13px] text-[#666] mt-2">Organize, delegue e acompanhe o progresso da sua equipe.</p>
+        </div>
+
+        {/* Botões de Visualização */}
+        <div className="flex items-center gap-2">
+          {[
+            { id: "checklist", label: "Checklist", icon: List },
+            { id: "quadro", label: "Quadro", icon: LayoutGrid },
+            { id: "calendario", label: "Calendário", icon: CalendarIcon },
+          ].map((mode) => {
+            const active = activeTab === mode.id
+            return (
+              <button
+                key={mode.id}
+                onClick={() => setActiveTab(mode.id)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all border",
+                  active 
+                    ? "bg-[#e87c2a] border-transparent text-white shadow-lg shadow-[#e87c2a]/10" 
+                    : "bg-transparent border-[#222] text-[#aaa] hover:border-[#333] hover:text-white"
+                )}
+              >
+                <mode.icon className="w-3.5 h-3.5" />
+                {mode.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
-      {/* TOOLBAR */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card border border-[#1E1E1E] p-3 rounded-xl">
-        <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto scroolbar-hide">
-          <div className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-lg min-w-[150px]">
-            <Search className="w-4 h-4 text-neutral-500 flex-shrink-0" />
+      {/* ─── BARRA DE FERRAMENTAS ─── */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
+        {/* Lado Esquerdo: Busca */}
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#161616] border border-[#222] rounded-lg w-full sm:w-[220px] focus-within:border-[#e87c2a]/50 transition-colors">
+            <Search className="w-4 h-4 text-[#666] flex-shrink-0" />
             <input
               type="text"
-              placeholder="Buscar tarefas..."
+              placeholder="Buscar tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-xs text-foreground placeholder:text-neutral-600 outline-none w-full"
+              className="bg-transparent text-[13px] text-white placeholder:text-[#444] outline-none w-full"
             />
           </div>
           
+          {/* Ícones de visualização (Lista) no centro/lado da busca */}
+          <div className="hidden sm:flex items-center gap-1 text-[#444]">
+            <List className="w-4 h-4" />
+            <LayoutGrid className="w-4 h-4" />
+          </div>
+        </div>
+
+        {/* Lado Direito: Filtros e Botão */}
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
           <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-            <SelectTrigger className="bg-background border-border text-xs h-9 min-w-[140px]">
-              <div className="flex items-center gap-2"><Filter className="w-3.5 h-3.5"/> <SelectValue placeholder="Responsável" /></div>
+            <SelectTrigger className="bg-[#161616] border-[#222] text-xs h-9 w-[180px] rounded-lg text-neutral-300">
+              <SelectValue placeholder="Todos" />
             </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              <SelectItem value="all">Qualquer responsável</SelectItem>
+            <SelectContent className="bg-[#161616] border-[#222] text-white">
+              <SelectItem value="all">Todos</SelectItem>
               {equipe.map(m => (
                 <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>
               ))}
@@ -421,159 +546,71 @@ export function MinhasTarefasModule() {
           </Select>
 
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="bg-background border-border text-xs h-9 min-w-[120px]">
-              <div className="flex items-center gap-2"><Filter className="w-3.5 h-3.5"/> <SelectValue placeholder="Prioridade" /></div>
+            <SelectTrigger className="bg-[#161616] border-[#222] text-xs h-9 w-[130px] rounded-lg text-neutral-300">
+              <SelectValue placeholder="Prioridade" />
             </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              <SelectItem value="all">Qualquer prioridade</SelectItem>
+            <SelectContent className="bg-[#161616] border-[#222] text-white">
+              <SelectItem value="all">Qualquer</SelectItem>
               <SelectItem value="alta">Alta</SelectItem>
               <SelectItem value="media">Média</SelectItem>
               <SelectItem value="baixa">Baixa</SelectItem>
             </SelectContent>
           </Select>
-        </div>
 
-        <Button onClick={openNewTask} className="bg-[#e65c00] hover:bg-[#ff7a1f] text-foreground flex-shrink-0">
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Tarefa
-        </Button>
+          <Button 
+            onClick={openNewTask} 
+            className="bg-[#e87c2a] hover:bg-[#e87c2a]/90 text-white font-bold h-9 px-5 rounded-lg transition-all shadow-lg shadow-[#e87c2a]/10"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Task
+          </Button>
+        </div>
       </div>
 
-      {/* TABS */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col">
-        <TabsList className="bg-transparent border-b border-[#1E1E1E] w-full justify-start rounded-none h-auto p-0 gap-6">
-          <TabsTrigger 
-            value="checklist" 
-            className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#e65c00] data-[state=active]:text-[#e65c00] rounded-none py-3 px-1 text-sm font-medium text-neutral-500"
-          >
-            Checklist
-          </TabsTrigger>
-          <TabsTrigger 
-            value="quadro" 
-            className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#e65c00] data-[state=active]:text-[#e65c00] rounded-none py-3 px-1 text-sm font-medium text-neutral-500"
-          >
-            Quadro
-          </TabsTrigger>
-        </TabsList>
+      {/* ─── CONTEÚDO PRINCIPAL ─── */}
+      <div className="flex-1 mt-2">
+        {activeTab === "checklist" && (
+          <TaskListView
+            searchQuery={searchQuery}
+            assigneeFilter={assigneeFilter}
+            priorityFilter={priorityFilter}
+            onEditTask={openEditTask}
+          />
+        )}
+        {activeTab === "quadro" && (
+          <KanbanBoard 
+            searchQuery={searchQuery}
+            assigneeFilter={assigneeFilter}
+            priorityFilter={priorityFilter}
+            onEditTask={openEditTask}
+          />
+        )}
+        {activeTab === "calendario" && (
+          <div className="flex flex-col items-center justify-center py-20 text-neutral-600 bg-[#161616] rounded-2xl border border-[#222]">
+            <CalendarIcon className="w-12 h-12 mb-4 opacity-20" />
+            <p className="text-sm">Visualização em Calendário indisponível.</p>
+          </div>
+        )}
+      </div>
 
-        <div className="mt-6 flex-1">
-          <TabsContent value="checklist" className="mt-0 h-full">
-            <AbaMinhasTarefas />
-          </TabsContent>
-          <TabsContent value="quadro" className="mt-0 h-full">
-            <KanbanBoard 
-              searchQuery={searchQuery}
-              assigneeFilter={assigneeFilter}
-              priorityFilter={priorityFilter}
-              onEditTask={openEditTask}
-            />
-          </TabsContent>
-        </div>
-      </Tabs>
+      {/* ─── BOTÃO FLUTUANTE (FAB) ─── */}
+      <button
+        onClick={openNewTask}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-[#e87c2a] text-white rounded-full flex items-center justify-center shadow-2xl shadow-[#e87c2a]/40 hover:scale-110 active:scale-95 transition-all z-50 border border-white/10"
+      >
+        <Plus className="w-7 h-7 stroke-[3px]" />
+      </button>
 
       {/* MODAL NOVA/EDITAR TAREFA */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-background border-border text-foreground">
-          <DialogHeader>
-            <DialogTitle className="font-display">{isEditMode ? "Editar Tarefa" : "Nova Tarefa"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label className="text-neutral-400 text-xs uppercase">Título da Tarefa *</Label>
-              <Input 
-                className="bg-[#1A1A1A] border-border" 
-                value={formData.titulo} 
-                onChange={e => setFormData({...formData, titulo: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-neutral-400 text-xs uppercase">Descrição</Label>
-              <Textarea 
-                className="bg-[#1A1A1A] border-border" 
-                value={formData.descricao} 
-                onChange={e => setFormData({...formData, descricao: e.target.value})} 
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-neutral-400 text-xs uppercase">Status</Label>
-                <Select value={formData.status} onValueChange={v => setFormData({...formData, status: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-background border-border">
-                    <SelectItem value="a_fazer">Pendente</SelectItem>
-                    <SelectItem value="em_progresso">Em Progresso</SelectItem>
-                    <SelectItem value="concluida">Concluída</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-neutral-400 text-xs uppercase">Prioridade</Label>
-                <Select value={formData.prioridade} onValueChange={v => setFormData({...formData, prioridade: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-background border-border">
-                    <SelectItem value="alta">Alta</SelectItem>
-                    <SelectItem value="media">Média</SelectItem>
-                    <SelectItem value="baixa">Baixa</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-neutral-400 text-xs uppercase">Atribuído a</Label>
-                <Select value={formData.responsavel_id} onValueChange={v => setFormData({...formData, responsavel_id: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-border"><SelectValue placeholder="Nenhum" /></SelectTrigger>
-                  <SelectContent className="bg-background border-border">
-                    <SelectItem value="none">Nenhum membro</SelectItem>
-                    {equipe.map(m => <SelectItem key={m.id} value={m.id}>{m.nome}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-neutral-400 text-xs uppercase">Vencimento</Label>
-                <Input 
-                  type="date" 
-                  className="bg-[#1A1A1A] border-border [color-scheme:dark]" 
-                  value={formData.prazo} 
-                  onChange={e => setFormData({...formData, prazo: e.target.value})} 
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-2">
-                <Label className="text-neutral-400 text-xs uppercase">Tempo Estimado (min)</Label>
-                <Input 
-                  type="number" 
-                  className="bg-[#1A1A1A] border-border" 
-                  placeholder="Ex: 60"
-                  value={formData.tempo_estimado} 
-                  onChange={e => setFormData({...formData, tempo_estimado: e.target.value})} 
-                />
-              </div>
-               <div className="space-y-2">
-                <Label className="text-neutral-400 text-xs uppercase">Vincular a Meta</Label>
-                <Select value={formData.meta_id} onValueChange={v => setFormData({...formData, meta_id: v})}>
-                  <SelectTrigger className="bg-[#1A1A1A] border-border text-neutral-500"><SelectValue placeholder="Opcional" /></SelectTrigger>
-                  <SelectContent className="bg-background border-border">
-                    <SelectItem value="none">Sem meta vinculada</SelectItem>
-                    <SelectItem value="meta1">Aumentar Receita (Mock)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4 border-t border-[#1A1A1A]">
-              <Button variant="outline" className="border-border" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-              <Button onClick={handleSaveTask} disabled={isSubmitting} className="bg-[#e65c00] hover:bg-[#ff7a1f] text-foreground">
-                {isEditMode ? "Salvar" : "Criar Tarefa"}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <NewTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTask}
+        equipe={equipe}
+        projects={projects}
+        editTask={isEditMode ? formData : null}
+        isEditMode={isEditMode}
+      />
     </div>
   )
 }

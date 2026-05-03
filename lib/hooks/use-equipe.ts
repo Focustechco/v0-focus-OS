@@ -140,6 +140,18 @@ export function useEquipe() {
     return { url: publicUrl }
   }
 
+  const deleteMembro = async (id: string) => {
+    const { error } = await supabase.from("equipe").delete().eq("id", id)
+
+    if (error) {
+      console.error("Erro ao deletar membro:", JSON.stringify(error, null, 2))
+      return { error }
+    }
+
+    mutate()
+    return { data: true }
+  }
+
   return {
     equipe: (data || []) as TeamMember[],
     isLoading,
@@ -147,6 +159,7 @@ export function useEquipe() {
     mutate,
     addMembro,
     updateMembro,
+    deleteMembro,
     uploadAvatar,
     uploadContrato,
   }

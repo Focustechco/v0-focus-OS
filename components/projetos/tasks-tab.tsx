@@ -115,6 +115,29 @@ function TaskCardNew({ task, equipe, sprints, onMutate }: {
         priority: task.prioridade === "alta" ? "high" : "normal",
       })
 
+      // Notificar o responsável da mudança de status
+      if (task.responsavel_id) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session && session.user.id !== task.responsavel_id) {
+          await fetch("/api/notifications/dispatch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: task.responsavel_id,
+              triggeredBy: session.user.id,
+              eventType: "task_status_changed",
+              data: {
+                title: "Status da sua task foi atualizado",
+                message: `${task.titulo}: ${task.status} → Em Revisão`,
+                ref_type: "tarefas",
+                ref_id: task.id,
+                ref_title: task.titulo
+              }
+            })
+          }).catch(console.error)
+        }
+      }
+
       onMutate()
     } finally {
       setSendingReview(false)

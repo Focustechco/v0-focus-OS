@@ -12,6 +12,7 @@ export interface Notification {
   type: string
   relatedEntityType?: string
   relatedEntityId?: string
+  triggeredBy?: string
   createdAt: string
 }
 
@@ -84,10 +85,63 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh()
 
-    // Polling opcional ou setup de Realtime se disponível
-    const interval = setInterval(refresh, 60000) // 1 min
+    // Setup de Realtime para ouvir novas notificações
+    let channel: ReturnType<typeof supabase.channel>
 
-    return () => clearInterval(interval)
+    const setupRealtime = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      channel = supabase
+        .channel("notificacoes_channel")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notificacoes",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            const newNotif = payload.new as any
+            
+            // Format new notification to match local state
+            const mappedNewNotif: Notification = {
+              id: newNotif.id,
+              title: newNotif.titulo,
+              body: newNotif.mensagem,
+              isRead: newNotif.lida,
+              type: newNotif.tipo,
+              relatedEntityType: newNotif.ref_type,
+              relatedEntityId: newNotif.ref_id,
+              triggeredBy: newNotif.triggered_by,
+              createdAt: newNotif.created_at,
+            }
+
+            setNotifications((prev) => [mappedNewNotif, ...prev])
+
+            // Exibir toast customizado
+            toast.success(mappedNewNotif.title, {
+              description: mappedNewNotif.body,
+              style: {
+                background: "#1e1e1e",
+                borderLeft: "3px solid #e87c2a",
+                color: "#fff",
+              },
+              duration: 5000,
+            })
+          }
+        )
+        .subscribe()
+    }
+
+    setupRealtime()
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel)
+      }
+    }
   }, [])
 
   return (

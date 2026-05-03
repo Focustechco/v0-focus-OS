@@ -21,7 +21,9 @@ import {
   MoreVertical,
   Edit2,
   Trash2,
-  ExternalLink
+  ExternalLink,
+  LayoutGrid,
+  List
 } from "lucide-react"
 import { NovoClienteModal } from "@/components/clientes/novo-cliente-modal"
 import { ClienteCard } from "@/components/clientes/cliente-card"
@@ -35,6 +37,7 @@ export default function ClientesPage() {
   const [novoClienteOpen, setNovoClienteOpen] = useState(false)
   const [selectedClienteId, setSelectedClienteId] = useState<string | null>(null)
   const [detalhesOpen, setDetalhesOpen] = useState(false)
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   const filteredClientes = clientes.filter(c => 
     c.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,13 +84,35 @@ export default function ClientesPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button 
-                onClick={() => setNovoClienteOpen(true)}
-                className="bg-orange-500 hover:bg-orange-600 text-foreground font-medium"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Cliente
-              </Button>
+              
+              <div className="flex items-center gap-3">
+                <div className="flex items-center bg-[#1A1A1A] rounded-md p-1 border border-border">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className={`h-8 w-8 rounded-sm ${viewMode === 'grid' ? 'bg-[#2A2A2A] text-foreground' : 'text-neutral-500 hover:text-foreground'}`}
+                    onClick={() => setViewMode('grid')}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className={`h-8 w-8 rounded-sm ${viewMode === 'list' ? 'bg-[#2A2A2A] text-foreground' : 'text-neutral-500 hover:text-foreground'}`}
+                    onClick={() => setViewMode('list')}
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <Button 
+                  onClick={() => setNovoClienteOpen(true)}
+                  className="bg-orange-500 hover:bg-orange-600 text-foreground font-medium"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Novo Cliente
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -117,7 +142,7 @@ export default function ClientesPage() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
               {filteredClientes.map(cliente => (
                 <ClienteCard 
                   key={cliente.id} 
@@ -125,6 +150,7 @@ export default function ClientesPage() {
                   projectCount={getProjectCount(cliente.id)}
                   onViewDetails={() => handleOpenDetalhes(cliente.id)}
                   onDelete={handleDeleteCliente}
+                  viewMode={viewMode}
                 />
               ))}
             </div>

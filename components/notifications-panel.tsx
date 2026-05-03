@@ -16,12 +16,14 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useNotificacoes, Notificacao } from "@/lib/hooks/use-notificacoes"
+import { useEquipe } from "@/lib/hooks/use-equipe"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 
 export function NotificationsPanel() {
   const [isOpen, setIsOpen] = useState(false)
   const { notifications, unreadCount, markAsRead, markAllAsRead, isLoading } = useNotificacoes()
+  const { equipe } = useEquipe()
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -113,72 +115,84 @@ export function NotificationsPanel() {
       </Button>
 
       {isOpen && (
-        <div className="fixed sm:absolute inset-x-4 top-16 sm:inset-auto sm:right-0 sm:mt-2 sm:w-[380px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="p-4 border-b border-border flex items-center justify-between bg-card">
-            <h3 className="text-xs font-mono font-bold tracking-widest text-foreground">NOTIFICAÇÕES</h3>
+        <div className="fixed sm:absolute inset-x-4 top-16 sm:inset-auto sm:right-0 sm:mt-2 w-full sm:w-[320px] bg-[#161616] border border-[#222] rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-4 border-b border-[#222] flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white tracking-wide">Notificações</h3>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={markAllAsRead}
-              className="text-[10px] text-orange-500 hover:text-orange-400 font-mono h-6 px-2"
+              className="text-[11px] text-[#e87c2a] hover:text-[#ff8e3e] hover:bg-transparent h-6 px-0"
             >
-              MARCAR TODAS COMO LIDAS
+              Marcar todas lidas
             </Button>
           </div>
 
-          <div className="max-h-[500px] overflow-y-auto overscroll-contain custom-scrollbar">
+          <div className="max-h-[420px] overflow-y-auto overscroll-contain custom-scrollbar">
             {isLoading && notifications.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="animate-spin w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-2" />
-                <p className="text-[10px] text-neutral-600 font-mono uppercase">Sincronizando...</p>
+                <div className="animate-spin w-5 h-5 border-2 border-[#e87c2a] border-t-transparent rounded-full mx-auto mb-2" />
+                <p className="text-[11px] text-neutral-500">Sincronizando...</p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-12 text-center">
-                <CheckCircle2 className="w-8 h-8 text-neutral-800 mx-auto mb-3" />
-                <p className="text-[10px] text-neutral-600 font-mono uppercase tracking-widest">Nada por aqui no momento</p>
+                <CheckCircle2 className="w-8 h-8 text-[#333] mx-auto mb-3" />
+                <p className="text-[12px] text-[#666]">Nenhuma notificação.</p>
               </div>
             ) : (
-              <div className="divide-y divide-[#1A1A1A]">
-                {notifications.map((notif) => (
-                  <div
-                    key={notif.id}
-                    onClick={() => handleNotificationClick(notif)}
-                    className={cn(
-                      "p-4 flex gap-3 cursor-pointer transition-all hover:bg-accent/10 active:bg-[#202020] group",
-                      !notif.lida && "bg-orange-500/[0.03]"
-                    )}
-                  >
-                    <div className="relative flex-shrink-0 mt-1">
-                      {getIcon(notif.tipo)}
-                      {!notif.lida && (
-                        <span className="absolute -top-1 -left-1 w-2 h-2 bg-orange-500 rounded-full border border-[#0F0F0F]" />
+              <div className="divide-y divide-[#222]">
+                {notifications.map((notif) => {
+                  const triggerUser = equipe?.find(e => e.id === notif.triggeredBy)
+                  const initials = triggerUser?.nome 
+                    ? triggerUser.nome.split(" ").map((n: string) => n[0]).join("").substring(0, 2).toUpperCase() 
+                    : "?"
+
+                  return (
+                    <div
+                      key={notif.id}
+                      onClick={() => handleNotificationClick(notif)}
+                      className={cn(
+                        "p-4 flex gap-3 cursor-pointer transition-all hover:bg-[#222] group",
+                        notif.lida ? "bg-[#161616]" : "bg-[#1e1200]"
                       )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={cn(
-                        "text-xs leading-tight mb-1",
-                        notif.lida ? "text-neutral-400" : "text-foreground font-medium"
-                      )}>
-                        {notif.titulo}
-                      </p>
-                      <p className="text-[11px] text-neutral-500 line-clamp-2 leading-normal mb-2">
+                    >
+                      <div className="relative flex-shrink-0 mt-1">
+                        {/* Avatar/Ícone */}
+                        <div className="w-8 h-8 rounded-full bg-[#2a2a2a] border border-[#333] flex items-center justify-center text-[11px] font-bold text-white overflow-hidden">
+                          {triggerUser?.avatar_url ? (
+                            <img src={triggerUser.avatar_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            triggerUser ? initials : getIcon(notif.tipo)
+                          )}
+                        </div>
+                        
+                        {!notif.lida && (
+                          <span className="absolute -top-1 -left-1 w-2.5 h-2.5 bg-[#e87c2a] rounded-full border border-[#161616]" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn(
+                          "text-[13px] leading-tight mb-1",
+                          notif.lida ? "text-[#888]" : "text-white font-medium"
+                        )}>
+                          {notif.titulo}
+                        </p>
+                      <p className="text-[12px] text-[#666] line-clamp-2 leading-normal mb-2">
                         {notif.descricao}
                       </p>
-                      <p className="text-[9px] text-neutral-600 font-mono uppercase tracking-wider">
+                      <p className="text-[10px] text-[#555]">
                         {formatRelativeTime(notif.created_at)}
                       </p>
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ArrowRight className="w-3 h-3 text-neutral-700" />
-                    </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
           
-          <div className="p-3 border-t border-border bg-card text-center">
-             <Link href="/configuracoes/notificacoes" className="text-[9px] text-neutral-600 font-mono hover:text-neutral-400 transition-colors uppercase tracking-widest">
+          <div className="p-3 border-t border-[#222] bg-[#121212] text-center">
+             <Link href="/configuracoes/notificacoes" className="text-[11px] text-[#666] hover:text-[#aaa] transition-colors">
                 Gerenciar Preferências
              </Link>
           </div>

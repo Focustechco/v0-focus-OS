@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Bell, Mail, Smartphone, Webhook } from "lucide-react"
 import { supabase } from "@/lib/supabase"
+import { toast } from "sonner"
 
 interface NotificacoesSectionProps {
   onChange: () => void
@@ -41,6 +42,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
     app: true, email: true, push: false, webhook: false
   })
   const [eventPrefs, setEventPrefs] = useState<Record<string, any>>({})
+  const [webhookUrl, setWebhookUrl] = useState("")
   const [quietMode, setQuietMode] = useState(false)
 
   const loadPrefs = async () => {
@@ -57,6 +59,7 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
           push: data.pushEnabled,
           webhook: data.webhookEnabled
         })
+        setWebhookUrl(data.webhookUrl || "")
         setEventPrefs(data.eventPrefs || {})
       }
     } catch (error) {
@@ -79,14 +82,54 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
         method: "POST",
         body: JSON.stringify({ userId: user.id, ...updates })
       })
+      toast.success("Preferências salvas", { duration: 2000 })
       onChange()
     } catch (error) {
       console.error(error)
+      toast.error("Erro ao salvar")
     }
   }
 
-  const toggleChannel = (channelId: string) => {
+  const testWebhook = async () => {
+    if (!webhookUrl) return
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "test",
+          message: "Webhook do Focus OS conectado com sucesso",
+          timestamp: new Date().toISOString()
+        })
+      })
+      if (res.ok) {
+        toast.success("Webhook testado com sucesso!")
+      } else {
+        toast.error("Erro no teste do Webhook")
+      }
+    } catch (err) {
+      toast.error("Erro de conexão com Webhook")
+    }
+  }
+
+  const toggleChannel = async (channelId: string) => {
     const newState = !channelStates[channelId]
+    
+    if (channelId === "push" && newState) {
+      if ("Notification" in window) {
+        const permission = await Notification.requestPermission()
+        if (permission !== "granted") {
+          toast.error("Permissão negada pelo navegador")
+          return
+        }
+        // Aqui seria a integração real com firebase/web-push para gerar o token
+        toast.success("Push ativado")
+      } else {
+        toast.error("Seu navegador não suporta Push")
+        return
+      }
+    }
+
     const updatedStates = { ...channelStates, [channelId]: newState }
     setChannelStates(updatedStates)
     savePrefs({
@@ -194,6 +237,28 @@ export function NotificacoesSection({ onChange }: NotificacoesSectionProps) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Configuração de Webhook */}
+        {channelStates.webhook && (
+          <Card className="bg-card border-[#2a2a2a] lg:col-span-2">
+            <CardContent className="p-6">
+              <Label className="text-neutral-400 font-mono text-xs uppercase mb-4 block tracking-widest">Configuração do Webhook</Label>
+              <div className="flex items-center gap-3">
+                <Input
+                  placeholder="https://seu-dominio.com/webhook"
+                  value={webhookUrl}
+                  onChange={(e) => setWebhookUrl(e.target.value)}
+                  onBlur={() => savePrefs({ webhookUrl })}
+                  className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono text-sm max-w-xl"
+                />
+                <Button onClick={testWebhook} className="bg-orange-500 hover:bg-orange-600 text-foreground">
+                  Testar Webhook
+                </Button>
+              </div>
+              <p className="text-xs text-neutral-500 mt-2 font-mono">Será enviado um POST request JSON com o payload do evento para esta URL.</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Modo Silencioso */}

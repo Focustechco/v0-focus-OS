@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
     if (error) throw error
 
-    // Colunas reais: id, titulo, mensagem, tipo, ref_id, ref_type, lida, user_id, created_at
+    // Colunas reais: id, titulo, mensagem, tipo, ref_id, ref_type, lida, user_id, created_at, triggered_by, ref_title
     const mapped = (notifications || []).map((n: any) => ({
       id: n.id,
       title: n.titulo,
@@ -31,12 +31,42 @@ export async function GET(request: Request) {
       type: n.tipo,
       relatedEntityType: n.ref_type || null,
       relatedEntityId: n.ref_id || null,
+      relatedEntityTitle: n.ref_title || null,
+      triggeredBy: n.triggered_by || null,
       createdAt: n.created_at
     }))
 
     return NextResponse.json(mapped)
   } catch (error: any) {
     console.error("Erro ao buscar notificações:", error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const supabase = createAdminClient()
+
+    const { data, error } = await supabase
+      .from("notificacoes")
+      .insert({
+        user_id: body.user_id,
+        tipo: body.type, // ex: "tarefa"
+        titulo: body.title,
+        mensagem: body.body,
+        ref_id: body.task_id,
+        ref_type: "tarefas",
+        lida: false
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return NextResponse.json(data)
+  } catch (error: any) {
+    console.error("Erro ao criar notificação:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

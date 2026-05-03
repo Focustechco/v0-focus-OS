@@ -59,27 +59,9 @@ export function useDriveAuth() {
   const connect = useCallback(async () => {
     setIsLoading(true)
     try {
-      // Prefer Supabase OAuth flow when Supabase is configured in the frontend.
-      if (supabase) {
-        const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"}/api/drive/callback`
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo,
-            scopes: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.email",
-          },
-        })
-
-        if (error) throw error
-
-        // If supabase returned a URL, redirect user to it. Otherwise fallback to server-generated URL.
-        if ((data as any)?.url) {
-          window.location.href = (data as any).url
-          return
-        }
-      }
-
-      // Fallback to server-side OAuth URL generation
+      // Use server-side OAuth URL generation (direct Google OAuth2 flow)
+      // This ensures the authorization code is a real Google code that our
+      // /api/drive/callback can exchange for tokens via googleapis.
       const response = await getDriveAuthUrl()
       window.location.href = response.authUrl
     } catch (err: any) {

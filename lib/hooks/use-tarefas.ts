@@ -98,6 +98,35 @@ export function useTarefas(sprintId?: string, projetoId?: string) {
       return { error }
     }
 
+    // Disparar notificação se a tarefa for atribuída a outra pessoa
+    if (newTask.responsavel_id) {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        try {
+          const res = await fetch("/api/notifications/dispatch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: newTask.responsavel_id,
+              triggeredBy: session.user.id,
+              eventType: "nova_task",
+              data: {
+                title: "Nova tarefa atribuída",
+                message: `Você foi designado para a tarefa "${newTask.titulo}".`,
+                ref_type: "tarefas",
+                ref_id: newTask.id,
+                ref_title: newTask.titulo
+              }
+            })
+          })
+          const result = await res.json()
+          console.log("[use-tarefas] Dispatch result:", result)
+        } catch (err) {
+          console.error("[use-tarefas] Erro ao notificar:", err)
+        }
+      }
+    }
+
     mutate()
     return { data: newTask }
   }

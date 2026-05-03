@@ -12,6 +12,7 @@ export interface Notificacao {
   created_at: string
   referencia_tipo?: string
   referencia_id?: string
+  triggeredBy?: string
 }
 
 export function useNotificacoes() {
@@ -26,7 +27,8 @@ export function useNotificacoes() {
     lida: n.isRead,
     created_at: n.createdAt,
     referencia_tipo: n.relatedEntityType || undefined,
-    referencia_id: n.relatedEntityId || undefined
+    referencia_id: n.relatedEntityId || undefined,
+    triggeredBy: n.triggeredBy || undefined
   }))
 
   return {

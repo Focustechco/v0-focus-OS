@@ -9,6 +9,10 @@ import {
   CheckSquare,
   CalendarClock,
   LayoutGrid,
+  Users,
+  TrendingUp,
+  BarChart3,
+  Wallet
 } from "lucide-react"
 import { useModules } from "@/contexts/modules-context"
 import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
@@ -18,7 +22,11 @@ const PRIMARY_NAV = [
   { id: "projetos",       href: "/projetos",  icon: FolderKanban,    label: "Projetos" },
   { id: "tarefas",        href: "/tarefas",   icon: CheckSquare,     label: "Tasks" },
   { id: "agenda",         href: "/agenda",    icon: CalendarClock,   label: "Agenda" },
-  { id: "backoffice",     href: "/backoffice", icon: LayoutGrid,      label: "Backoffice" },
+  { id: "comercial",      href: "/comercial", icon: TrendingUp,      label: "CRM" },
+  { id: "equipe",         href: "/equipe",    icon: Users,           label: "Equipe" },
+  { id: "financeiro",     href: "/financeiro", icon: Wallet,         label: "Finanças" },
+  { id: "backoffice",     href: "/backoffice", icon: LayoutGrid,      label: "Módulos" },
+  { id: "relatorios",     href: "/relatorios", icon: BarChart3,       label: "Relatórios" },
 ]
 
 export function MobileBottomNav() {
@@ -67,6 +75,7 @@ export function MobileBottomNav() {
           border-t border-border
           flex items-stretch
           overflow-x-auto scroll-smooth mobile-nav-scroll
+          snap-x snap-mandatory
           safe-area-inset-bottom
         "
         style={{ 
@@ -84,9 +93,9 @@ export function MobileBottomNav() {
               href={item.href}
               data-active={active}
               className={`
-                relative flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-1 min-h-[56px] min-w-[70px]
-                transition-colors duration-150 active:scale-95
-                ${active ? "text-primary" : "text-neutral-500 hover:text-foreground"}
+                relative flex-none snap-center flex flex-col items-center justify-center gap-1 py-1 min-h-[56px] min-w-[76px]
+                transition-all duration-150 active:scale-90
+                ${active ? "text-primary font-bold" : "text-neutral-500"}
               `}
             >
               {active && (
@@ -94,15 +103,15 @@ export function MobileBottomNav() {
               )}
 
               <div className="relative">
-                <item.icon className="w-5 h-5" />
+                <item.icon className={`w-5 h-5 transition-transform ${active ? "scale-110" : "scale-100"}`} />
                 {badge && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-0.5 bg-primary rounded-full text-[9px] font-bold text-foreground flex items-center justify-center font-mono">
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-0.5 bg-primary rounded-full text-[9px] font-bold text-foreground flex items-center justify-center font-mono shadow-sm">
                     {badge > 9 ? "9+" : badge}
                   </span>
                 )}
               </div>
 
-              <span className="text-[10px] font-mono tracking-wide leading-none">
+              <span className="text-[10px] font-mono tracking-tight leading-none uppercase">
                 {item.label}
               </span>
             </Link>

@@ -25,19 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Pencil, Trash2, Mail, RefreshCw, ChevronRight } from "lucide-react"
+import { Plus, Pencil, Trash2, Mail, RefreshCw, ChevronRight, Loader2 } from "lucide-react"
+import { useEquipe } from "@/lib/hooks/use-equipe"
+import { toast } from "sonner"
 
 interface UsuariosSectionProps {
   onChange: () => void
 }
 
-const users = [
-  { id: 1, name: "Carlos Silva", email: "carlos@focus.com.br", role: "Admin", modules: 16, lastAccess: "Agora", status: true, initials: "CS" },
-  { id: 2, name: "Ana Santos", email: "ana@focus.com.br", role: "Tech Lead", modules: 12, lastAccess: "1h atras", status: true, initials: "AS" },
-  { id: 3, name: "Pedro Lima", email: "pedro@focus.com.br", role: "Dev", modules: 8, lastAccess: "2h atras", status: true, initials: "PL" },
-  { id: 4, name: "Mariana Costa", email: "mariana@focus.com.br", role: "Designer", modules: 6, lastAccess: "1 dia atras", status: true, initials: "MC" },
-  { id: 5, name: "Lucas Ferreira", email: "lucas@focus.com.br", role: "Comercial", modules: 5, lastAccess: "3 dias atras", status: false, initials: "LF" },
-]
+// Mock para funcoes e convites (serão integrados em seguida)
 
 const roles = [
   { name: "Admin", permissions: { ver: true, criar: true, editar: true, deletar: true, aprovar: true } },
@@ -65,8 +61,56 @@ const roleColors: Record<string, string> = {
 }
 
 export function UsuariosSection({ onChange }: UsuariosSectionProps) {
+  const { equipe, isLoading, updateMembro, deleteMembro } = useEquipe()
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
+  const [editingUser, setEditingUser] = useState<any>(null)
   const [expandedRole, setExpandedRole] = useState<string | null>(null)
+
+  const getInitials = (name: string) => {
+    if (!name) return "??";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  const handleToggleStatus = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === "ativo" ? "inativo" : "ativo";
+    const { error } = await updateMembro(id, { status: newStatus });
+    if (error) {
+      toast.error("Erro ao atualizar status");
+    } else {
+      toast.success(`Usuário ${newStatus === "ativo" ? "ativado" : "desativado"}`);
+      onChange();
+    }
+  };
+
+  const handleDeleteUser = async (id: string, name: string) => {
+    if (!confirm(`Tem certeza que deseja excluir ${name}?`)) return;
+    
+    const { error } = await deleteMembro(id);
+    if (error) {
+      toast.error("Erro ao excluir usuário");
+    } else {
+      toast.success("Usuário excluído com sucesso");
+      onChange();
+    }
+  };
+
+  const handleUpdateRole = async () => {
+    if (!editingUser) return;
+    
+    const { error } = await updateMembro(editingUser.id, { cargo: editingUser.cargo });
+    if (error) {
+      toast.error("Erro ao atualizar função");
+    } else {
+      toast.success("Função atualizada com sucesso");
+      setEditingUser(null);
+      onChange();
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -97,7 +141,7 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
           <Card className="bg-card border-[#2a2a2a]">
             <CardContent className="p-0">
               <div className="p-4 border-b border-[#2a2a2a] flex items-center justify-between">
-                <span className="text-neutral-400 text-sm font-mono">{users.length} usuarios</span>
+                <span className="text-neutral-400 text-sm font-mono">{equipe.length} usuarios</span>
                 <Button
                   onClick={() => setInviteModalOpen(true)}
                   className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono text-xs tracking-widest uppercase"
@@ -120,42 +164,72 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map((user) => (
-                      <tr key={user.id} className="border-b border-[#2a2a2a] hover:bg-[#1f1f1f] transition-colors">
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="w-8 h-8">
-                              <AvatarFallback className="bg-orange-500/20 text-orange-500 text-xs font-mono">
-                                {user.initials}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-foreground font-medium">{user.name}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-neutral-400 font-mono text-sm">{user.email}</td>
-                        <td className="p-4">
-                          <Badge className={`${roleColors[user.role]} text-[10px] font-mono`}>{user.role}</Badge>
-                        </td>
-                        <td className="p-4 text-neutral-400 font-mono text-sm">{user.modules} modulos</td>
-                        <td className="p-4 text-neutral-400 font-mono text-sm">{user.lastAccess}</td>
-                        <td className="p-4">
-                          <Switch
-                            checked={user.status}
-                            onCheckedChange={onChange}
-                          />
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-orange-500">
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-red-500">
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
+                    {isLoading ? (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center">
+                          <Loader2 className="w-6 h-6 animate-spin text-orange-500 mx-auto" />
                         </td>
                       </tr>
-                    ))}
+                    ) : equipe.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center text-neutral-500 font-mono text-xs">
+                          Nenhum usuario encontrado
+                        </td>
+                      </tr>
+                    ) : (
+                      equipe.map((user) => (
+                        <tr key={user.id} className="border-b border-[#2a2a2a] hover:bg-[#1f1f1f] transition-colors">
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="w-8 h-8">
+                                <AvatarFallback className="bg-orange-500/20 text-orange-500 text-xs font-mono">
+                                  {getInitials(user.nome)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="text-foreground font-medium">{user.nome}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 text-neutral-400 font-mono text-sm">{user.email}</td>
+                          <td className="p-4">
+                            <Badge className={`${roleColors[user.cargo || "Dev"] || "bg-neutral-500/20 text-neutral-400"} text-[10px] font-mono`}>
+                              {user.cargo || "Membro"}
+                            </Badge>
+                          </td>
+                          <td className="p-4 text-neutral-400 font-mono text-sm">
+                            {user.tipo === "admin" ? "16 modulos" : "8 modulos"}
+                          </td>
+                          <td className="p-4 text-neutral-400 font-mono text-sm">
+                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : "--"}
+                          </td>
+                          <td className="p-4">
+                            <Switch
+                              checked={user.status === "ativo"}
+                              onCheckedChange={() => handleToggleStatus(user.id, user.status)}
+                            />
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-end gap-1">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-neutral-400 hover:text-orange-500"
+                                onClick={() => setEditingUser(user)}
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-neutral-400 hover:text-red-500"
+                                onClick={() => handleDeleteUser(user.id, user.nome)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </ScrollArea>
@@ -315,6 +389,51 @@ export function UsuariosSection({ onChange }: UsuariosSectionProps) {
             <Button className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono">
               <Mail className="w-4 h-4 mr-2" />
               Enviar Convite
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Edit User Modal */}
+      <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+        <DialogContent className="bg-card border-[#2a2a2a] max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-foreground font-display">Editar Funcao</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="flex items-center gap-3 p-3 bg-[#1a1a1a] rounded-lg border border-[#2a2a2a]">
+              <Avatar className="w-10 h-10">
+                <AvatarFallback className="bg-orange-500/20 text-orange-500 font-mono">
+                  {editingUser && getInitials(editingUser.nome)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-foreground font-medium">{editingUser?.nome}</p>
+                <p className="text-neutral-500 text-xs font-mono">{editingUser?.email}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-neutral-400 font-mono text-xs uppercase">Funcao</Label>
+              <Select 
+                value={editingUser?.cargo} 
+                onValueChange={(val) => setEditingUser({...editingUser, cargo: val})}
+              >
+                <SelectTrigger className="bg-[#1a1a1a] border-[#2a2a2a] text-foreground font-mono">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a1a] border-[#2a2a2a]">
+                  {roles.map((role) => (
+                    <SelectItem key={role.name} value={role.name}>{role.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter className="mt-6">
+            <Button variant="ghost" onClick={() => setEditingUser(null)} className="text-neutral-400 font-mono">
+              Cancelar
+            </Button>
+            <Button onClick={handleUpdateRole} className="bg-orange-500 hover:bg-orange-600 text-foreground font-mono">
+              Salvar Alteracoes
             </Button>
           </DialogFooter>
         </DialogContent>

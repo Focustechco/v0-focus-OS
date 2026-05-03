@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Clock, BookOpen, Link } from "lucide-react"
+import { Users, Clock, BookOpen, Link, ExternalLink } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { AbaMinhaEquipe } from "./tabs/aba-minha-equipe"
 import { AbaRegistroPonto } from "./tabs/aba-ponto"
@@ -46,27 +46,28 @@ export function EquipeModule() {
             <BookOpen className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
             Conteúdos
           </TabsTrigger>
-          <TabsTrigger value="acessos" className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-foreground font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4">
+          <TabsTrigger
+            value="acessos"
+            className="flex-shrink-0 data-[state=active]:bg-orange-500 data-[state=active]:text-foreground font-mono text-[9px] sm:text-[10px] tracking-widest uppercase py-2 px-3 sm:px-4"
+          >
             <Link className="w-3.5 h-3.5 mr-1.5 sm:mr-2" />
-            Acessos
+            Links
           </TabsTrigger>
-
         </TabsList>
 
-        <div className="mt-6">
-          <TabsContent value="minha-equipe">
+        <div className="mt-8">
+          <TabsContent value="minha-equipe" className="m-0 focus:outline-none">
             <AbaMinhaEquipe userType={userType} />
           </TabsContent>
-          <TabsContent value="ponto">
+          <TabsContent value="ponto" className="m-0 focus:outline-none">
             <AbaRegistroPonto />
           </TabsContent>
-          <TabsContent value="conteudos">
-              <AbaConteudos userType={userType} />
+          <TabsContent value="conteudos" className="m-0 focus:outline-none">
+            <AbaConteudos userType={userType} />
           </TabsContent>
-          <TabsContent value="acessos">
-              <AbaAcessos userType={userType} />
+          <TabsContent value="acessos" className="m-0 focus:outline-none">
+            <AbaAcessos userType={userType} />
           </TabsContent>
-
         </div>
       </Tabs>
     </div>

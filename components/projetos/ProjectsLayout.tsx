@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Zap, ListTodo, CheckCircle2, Calendar } from 'lucide-react';
+import { LayoutDashboard, Zap, ListTodo, CheckCircle2, Calendar, GitBranch } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PageWrapper } from '@/components/page-wrapper';
 
@@ -24,6 +24,8 @@ export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
     { name: 'Sprints', href: '/projetos/sprints', icon: Zap, count: counts?.sprints },
     { name: 'Backlog', href: '/projetos/backlog', icon: ListTodo, count: counts?.backlog },
     { name: 'Aprovações', href: '/projetos/aprovacoes', icon: CheckCircle2, count: counts?.approvals },
+    { name: 'Fluxo de Etapas', href: '/projetos/fluxo', icon: ListTodo },
+    { name: 'Pipeline', href: '/projetos/etapas', icon: GitBranch },
     { name: 'Prazos', href: '/projetos/prazos', icon: Calendar },
   ];
 
