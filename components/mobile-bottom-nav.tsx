@@ -8,11 +8,15 @@ import {
   FolderKanban,
   CheckSquare,
   CalendarClock,
-  LayoutGrid,
   Users,
   TrendingUp,
   BarChart3,
-  Wallet
+  Wallet,
+  Box,
+  Cpu,
+  Settings,
+  Cog,
+  Contact
 } from "lucide-react"
 import { useModules } from "@/contexts/modules-context"
 import { useSidebarStats } from "@/lib/hooks/use-sidebar-stats"
@@ -24,9 +28,13 @@ const PRIMARY_NAV = [
   { id: "agenda",         href: "/agenda",    icon: CalendarClock,   label: "Agenda" },
   { id: "comercial",      href: "/comercial", icon: TrendingUp,      label: "CRM" },
   { id: "equipe",         href: "/equipe",    icon: Users,           label: "Equipe" },
+  { id: "clientes",       href: "/clientes",  icon: Contact,         label: "Clientes" },
+  { id: "documentos",     href: "/documentos", icon: Box,            label: "Docs" },
   { id: "financeiro",     href: "/financeiro", icon: Wallet,         label: "Finanças" },
-  { id: "backoffice",     href: "/backoffice", icon: LayoutGrid,      label: "Módulos" },
   { id: "relatorios",     href: "/relatorios", icon: BarChart3,       label: "Relatórios" },
+  { id: "intelligence",   href: "/intelligence", icon: Cpu,          label: "Inteligence" },
+  { id: "sistemas",       href: "/sistemas", icon: Settings,         label: "Sistemas" },
+  { id: "configuracoes",  href: "/configuracoes", icon: Cog,         label: "Config" },
 ]
 
 export function MobileBottomNav() {
