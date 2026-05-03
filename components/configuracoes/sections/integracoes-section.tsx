@@ -87,21 +87,28 @@ export function IntegracoesSection() {
   const disconnectIntegration = integrations.find(i => i.id === disconnectConfirmOpen)
 
   const handleConnect = (id: string) => {
-    // Simulando conexão OAuth
-    const redirectUri = window.location.origin + `/api/integrations/callback/${id}`
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    const redirectUri = `${origin}/api/integrations/callback/${id}`
     
     if (id === "clickup") {
-      toast.info("Iniciando OAuth ClickUp...")
-      // window.location.href = `https://app.clickup.com/api?client_id=YOUR_CLIENT_ID&redirect_uri=${redirectUri}`
+      const clientId = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID || "YOUR_CLICKUP_CLIENT_ID"
+      window.location.href = `https://app.clickup.com/api?client_id=${clientId}&redirect_uri=${redirectUri}`
     } else if (id === "google_calendar" || id === "google_drive") {
-      toast.info(`Iniciando OAuth Google (${id})...`)
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID"
+      const scope = id === "google_calendar" 
+        ? "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly"
+        : "https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file"
+      
+      const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth")
+      authUrl.searchParams.append("client_id", clientId)
+      authUrl.searchParams.append("redirect_uri", redirectUri)
+      authUrl.searchParams.append("response_type", "code")
+      authUrl.searchParams.append("scope", scope)
+      authUrl.searchParams.append("access_type", "offline")
+      authUrl.searchParams.append("prompt", "consent")
+      
+      window.location.href = authUrl.toString()
     }
-
-    // Mock connection
-    setTimeout(() => {
-      setIntegrations(prev => prev.map(i => i.id === id ? { ...i, connected: true, lastSync: "agora" } : i))
-      toast.success(`${id} conectado com sucesso!`)
-    }, 1000)
   }
 
   const handleDisconnect = () => {
@@ -276,7 +283,7 @@ export function IntegracoesSection() {
                       <p className="text-[11px] text-[#555]">Conta conectada</p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-[11px] text-[#888] hover:text-white">
+                  <Button onClick={() => handleConnect(activeIntegration.id)} size="sm" className="bg-[#e87c2a] hover:bg-[#ff8e3e] text-white text-[11px] font-bold h-8 px-3">
                     Trocar conta
                   </Button>
                 </div>
