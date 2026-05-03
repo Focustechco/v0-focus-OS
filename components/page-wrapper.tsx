@@ -4,6 +4,7 @@ import { useState } from "react"
 import { FocusSidebar } from "@/components/focus-sidebar"
 import { FocusHeader } from "@/components/focus-header"
 import { MobileBottomNav } from "@/components/mobile-bottom-nav"
+import { MobileSidebar } from "@/components/mobile-sidebar"
 
 interface PageWrapperProps {
   title: string
@@ -13,6 +14,7 @@ interface PageWrapperProps {
 
 export function PageWrapper({ title, breadcrumb, children }: PageWrapperProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <div className="flex h-[100dvh] bg-background overflow-hidden">
@@ -27,6 +29,7 @@ export function PageWrapper({ title, breadcrumb, children }: PageWrapperProps) {
         <FocusHeader
           title={title}
           breadcrumb={breadcrumb}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
         />
 
         {/* Scrollable content — bottom padding accounts for mobile nav bar */}
@@ -37,6 +40,9 @@ export function PageWrapper({ title, breadcrumb, children }: PageWrapperProps) {
 
       {/* Mobile bottom navigation */}
       <MobileBottomNav />
+
+      {/* Mobile Sidebar */}
+      <MobileSidebar isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </div>
   )
 }

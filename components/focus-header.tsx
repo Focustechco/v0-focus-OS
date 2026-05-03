@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Bell, RefreshCw, Search } from "lucide-react"
+import { Bell, RefreshCw, Search, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { UserMenu } from "@/components/user-menu"
@@ -10,9 +10,10 @@ import { NotificationsPanel } from "./notifications-panel"
 interface FocusHeaderProps {
   title: string
   breadcrumb?: string
+  onOpenMobileMenu?: () => void
 }
 
-export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
+export function FocusHeader({ title, breadcrumb, onOpenMobileMenu }: FocusHeaderProps) {
   const [currentTime, setCurrentTime] = useState("")
 
   useEffect(() => {
@@ -57,6 +58,16 @@ export function FocusHeader({ title, breadcrumb }: FocusHeaderProps) {
   return (
     <header className="h-14 bg-background border-b border-border flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
       <div className="flex items-center gap-2 sm:gap-4">
+        {/* Menu button for mobile */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onOpenMobileMenu}
+          className="lg:hidden text-neutral-400 hover:text-orange-500"
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
+
         {/* Logo for mobile — links back to dashboard */}
         <a href="/" className="lg:hidden">
           <img src="/logo.svg" alt="Focus OS" className="w-7 h-7" />
