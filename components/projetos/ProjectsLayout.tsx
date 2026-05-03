@@ -34,15 +34,16 @@ export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
       <div className="flex flex-col space-y-4 sm:space-y-6">
         
         {/* Navigation Tabs */}
-        <div className="flex items-center space-x-1 border-b border-[#1f1f1f] pb-px overflow-x-auto no-scrollbar snap-x snap-proximity">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
+        <div className="w-full overflow-x-auto no-scrollbar border-b border-[#1f1f1f] pb-px">
+          <div className="inline-flex w-max items-center gap-1 snap-x snap-proximity">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative flex items-center space-x-2 py-4 px-4 text-xs sm:text-sm font-medium transition-colors hover:text-white whitespace-nowrap shrink-0 snap-start",
+                  "relative inline-flex items-center gap-2 py-4 px-4 text-xs sm:text-sm font-medium transition-colors hover:text-white whitespace-nowrap shrink-0 snap-start",
                   isActive ? "text-white" : "text-[#888888]"
                 )}
               >
@@ -56,9 +57,10 @@ export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
                 {isActive && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f97316]" />
                 )}
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {/* Content Area */}
