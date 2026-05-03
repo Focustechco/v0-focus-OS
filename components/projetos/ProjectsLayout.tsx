@@ -42,7 +42,7 @@ export function ProjectsLayout({ children, counts }: ProjectsLayoutProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative flex items-center space-x-2 py-4 px-4 text-xs sm:text-sm font-medium transition-colors hover:text-white whitespace-nowrap snap-start",
+                  "relative flex items-center space-x-2 py-4 px-4 text-xs sm:text-sm font-medium transition-colors hover:text-white whitespace-nowrap shrink-0 snap-start",
                   isActive ? "text-white" : "text-[#888888]"
                 )}
               >
