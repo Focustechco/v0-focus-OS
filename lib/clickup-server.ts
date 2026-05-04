@@ -33,10 +33,12 @@ export async function getClickUpConfig() {
       
       return {
         ...envConfig,
+        token: fileConfig.token || envConfig.token,
         teamId: fileConfig.teamId || envConfig.teamId,
         spaceId: fileConfig.spaceId || envConfig.spaceId,
         listId: fileConfig.listId || envConfig.listId,
         enabled: fileConfig.enabled ?? true,
+        configured: Boolean(fileConfig.token || envConfig.token),
       }
     }
   } catch (error) {
