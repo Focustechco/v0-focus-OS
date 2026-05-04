@@ -13,7 +13,7 @@ function getSupabase() {
 
 function getOAuth2Client() {
   return new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
     process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`
   )
@@ -24,9 +24,9 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const userId = searchParams.get("user_id")
 
-  if (!process.env.GOOGLE_CLIENT_ID) {
+  if (!(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID)) {
     return NextResponse.json(
-      { error: "Google Calendar não configurado. Adicione GOOGLE_CLIENT_ID no .env.local" },
+      { error: "Google Calendar não configurado. Adicione NEXT_PUBLIC_GOOGLE_CLIENT_ID no .env.local" },
       { status: 500 }
     )
   }
