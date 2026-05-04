@@ -13,7 +13,7 @@ export function useDashboard() {
   const { data, error, isLoading, mutate } = useSWR("dashboard-consolidated", fetcher, {
     refreshInterval: 60000,
     shouldRetryOnError: false,
-    revalidateOnFocus: false,
+    revalidateOnFocus: true,
   })
 
   return {

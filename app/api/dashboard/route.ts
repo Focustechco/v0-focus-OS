@@ -62,7 +62,9 @@ function buildCommercialLeadSummary(deals: CRMDeal[]) {
 export async function GET() {
   try {
     const supabase = createAdminClient()
-    const today = new Date().toISOString().split('T')[0]
+    const now = new Date()
+    const offset = now.getTimezoneOffset() * 60000
+    const today = new Date(now.getTime() - offset).toISOString().split('T')[0]
 
     const clickupPipelineDeals = await (async () => {
       try {
