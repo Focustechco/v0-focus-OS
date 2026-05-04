@@ -74,8 +74,8 @@ export async function GET() {
       }
     })()
 
-    // Run all 6 primary queries in parallel, each isolated so one failure doesn't break the rest
-    const [projetos, tarefas, sprints, aprovacoes, equipe, leads] = await Promise.all([
+    // Run all 7 primary queries in parallel, each isolated so one failure doesn't break the rest
+    const [projetos, tarefas, sprints, aprovacoes, equipe, leads, eventos] = await Promise.all([
       safeQuery(() =>
         supabase.from("projetos")
           .select("id, nome, status, progresso, created_at", { count: "exact" })
@@ -108,6 +108,13 @@ export async function GET() {
           .not("status", "fechado_perdido")
           .order("created_at", { ascending: false })
       ),
+      safeQuery(() =>
+        supabase.from("eventos")
+          .select("id, titulo, inicio, fim, tipo")
+          .gte("inicio", `${today}T00:00:00.000Z`)
+          .lte("inicio", `${today}T23:59:59.999Z`)
+          .order("inicio", { ascending: true })
+      ),
     ])
 
     // Secondary counts (non-critical)
@@ -125,6 +132,7 @@ export async function GET() {
     const aprovacoesData: any[] = Array.isArray(aprovacoes.data) ? aprovacoes.data : []
     const equipeData: any[] = Array.isArray(equipe.data) ? equipe.data : []
     const leadsData: any[] = Array.isArray(leads.data) ? leads.data : []
+    const eventosData: any[] = Array.isArray(eventos.data) ? eventos.data : []
 
     const clickupCommercialSummary = clickupPipelineDeals.length > 0 ? buildCommercialLeadSummary(clickupPipelineDeals) : null
     const pipelineLeads = clickupCommercialSummary ? clickupCommercialSummary.leads : leadsData
@@ -224,6 +232,7 @@ export async function GET() {
         projeto: null,
         created_at: a.created_at,
       })),
+      agenda: eventosData.slice(0, 5),
       intelligence,
     })
   } catch (error: any) {

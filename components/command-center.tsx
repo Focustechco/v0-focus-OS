@@ -20,7 +20,9 @@ import {
   BrainCircuit,
   MessageSquare,
   Clock,
-  Briefcase
+  Briefcase,
+  CalendarClock,
+  CheckSquare
 } from "lucide-react"
 
 export function CommandCenter() {
@@ -89,6 +91,7 @@ export function CommandCenter() {
   const leads = data?.leads || []
   const leadsStats = data?.leads_stats || {}
   const aprovacoes = data?.aprovacoes || []
+  const agenda = data?.agenda || []
   const intelligence = data?.intelligence || ""
 
   return (
@@ -350,6 +353,97 @@ export function CommandCenter() {
                  </div>
                </Card>
             </div>
+
+          </div>
+
+          {/* 5. Row Adicional: Agenda e Tasks */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Agenda do Dia */}
+            <Card className="bg-card border-border rounded-[10px] flex flex-col h-[300px]">
+              <div className="p-[18px] border-b border-border flex items-center justify-between">
+                <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <CalendarClock className="w-4 h-4 text-primary" /> Agenda do Dia
+                </h2>
+                <Link href="/agenda" className="text-[11px] font-mono text-neutral-500 hover:text-primary transition-colors">
+                  Abrir Agenda →
+                </Link>
+              </div>
+              <div className="p-[18px] flex-1 overflow-y-auto space-y-3 custom-scrollbar">
+                {agenda.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-neutral-500">
+                    <CalendarClock className="w-8 h-8 mb-2 opacity-20" />
+                    <p className="text-xs">Nenhum evento para hoje</p>
+                  </div>
+                ) : (
+                  agenda.map((evento: any) => (
+                    <div key={evento.id} className="p-3 bg-secondary border border-border rounded-[8px] flex flex-col gap-1">
+                      <p className="text-xs font-medium text-foreground">{evento.titulo}</p>
+                      <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-500">
+                        <Clock className="w-3 h-3" />
+                        <span>
+                          {new Date(evento.inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          {' - '}
+                          {new Date(evento.fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        {evento.tipo && (
+                          <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 border-primary/20 text-primary uppercase ml-auto">
+                            {evento.tipo}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Card>
+
+            {/* Minhas Tarefas (Tasks Module View) */}
+            <Card className="bg-card border-border rounded-[10px] flex flex-col h-[300px]">
+              <div className="p-[18px] border-b border-border flex items-center justify-between">
+                <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <CheckSquare className="w-4 h-4 text-primary" /> Minhas Tarefas
+                </h2>
+                <Link href="/tarefas" className="text-[11px] font-mono text-neutral-500 hover:text-primary transition-colors">
+                  Módulo Tasks →
+                </Link>
+              </div>
+              <div className="p-[18px] flex-1 overflow-y-auto space-y-3 custom-scrollbar">
+                <div className="flex items-center justify-between mb-2">
+                  <Badge className="bg-secondary text-neutral-400 font-mono text-[9px] hover:bg-secondary">
+                    Para Hoje
+                  </Badge>
+                  <span className="text-[10px] font-mono text-primary">
+                    {tarefasUrg.filter((t:any) => t.prazo === new Date().toISOString().split('T')[0]).length} pendentes
+                  </span>
+                </div>
+                {tarefasUrg.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-neutral-500">
+                    <CheckSquare className="w-8 h-8 mb-2 opacity-20" />
+                    <p className="text-xs">Tudo em dia!</p>
+                  </div>
+                ) : (
+                  tarefasUrg.slice(0, 4).map((t: any) => (
+                    <div key={t.id} className="group flex items-start gap-3 p-2 -mx-2 rounded hover:bg-secondary transition-colors cursor-pointer">
+                      <div className="mt-0.5 w-4 h-4 rounded-full border border-border flex items-center justify-center bg-background shrink-0 group-hover:border-primary transition-colors">
+                        <CheckCircle2 className="w-2.5 h-2.5 text-transparent group-hover:text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-foreground font-medium truncate">{t.titulo}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[9px] font-mono text-neutral-500 uppercase truncate">
+                            {t.projeto}
+                          </span>
+                          <span className={`text-[9px] font-mono uppercase ${t.prioridade === 'alta' ? 'text-primary' : 'text-neutral-500'}`}>
+                            • {t.prioridade}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Card>
 
           </div>
         </>
