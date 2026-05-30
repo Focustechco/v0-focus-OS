@@ -5,17 +5,18 @@ import { supabaseAdmin } from "@/lib/supabase-admin"
 
 export const dynamic = 'force-dynamic'
 
-function getOAuth2Client() {
+function getOAuth2Client(origin: string) {
   return new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/drive/callback`
+    process.env.GOOGLE_REDIRECT_URI || `${origin}/api/drive/callback`
   )
 }
 
 // POST /api/drive/restore with JSON { userId }
 export async function POST(req: NextRequest) {
   try {
+    const { origin } = new URL(req.url)
     const body = await req.json()
     const userId = body?.userId
     if (!userId) return NextResponse.json({ error: "userId required" }, { status: 400 })
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
     if (error) throw error
     if (!data || !data.refresh_token) return NextResponse.json({ error: 'No refresh token' }, { status: 404 })
 
-    const oauth2Client = getOAuth2Client()
+    const oauth2Client = getOAuth2Client(origin)
     // Trocar refresh token por access token
     const res = await oauth2Client.refreshToken(data.refresh_token)
     const credentials = res.credentials

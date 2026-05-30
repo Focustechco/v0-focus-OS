@@ -5,25 +5,25 @@ import { supabaseAdmin } from "@/lib/supabase-admin"
 
 export const dynamic = 'force-dynamic'
 
-function getOAuth2Client() {
+function getOAuth2Client(origin: string) {
   return new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/drive/callback`
+    process.env.GOOGLE_REDIRECT_URI || `${origin}/api/drive/callback`
   )
 }
 
 // GET /api/drive/callback?code=... → Troca o code pelo access_token
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
+    const { searchParams, origin } = new URL(req.url)
     const code = searchParams.get("code")
 
     if (!code) {
       return NextResponse.redirect(new URL("/documentos?error=no_code", req.url))
     }
 
-    const oauth2Client = getOAuth2Client()
+    const oauth2Client = getOAuth2Client(origin)
     let tokens
     try {
       const res = await oauth2Client.getToken(code)

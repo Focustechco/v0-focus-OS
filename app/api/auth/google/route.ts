@@ -11,17 +11,17 @@ function getSupabase() {
   )
 }
 
-function getOAuth2Client() {
+function getOAuth2Client(origin: string) {
   return new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI || `http://localhost:3000/api/auth/google/callback`
+    process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/google/callback`
   )
 }
 
 // GET /api/auth/google — redireciona para tela de login do Google
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
+  const { searchParams, origin } = new URL(req.url)
   const userId = searchParams.get("user_id")
 
   if (!(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID)) {
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const oauth2Client = getOAuth2Client()
+  const oauth2Client = getOAuth2Client(origin)
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
     prompt: "consent",

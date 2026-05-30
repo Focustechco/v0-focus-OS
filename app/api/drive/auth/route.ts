@@ -3,18 +3,19 @@ import { google } from "googleapis"
 
 export const dynamic = 'force-dynamic'
 
-function getOAuth2Client() {
+function getOAuth2Client(origin: string) {
   return new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/drive/callback`
+    process.env.GOOGLE_REDIRECT_URI || `${origin}/api/drive/callback`
   )
 }
 
 // GET /api/drive/auth → Gera a URL de autorização do Google
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const oauth2Client = getOAuth2Client()
+    const { origin } = new URL(req.url)
+    const oauth2Client = getOAuth2Client(origin)
 
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: "offline",

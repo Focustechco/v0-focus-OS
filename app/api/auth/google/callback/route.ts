@@ -15,19 +15,19 @@ function getSupabase() {
 // GET /api/auth/google/callback — Google redireciona aqui após login
 export async function GET(req: NextRequest) {
   const supabase = getSupabase()
-  const { searchParams } = new URL(req.url)
+  const { searchParams, origin } = new URL(req.url)
   const code = searchParams.get("code")
   const userId = searchParams.get("state") // user_id que mandamos no state
 
   if (!code) {
-    return NextResponse.redirect(`http://localhost:3000/configuracoes?google=error&reason=no_code`)
+    return NextResponse.redirect(`${origin}/configuracoes?google=error&reason=no_code`)
   }
 
   try {
     const oauth2Client = new google.auth.OAuth2(
       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI || `http://localhost:3000/api/auth/google/callback`
+      process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/google/callback`
     )
 
     // Troca o code por tokens
@@ -51,13 +51,13 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       console.error("[Google OAuth] Erro ao salvar token:", error)
-      return NextResponse.redirect(`http://localhost:3000/configuracoes?google=error&reason=db_error`)
+      return NextResponse.redirect(`${origin}/configuracoes?google=error&reason=db_error`)
     }
 
     // Sucesso — redireciona de volta para as configurações
-    return NextResponse.redirect(`http://localhost:3000/configuracoes?google=success`)
+    return NextResponse.redirect(`${origin}/configuracoes?google=success`)
   } catch (err: any) {
     console.error("[Google OAuth] Erro no callback:", err.message)
-    return NextResponse.redirect(`http://localhost:3000/configuracoes?google=error&reason=${encodeURIComponent(err.message)}`)
+    return NextResponse.redirect(`${origin}/configuracoes?google=error&reason=${encodeURIComponent(err.message)}`)
   }
 }
